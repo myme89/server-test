@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package pb;
+
+import "data.proto";
+
+option go_package = "server-test/pb";
+
+message DataInfoResquest{
+}
+
+message DataInfoRespone{
+    repeated DataInfo data = 1;
+}
+
+message DataPostResqest{
+    int32 id = 1;
+    string name = 2;
+    string fullname = 3;
+}
+
+message DataPostRespone{
+    string notice = 1;
+}
+
+message DataUpdateResqest{
+    string oldname = 1;
+    string newname = 2;
+    string newfullname = 3;
+}
+
+message DataUpdateRespone{
+    string notice = 1;
+}

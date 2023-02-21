@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package pb;
+
+import "rpc_data.proto";
+import "google/api/annotations.proto";
+
+option go_package = "server-test/pb";
+
+service Deliveroo {
+    rpc GetData(DataInfoResquest) returns (DataInfoRespone) {
+        option (google.api.http) = {
+            get: "/v1/getdata"
+            // body: "*"
+        };
+    }
+
+    rpc PostData(DataPostResqest) returns (DataPostRespone) {
+        option (google.api.http) = {
+            post: "/v1/postdata"
+            body: "*"
+        };
+    }
+    rpc UpdateData(DataUpdateResqest) returns (DataUpdateRespone) {
+        option (google.api.http) = {
+            put: "/v1/updatedata"
+            body: "*"
+        };
+    }
+} 
