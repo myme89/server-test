@@ -9,6 +9,7 @@ import (
 	"server-test/model"
 	"server-test/pb"
 
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -53,6 +54,49 @@ func (server *Server) GetData(ctx context.Context, res *pb.DataInfoResquest) (*p
 			Data: ConvertData(temp),
 		}
 
+	}
+
+	return rsp, nil
+}
+
+func (server *Server) PostData(ctx context.Context, res *pb.DataPostResqest) (*pb.DataPostRespone, error) {
+
+	Id := int(res.GetId())
+	Name := res.GetName()
+	FullName := res.GetFullname()
+
+	log.Info("nhatnt", Id)
+	log.Info("nhatnt", Name)
+	log.Info("nhatnt", FullName)
+
+	InfoGroup, err := db.PostData(Id, Name, FullName)
+	// InfoGroup := "data received : "
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unimplemented, " Post Data failed")
+	}
+
+	rsp := &pb.DataPostRespone{
+		Notice: InfoGroup,
+	}
+	return rsp, nil
+}
+
+func (server *Server) UpdateData(ctx context.Context, res *pb.DataUpdateResqest) (*pb.DataUpdateRespone, error) {
+
+	oldName := res.GetOldname()
+	newName := res.GetNewname()
+	newFullName := res.GetNewfullname()
+
+	InfoGroup, err := db.UpdateData(oldName, newName, newFullName)
+	// InfoGroup := "data received : "
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unimplemented, "Update Data failed")
+	}
+
+	rsp := &pb.DataUpdateRespone{
+		Notice: InfoGroup,
 	}
 
 	return rsp, nil
