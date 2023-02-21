@@ -28,10 +28,11 @@ func ConnectRedis(ctx context.Context) {
 }
 
 func SetToRedis(ctx context.Context, key string, val []byte) {
-	err := redisClient.Set(ctx, key, val, 60*time.Second).Err()
+	err := redisClient.Set(ctx, key, val, 120*time.Second).Err()
 	if err != nil {
 		fmt.Println(err)
 	}
+
 }
 
 func GetFromRedis(ctx context.Context, key string) string {

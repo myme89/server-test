@@ -8,6 +8,7 @@ import (
 	"server-test/db"
 	"server-test/model"
 	"server-test/pb"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
@@ -65,19 +66,57 @@ func (server *Server) PostData(ctx context.Context, res *pb.DataPostResqest) (*p
 	Name := res.GetName()
 	FullName := res.GetFullname()
 
-	log.Info("nhatnt", Id)
-	log.Info("nhatnt", Name)
-	log.Info("nhatnt", FullName)
+	// log.Info("nhatnt", Id)
+	// log.Info("nhatnt", Name)
+	// log.Info("nhatnt", FullName)
 
-	InfoGroup, err := db.PostData(Id, Name, FullName)
+	type Info struct {
+		Id       int    `json:"id"`
+		Name     string `json:"name"`
+		FullName string `json:"full_name"`
+	}
+	// InfoGroup, err := db.PostData(Id, Name, FullName)
 	// InfoGroup := "data received : "
 
+	json1, err := json.Marshal(Info{Id: Id, Name: Name, FullName: FullName})
+
 	if err != nil {
-		return nil, status.Errorf(codes.Unimplemented, " Post Data failed")
+		fmt.Println(err)
 	}
+	cache.SetToRedis(ctx, "data_test", json1)
+
+	valueCache := cache.GetFromRedis(ctx, "data_test")
+	fmt.Println("value Cache= ", valueCache)
+
+	// rsp := &pb.DataPostRespone{
+	// 	Notice: InfoGroup,
+	// }
+
+	// values := cache.GetAllKeys(ctx, "data_test")
+
+	// log.Info("All values : %v \n", values)
+
+	time.AfterFunc(60*time.Second, func() {
+		ctx1 := context.TODO()
+		valueCache1 := cache.GetFromRedis(ctx1, "data_test")
+
+		var temp Info
+		err := json.Unmarshal([]byte(valueCache1), &temp)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println("value Cache= ", temp)
+
+		info, err := db.PostData(temp.Id, temp.Name, temp.FullName)
+		if err != nil {
+			log.Error("Post Data to Database failed")
+		}
+
+		log.Info(info)
+	})
 
 	rsp := &pb.DataPostRespone{
-		Notice: InfoGroup,
+		Notice: "Post Data Done",
 	}
 	return rsp, nil
 }
