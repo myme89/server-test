@@ -3,6 +3,7 @@ package db
 import (
 	sql "database/sql"
 	"fmt"
+	"server-test/config"
 	"server-test/model"
 	"sync"
 
@@ -22,37 +23,30 @@ var err error
 // 	db *sql.DB
 // }
 
-func Init() {
+func Init(config *config.Config) (*sql.DB, error) {
 	once.Do(func() {
-		// host := os.Getenv("POSTGRES_HOST")
-		// port, _ := strconv.Atoi(os.Getenv("POSTGRES_PORT"))
-		// user := os.Getenv("POSTGRES_USER")
-		// password := os.Getenv("POSTGRES_PASSWORD")
-		// dbname := os.Getenv("POSTGRES_DB")
 
-		host := "localhost"
-		port := 5432
-		user := "postgres"
-		password := "1"
-		dbname := "postgres"
+		// host := "localhost"
+		// port := 5432
+		// user := "postgres"
+		// password := "1"
+		// dbname := "postgres"
 
-		// log.Info("nhatnt", host)
+		// config := config.GetConfig()
+
+		host := config.Sever.ServerPostgersSql.DBHost
+		port := config.Sever.ServerPostgersSql.DBPort
+		user := config.Sever.ServerPostgersSql.DBUserName
+		password := config.Sever.ServerPostgersSql.DBPassword
+		dbname := config.Sever.ServerPostgersSql.DBName
 
 		psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 		db, err = sql.Open("postgres", psqlInfo)
 
 		log.Info("nhatnt", psqlInfo)
 
-		if err != nil {
-			panic(err)
-		}
-
-		err = db.Ping()
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println("Successfully connected!")
 	})
+	return db, err
 }
 
 // get, insert, update data

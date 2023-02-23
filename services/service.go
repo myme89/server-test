@@ -3,7 +3,7 @@ package services
 import (
 	"encoding/json"
 	"net/http"
-	"server-test/db"
+	"server-test/database/db"
 	"server-test/model"
 	"strconv"
 

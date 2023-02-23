@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"server-test/cache"
-	"server-test/db"
+	"server-test/database/db"
+	"server-test/database/levedb"
+	"server-test/database/mongodb"
 	"server-test/model"
 	"server-test/pb"
-	"time"
 
-	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -20,12 +20,31 @@ func (server *Server) GetData(ctx context.Context, res *pb.DataInfoResquest) (*p
 	valueCache := cache.GetFromRedis(ctx, "data_test")
 
 	var rsp *pb.DataInfoRespone
+
 	if len(valueCache) == 0 {
+		var dataInfo []model.DataInfo
+		var err error
 
-		dataInfo, err := db.GetData()
+		switch server.config.Sever.TypeServer.Name {
 
-		if err != nil {
-			return nil, status.Errorf(codes.Unimplemented, "get Data failed")
+		case "server_levedb":
+
+			temp := levedb.GetData(server.config)
+			dataInfo = append(dataInfo, temp)
+
+		case "server_mysql":
+
+		case "server_postgressql":
+
+			dataInfo, err = db.GetData()
+			if err != nil {
+				return nil, status.Errorf(codes.Unimplemented, "get Data failed")
+			}
+
+		case "server_mongodb":
+			dataInfo, err = mongodb.GetAllInfo()
+		default:
+			return nil, status.Errorf(codes.Unimplemented, "Don't have database")
 		}
 
 		var DataInfo []model.DataInfo
@@ -78,15 +97,15 @@ func (server *Server) PostData(ctx context.Context, res *pb.DataPostResqest) (*p
 	// InfoGroup, err := db.PostData(Id, Name, FullName)
 	// InfoGroup := "data received : "
 
-	json1, err := json.Marshal(Info{Id: Id, Name: Name, FullName: FullName})
+	// json1, err := json.Marshal(Info{Id: Id, Name: Name, FullName: FullName})
 
-	if err != nil {
-		fmt.Println(err)
-	}
-	cache.SetToRedis(ctx, "data_test", json1)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// cache.SetToRedis(ctx, "data_test", json1)
 
-	valueCache := cache.GetFromRedis(ctx, "data_test")
-	fmt.Println("value Cache= ", valueCache)
+	// valueCache := cache.GetFromRedis(ctx, "data_test")
+	// fmt.Println("value Cache= ", valueCache)
 
 	// rsp := &pb.DataPostRespone{
 	// 	Notice: InfoGroup,
@@ -96,27 +115,57 @@ func (server *Server) PostData(ctx context.Context, res *pb.DataPostResqest) (*p
 
 	// log.Info("All values : %v \n", values)
 
-	time.AfterFunc(60*time.Second, func() {
-		ctx1 := context.TODO()
-		valueCache1 := cache.GetFromRedis(ctx1, "data_test")
+	// time.AfterFunc(60*time.Second, func() {
+	// 	ctx1 := context.TODO()
+	// 	valueCache1 := cache.GetFromRedis(ctx1, "data_test")
 
-		var temp Info
-		err := json.Unmarshal([]byte(valueCache1), &temp)
+	// 	var temp Info
+	// 	err := json.Unmarshal([]byte(valueCache1), &temp)
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// 	fmt.Println("value Cache= ", temp)
+
+	// 	info, err := db.PostData(temp.Id, temp.Name, temp.FullName)
+	// 	if err != nil {
+	// 		log.Error("Post Data to Database failed")
+	// 	}
+
+	// 	log.Info(info)
+	// })
+	var noticeDb string
+	switch server.config.Sever.TypeServer.Name {
+
+	case "server_levedb":
+		err := levedb.PutData(server.config, Id, Name, FullName)
 		if err != nil {
-			fmt.Println(err)
+			return nil, status.Errorf(codes.Unimplemented, "Post Data to Leve Database failed")
 		}
-		fmt.Println("value Cache= ", temp)
+		noticeDb = "Post Done"
 
-		info, err := db.PostData(temp.Id, temp.Name, temp.FullName)
+	case "server_mysql":
+
+	case "server_postgressql":
+
+		info, err := db.PostData(Id, Name, FullName)
 		if err != nil {
-			log.Error("Post Data to Database failed")
+			return nil, status.Errorf(codes.Unimplemented, "Post Data to Postges Database failed")
 		}
+		noticeDb = info
 
-		log.Info(info)
-	})
+	case "server_mongodb":
+		err := mongodb.AddInfo(Id, Name, FullName)
+		if err != nil {
+			return nil, status.Errorf(codes.Unimplemented, "Post Data to Leve Database failed")
+		}
+		noticeDb = "Post Done"
+
+	default:
+		return nil, status.Errorf(codes.Unimplemented, "Don't have database")
+	}
 
 	rsp := &pb.DataPostRespone{
-		Notice: "Post Data Done",
+		Notice: noticeDb,
 	}
 	return rsp, nil
 }

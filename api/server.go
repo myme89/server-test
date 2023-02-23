@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 	"net/http"
+	"server-test/config"
 	"server-test/pb"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -17,12 +18,14 @@ type Server struct {
 	pb.UnimplementedDeliverooServer
 	Addr    string
 	Handler http.Handler
+	config  *config.Config
 }
 
-func GRPCSever(serverAddr string) {
+func GRPCSever(serverAddr string, config *config.Config) {
 
 	srv := &Server{
-		Addr: serverAddr,
+		Addr:   serverAddr,
+		config: config,
 	}
 
 	grpcServer := grpc.NewServer()
@@ -42,9 +45,10 @@ func GRPCSever(serverAddr string) {
 	log.Info("Successfully connected")
 }
 
-func GatewaySever(serverAddr string) {
+func GatewaySever(serverAddr string, config *config.Config) {
 	srv := &Server{
-		Addr: serverAddr,
+		Addr:   serverAddr,
+		config: config,
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
