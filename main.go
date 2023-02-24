@@ -33,10 +33,9 @@ func main() {
 		// }
 
 	case "server_mysql":
-		mysqldb, err := mysqldb.InitMySqlDb(config)
-
+		_, err := mysqldb.InitMySqlDb(config)
 		if err != nil {
-			fmt.Println("Error connecting to database : error=% ", err, mysqldb)
+			fmt.Println("Error connecting to database : error=% ", err)
 		}
 	case "server_postgressql":
 
@@ -53,16 +52,7 @@ func main() {
 	case "server_mongodb":
 		mongodb.InitMongoDB(config)
 	default:
-		db, err := db.Init(config)
-
-		if err != nil {
-			panic(err)
-		}
-
-		err = db.Ping()
-		if err != nil {
-			panic(err)
-		}
+		fmt.Println("Don't have sever  " + config.Sever.TypeServer.Name)
 	}
 
 	//----------------------------------------------------------------------------//

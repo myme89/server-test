@@ -8,6 +8,7 @@ import (
 	"server-test/database/db"
 	"server-test/database/levedb"
 	"server-test/database/mongodb"
+	"server-test/database/mysqldb"
 	"server-test/model"
 	"server-test/pb"
 
@@ -33,14 +34,19 @@ func (server *Server) GetData(ctx context.Context, res *pb.DataInfoResquest) (*p
 			dataInfo = append(dataInfo, temp)
 
 		case "server_mysql":
-
+			var data []model.DataPost
+			err := mysqldb.GetData(&data)
+			if err != nil {
+				return nil, status.Errorf(codes.Unimplemented, "get Data failed")
+			}
+			for i := 0; i < len(data); i++ {
+				dataInfo = append(dataInfo, model.DataInfo{Name: data[i].Name, FullName: data[i].FullName})
+			}
 		case "server_postgressql":
-
 			dataInfo, err = db.GetData()
 			if err != nil {
 				return nil, status.Errorf(codes.Unimplemented, "get Data failed")
 			}
-
 		case "server_mongodb":
 			dataInfo, err = mongodb.GetAllInfo()
 		default:
@@ -84,10 +90,6 @@ func (server *Server) PostData(ctx context.Context, res *pb.DataPostResqest) (*p
 	Id := int(res.GetId())
 	Name := res.GetName()
 	FullName := res.GetFullname()
-
-	// log.Info("nhatnt", Id)
-	// log.Info("nhatnt", Name)
-	// log.Info("nhatnt", FullName)
 
 	type Info struct {
 		Id       int    `json:"id"`
@@ -144,6 +146,11 @@ func (server *Server) PostData(ctx context.Context, res *pb.DataPostResqest) (*p
 		noticeDb = "Post Done"
 
 	case "server_mysql":
+		err := mysqldb.PostData(Id, Name, FullName)
+		if err != nil {
+			return nil, status.Errorf(codes.Unimplemented, "Post Data to MySql Database failed")
+		}
+		noticeDb = "Post Done"
 
 	case "server_postgressql":
 
@@ -156,7 +163,7 @@ func (server *Server) PostData(ctx context.Context, res *pb.DataPostResqest) (*p
 	case "server_mongodb":
 		err := mongodb.AddInfo(Id, Name, FullName)
 		if err != nil {
-			return nil, status.Errorf(codes.Unimplemented, "Post Data to Leve Database failed")
+			return nil, status.Errorf(codes.Unimplemented, "Post Data to Mongo Database failed")
 		}
 		noticeDb = "Post Done"
 
