@@ -25,4 +25,4 @@ server:
     dbcollection: data_test
   
   servertype:
-     name: server_postgressql
+     name: server_mysql

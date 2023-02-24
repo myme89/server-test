@@ -17,12 +17,12 @@ import (
 
 var clientMongo *mongo.Client
 
-var (
-	collectionDB string
-	host         string
-	port         string
-	dbName       string
-)
+// var (
+// 	collectionDB string
+// 	host         string
+// 	port         string
+// 	dbName       string
+// )
 
 func contains(s []string, str string) bool {
 	for _, v := range s {
@@ -34,13 +34,13 @@ func contains(s []string, str string) bool {
 	return false
 }
 
-func InitMongoDB(config *config.Config) {
+func InitMongoDB(config *config.Config) *mongo.Client {
 
 	var err error
-	collectionDB = config.Sever.ServerMongoDB.DBcollection
-	host = config.Sever.ServerMongoDB.DBHost
-	port = config.Sever.ServerMongoDB.DBPort
-	dbName = config.Sever.ServerMongoDB.DBName
+	collectionDB := config.Sever.ServerMongoDB.DBcollection
+	dbName := config.Sever.ServerMongoDB.DBName
+	host := config.Sever.ServerMongoDB.DBHost
+	port := config.Sever.ServerMongoDB.DBPort
 
 	connStr := fmt.Sprintf("mongodb://%s:%s", host, port)
 	clientOpts := options.Client().ApplyURI(connStr)
@@ -72,10 +72,13 @@ func InitMongoDB(config *config.Config) {
 	} else {
 		log.Info(" Connect MongoDB success ")
 	}
+	return clientMongo
 }
 
-func GetAllInfo() ([]model.DataInfo, error) {
+func GetAllInfo(config *config.Config) ([]model.DataInfo, error) {
 
+	collectionDB := config.Sever.ServerMongoDB.DBcollection
+	dbName := config.Sever.ServerMongoDB.DBName
 	collection := clientMongo.Database(dbName).Collection(collectionDB)
 	var arr []model.DataInfo
 	queryString := bson.D{}
@@ -89,8 +92,9 @@ func GetAllInfo() ([]model.DataInfo, error) {
 	return arr, err
 }
 
-func AddInfo(id int, name, fullName string) error {
-
+func AddInfo(config *config.Config, id int, name, fullName string) error {
+	collectionDB := config.Sever.ServerMongoDB.DBcollection
+	dbName := config.Sever.ServerMongoDB.DBName
 	collection := clientMongo.Database(dbName).Collection(collectionDB)
 
 	insert := bson.D{

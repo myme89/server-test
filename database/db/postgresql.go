@@ -52,7 +52,6 @@ func Init(config *config.Config) (*sql.DB, error) {
 // get, insert, update data
 
 func GetData() ([]model.DataInfo, error) {
-
 	rows, err := db.Query(`SELECT * FROM public.data_test `)
 
 	var (

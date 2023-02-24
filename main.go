@@ -23,6 +23,8 @@ func main() {
 
 	config := config.GetConfig()
 
+	fmt.Println(config)
+
 	switch config.Sever.TypeServer.Name {
 
 	case "server_levedb":

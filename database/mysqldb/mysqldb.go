@@ -14,9 +14,9 @@ var db *gorm.DB
 var err error
 
 func InitMySqlDb(config *config.Config) (*gorm.DB, error) {
-	fmt.Println("Go MySQL Tutorial")
+	// fmt.Println("Go MySQL Tutorial")
 
-	fmt.Println(config)
+	// fmt.Println(config)
 	dsn := config.Sever.ServerMySql.DBUserName + ":" + config.Sever.ServerMySql.DBPassword + "@tcp" +
 		"(" + config.Sever.ServerMySql.DBHost + ":" + config.Sever.ServerMySql.DBPort + ")/" + config.Sever.ServerMySql.DBName
 
@@ -38,7 +38,7 @@ func PostData(Id int, Name, FullName string) error {
 
 func GetData(info *[]model.DataPost) error {
 
-	fmt.Println("db= ", db)
+	fmt.Println("db= ", info)
 	err := db.Find(info).Error
 	if err != nil {
 		return err

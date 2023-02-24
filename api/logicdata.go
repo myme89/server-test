@@ -48,7 +48,7 @@ func (server *Server) GetData(ctx context.Context, res *pb.DataInfoResquest) (*p
 				return nil, status.Errorf(codes.Unimplemented, "get Data failed")
 			}
 		case "server_mongodb":
-			dataInfo, err = mongodb.GetAllInfo()
+			dataInfo, err = mongodb.GetAllInfo(server.config)
 		default:
 			return nil, status.Errorf(codes.Unimplemented, "Don't have database")
 		}
@@ -161,7 +161,7 @@ func (server *Server) PostData(ctx context.Context, res *pb.DataPostResqest) (*p
 		noticeDb = info
 
 	case "server_mongodb":
-		err := mongodb.AddInfo(Id, Name, FullName)
+		err := mongodb.AddInfo(server.config, Id, Name, FullName)
 		if err != nil {
 			return nil, status.Errorf(codes.Unimplemented, "Post Data to Mongo Database failed")
 		}
