@@ -26,6 +26,7 @@ type DeliverooClient interface {
 	PostData(ctx context.Context, in *DataPostResqest, opts ...grpc.CallOption) (*DataPostRespone, error)
 	UpdateData(ctx context.Context, in *DataUpdateResqest, opts ...grpc.CallOption) (*DataUpdateRespone, error)
 	ExportData(ctx context.Context, in *ExportDataResquest, opts ...grpc.CallOption) (*ExportDataRespone, error)
+	ImportData(ctx context.Context, in *ImportDataResquest, opts ...grpc.CallOption) (*ImportDataRespone, error)
 }
 
 type deliverooClient struct {
@@ -72,6 +73,15 @@ func (c *deliverooClient) ExportData(ctx context.Context, in *ExportDataResquest
 	return out, nil
 }
 
+func (c *deliverooClient) ImportData(ctx context.Context, in *ImportDataResquest, opts ...grpc.CallOption) (*ImportDataRespone, error) {
+	out := new(ImportDataRespone)
+	err := c.cc.Invoke(ctx, "/pb.Deliveroo/ImportData", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DeliverooServer is the server API for Deliveroo service.
 // All implementations must embed UnimplementedDeliverooServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type DeliverooServer interface {
 	PostData(context.Context, *DataPostResqest) (*DataPostRespone, error)
 	UpdateData(context.Context, *DataUpdateResqest) (*DataUpdateRespone, error)
 	ExportData(context.Context, *ExportDataResquest) (*ExportDataRespone, error)
+	ImportData(context.Context, *ImportDataResquest) (*ImportDataRespone, error)
 	mustEmbedUnimplementedDeliverooServer()
 }
 
@@ -98,6 +109,9 @@ func (UnimplementedDeliverooServer) UpdateData(context.Context, *DataUpdateResqe
 }
 func (UnimplementedDeliverooServer) ExportData(context.Context, *ExportDataResquest) (*ExportDataRespone, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExportData not implemented")
+}
+func (UnimplementedDeliverooServer) ImportData(context.Context, *ImportDataResquest) (*ImportDataRespone, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ImportData not implemented")
 }
 func (UnimplementedDeliverooServer) mustEmbedUnimplementedDeliverooServer() {}
 
@@ -184,6 +198,24 @@ func _Deliveroo_ExportData_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Deliveroo_ImportData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImportDataResquest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeliverooServer).ImportData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Deliveroo/ImportData",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeliverooServer).ImportData(ctx, req.(*ImportDataResquest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Deliveroo_ServiceDesc is the grpc.ServiceDesc for Deliveroo service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +238,10 @@ var Deliveroo_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExportData",
 			Handler:    _Deliveroo_ExportData_Handler,
+		},
+		{
+			MethodName: "ImportData",
+			Handler:    _Deliveroo_ImportData_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

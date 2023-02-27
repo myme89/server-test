@@ -12,6 +12,7 @@ import (
 	"server-test/database/mysqldb"
 	"server-test/model"
 	"server-test/pb"
+	"strconv"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/xuri/excelize/v2"
@@ -284,5 +285,48 @@ func (server *Server) ExportData(ctx context.Context, res *pb.ExportDataResquest
 		PathExport: pathExport,
 	}
 
+	return rsp, nil
+}
+
+func (server *Server) ImportData(ctx context.Context, res *pb.ImportDataResquest) (*pb.ImportDataRespone, error) {
+
+	pathImport := res.GetPathimport()
+
+	file, err := excelize.OpenFile(pathImport)
+	if err != nil {
+		return nil, status.Errorf(codes.Unimplemented, "Open file err", err)
+	}
+	defer func() {
+		// Close the spreadsheet.
+		if err := file.Close(); err != nil {
+			fmt.Println(err)
+		}
+	}()
+
+	data, err := file.GetRows("Sheet1")
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unimplemented, "GetRows failed")
+	}
+
+	var noticeDb string
+
+	var datasAdd []model.DataPost
+
+	for i := 0; i < len(data); i++ {
+		idInt, _ := strconv.Atoi(data[i][0])
+		datasAdd = append(datasAdd, model.DataPost{Id: idInt, Name: data[i][1], FullName: data[i][2]})
+
+	}
+
+	err = mongodb.AddManyInfo(server.config, datasAdd)
+	if err != nil {
+		return nil, status.Errorf(codes.Unimplemented, "Post Data to Mongo Database failed")
+	}
+	noticeDb = "Post Done"
+
+	rsp := &pb.ImportDataRespone{
+		Notice: noticeDb,
+	}
 	return rsp, nil
 }

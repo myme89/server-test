@@ -39,3 +39,11 @@ message ExportDataResquest{
 message ExportDataRespone{
     string pathExport = 1;
 }
+
+message ImportDataResquest{
+    string pathimport =  1;
+}
+
+message ImportDataRespone{
+    string notice = 1;
+}

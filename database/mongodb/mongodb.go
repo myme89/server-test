@@ -110,3 +110,23 @@ func AddInfo(config *config.Config, id int, name, fullName string) error {
 	}
 	return nil
 }
+
+func AddManyInfo(config *config.Config, info []model.DataPost) error {
+	collectionDB := config.Sever.ServerMongoDB.DBcollection
+	dbName := config.Sever.ServerMongoDB.DBName
+	collection := clientMongo.Database(dbName).Collection(collectionDB)
+
+	infos := make([]interface{}, len(info))
+	for i, s := range info {
+		infos[i] = s
+	}
+
+	log.Info("infos", info)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	_, err := collection.InsertMany(ctx, infos)
+	if err != nil {
+		return err
+	}
+	return nil
+}
