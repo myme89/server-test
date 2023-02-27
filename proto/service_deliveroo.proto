@@ -27,4 +27,10 @@ service Deliveroo {
             body: "*"
         };
     }
+    rpc ExportData(ExportDataResquest) returns (ExportDataRespone) {
+        option (google.api.http) = {
+            get: "/v1/exportdata"
+            // body: "*"
+        };
+    }
 } 

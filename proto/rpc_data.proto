@@ -32,3 +32,10 @@ message DataUpdateResqest{
 message DataUpdateRespone{
     string notice = 1;
 }
+
+message ExportDataResquest{
+}
+
+message ExportDataRespone{
+    string pathExport = 1;
+}

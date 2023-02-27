@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"path/filepath"
 	"server-test/cache"
 	"server-test/database/db"
 	"server-test/database/levedb"
@@ -12,6 +13,8 @@ import (
 	"server-test/model"
 	"server-test/pb"
 
+	log "github.com/sirupsen/logrus"
+	"github.com/xuri/excelize/v2"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -192,6 +195,93 @@ func (server *Server) UpdateData(ctx context.Context, res *pb.DataUpdateResqest)
 
 	rsp := &pb.DataUpdateRespone{
 		Notice: InfoGroup,
+	}
+
+	return rsp, nil
+}
+
+func (server *Server) ExportData(ctx context.Context, res *pb.ExportDataResquest) (*pb.ExportDataRespone, error) {
+
+	var dataInfo []model.DataInfo
+	var err error
+
+	switch server.config.Sever.TypeServer.Name {
+
+	case "server_levedb":
+
+		temp := levedb.GetData(server.config)
+		dataInfo = append(dataInfo, temp)
+
+	case "server_mysql":
+		var data []model.DataPost
+		err := mysqldb.GetData(&data)
+		if err != nil {
+			return nil, status.Errorf(codes.Unimplemented, "get Data failed")
+		}
+		for i := 0; i < len(data); i++ {
+			dataInfo = append(dataInfo, model.DataInfo{Name: data[i].Name, FullName: data[i].FullName})
+		}
+	case "server_postgressql":
+		dataInfo, err = db.GetData()
+		if err != nil {
+			return nil, status.Errorf(codes.Unimplemented, "get Data failed")
+		}
+	case "server_mongodb":
+		dataInfo, err = mongodb.GetAllInfo(server.config)
+	default:
+		return nil, status.Errorf(codes.Unimplemented, "Don't have database")
+	}
+
+	var DataInfo []model.DataInfo
+	var expenseData = [][]interface{}{}
+
+	for i := 0; i < len(dataInfo); i++ {
+		DataInfo = append(DataInfo, model.DataInfo{Name: dataInfo[i].Name, FullName: dataInfo[i].FullName})
+		temp := []interface{}{dataInfo[i].Name, dataInfo[i].FullName}
+		expenseData = append(expenseData, temp)
+	}
+
+	f := excelize.NewFile()
+	index, _ := f.NewSheet("Sheet1")
+	f.SetActiveSheet(index)
+
+	err = f.SetSheetRow("Sheet1", "A1", &[]interface{}{"Name", "FullName"})
+	if err != nil {
+
+		log.Error("Error SetSheetRow ", err)
+	}
+	err = f.SetColWidth("Sheet1", "A", "G", 30)
+
+	if err != nil {
+
+		log.Error("Error SetColWidth ", err)
+	}
+
+	startRow := 2
+	for i := startRow; i < (len(expenseData) + startRow); i++ {
+		err = f.SetSheetRow("Sheet1", fmt.Sprintf("A%d", i), &expenseData[i-2])
+		if err != nil {
+			log.Error("Error SetSheetRow ", err)
+		}
+	}
+
+	// Save spreadsheet by the given path.
+	if err := f.SaveAs("./export/DataExportFromDB.xlsx"); err != nil {
+		fmt.Println(err)
+	}
+
+	if err != nil {
+		log.Error("Error SaveAs ", err)
+	}
+
+	dir, err := filepath.Abs(filepath.Dir("DataExportFromDB.xlsx"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	pathExport := dir + "/export/DataExportFromDB.xlsx"
+
+	rsp := &pb.ExportDataRespone{
+		PathExport: pathExport,
 	}
 
 	return rsp, nil
