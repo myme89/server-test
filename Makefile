@@ -25,4 +25,4 @@
 
 
 test:
-	go test -v -cover ./database/...
+	go test -v -cover ./database/db
