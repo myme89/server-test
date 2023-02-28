@@ -10,7 +10,7 @@ import (
 )
 
 func TestInit(t *testing.T) {
-	path := "/home/nhatnt/nhatnt/probationary project/server-test/config/config.yml"
+	path := "/home/nhatnt/nhatnt/probationary-project/server-test/config/config.yml"
 	config, err := config.NewConfig(path)
 	if err != nil {
 		log.Fatal("Get congfig err")
@@ -21,7 +21,7 @@ func TestInit(t *testing.T) {
 }
 
 func TestGetData(t *testing.T) {
-	path := "/home/nhatnt/nhatnt/probationary project/server-test/config/config.yml"
+	path := "/home/nhatnt/nhatnt/probationary-project/server-test/config/config.yml"
 	config, err := config.NewConfig(path)
 	_, err = InitMySqlDb(config)
 	listData := []model.DataPost{
@@ -33,9 +33,9 @@ func TestGetData(t *testing.T) {
 }
 
 func TestPostData(t *testing.T) {
-	path := "/home/nhatnt/nhatnt/probationary project/server-test/config/config.yml"
+	path := "/home/nhatnt/nhatnt/probationary-project/server-test/config/config.yml"
 	config, err := config.NewConfig(path)
 	_, err = InitMySqlDb(config)
-	err = PostData(18, "nhat45", "NTN45")
+	err = PostData(1934, "nhat432", "NTN4441")
 	require.NoError(t, err)
 }
