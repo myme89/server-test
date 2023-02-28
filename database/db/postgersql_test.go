@@ -9,7 +9,7 @@ import (
 )
 
 func TestInit(t *testing.T) {
-	path := "/home/nhatnt/nhatnt/probationary-project/server-test/config/config.yml"
+	path := "./../../config/config.yml"
 	config, err := config.NewConfig(path)
 	if err != nil {
 		log.Fatal("Get congfig err")
