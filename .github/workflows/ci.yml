@@ -34,11 +34,7 @@ jobs:
 
 
     steps:
-
-      - name: Exit if not on master branch
-        if: endsWith(github.ref, 'master') == false
-        run: exit -1
-
+    
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
 
