@@ -6,7 +6,7 @@ import (
 )
 
 func TestGetConfig(t *testing.T) {
-	path := "/home/nhatnt/nhatnt/probationary project/server-test/config/config.yml"
+	path := "/home/nhatnt/nhatnt/probationary-project/server-test/config/config.yml"
 	_, err := NewConfig(path)
 
 	if err != nil {

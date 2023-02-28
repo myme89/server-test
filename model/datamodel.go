@@ -13,6 +13,6 @@ type DataInfo struct {
 
 type DataPost struct {
 	Id       int    `gorm:"primary_key;auto_increment" json:"id"`
-	Name     string `gorm:"size:255;not null;unique" json:"name"`
-	FullName string `gorm:"size:100;not null;unique" json:"fullname"`
+	Name     string `gorm:"size:255;not null" json:"name"`
+	FullName string `gorm:"size:100;not null" json:"fullname"`
 }
