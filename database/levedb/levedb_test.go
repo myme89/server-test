@@ -8,7 +8,7 @@ import (
 )
 
 func TestGetData(t *testing.T) {
-	path := "/home/nhatnt/nhatnt/probationary-project/server-test/config/config.yml"
+	path := "./../../config/config.yml"
 	config, err := config.NewConfig(path)
 	if err != nil {
 		log.Fatal("Get congfig err")
@@ -23,7 +23,7 @@ func TestPutData(t *testing.T) {
 	Name := "nhat"
 	FullName := "NTN"
 
-	path := "/home/nhatnt/nhatnt/probationary-project/server-test/config/config.yml"
+	path := "./../../config/config.yml"
 	config, err := config.NewConfig(path)
 	if err != nil {
 		log.Fatal("Get congfig err")

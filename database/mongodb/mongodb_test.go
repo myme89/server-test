@@ -12,7 +12,7 @@ import (
 // var test *mongo.Client
 
 func TestInit(t *testing.T) {
-	path := "/home/nhatnt/nhatnt/probationary-project/server-test/config/config.yml"
+	path := "./../../config/config.yml"
 	config, err := config.NewConfig(path)
 	if err != nil {
 		log.Fatal("Get congfig err")
@@ -22,7 +22,7 @@ func TestInit(t *testing.T) {
 }
 
 func TestGetAllData(t *testing.T) {
-	path := "/home/nhatnt/nhatnt/probationary-project/server-test/config/config.yml"
+	path := "./../../config/config.yml"
 	config, err := config.NewConfig(path)
 	if err != nil {
 		log.Fatal("Get congfig err")
@@ -38,7 +38,7 @@ func TestGetAllData(t *testing.T) {
 }
 
 func TestAddinfo(t *testing.T) {
-	path := "/home/nhatnt/nhatnt/probationary-project/server-test/config/config.yml"
+	path := "./../../config/config.yml"
 	config, err := config.NewConfig(path)
 	if err != nil {
 		log.Fatal("Get congfig err")
