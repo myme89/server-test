@@ -2,9 +2,9 @@ name: ci-test
 
 on:
   push:
-    branches: ["master"]
     tags:
       - 'v*'
+    branches: ["master"]
 
 jobs:
   test:
@@ -46,7 +46,7 @@ jobs:
 
       - name: Test
         run: make test
-        
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
