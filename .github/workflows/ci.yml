@@ -77,11 +77,12 @@ jobs:
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.key_release }} # This token is provided by Actions, you do not need to create your own token
+        # env:
+        #   GITHUB_TOKEN: ${{ secrets.key_release }} # This token is provided by Actions, you do not need to create your own token
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: |
             Release Test
           repo: ${{ secrets.owner }}/${{ secrets.SAVE_RELEASE }}
+          repo-token: ${{ secrets.key_release }}
