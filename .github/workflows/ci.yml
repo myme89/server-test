@@ -47,11 +47,11 @@ jobs:
       mongodb:
               image: mongo
               env:
-                MONGO_INITDB_ROOT_USERNAME: data-test-mongo
+                MONGO_INITDB_ROOT_USERNAME: mongo
                 MONGO_INITDB_ROOT_PASSWORD: 1
                 MONGO_INITDB_DATABASE: data
               options: >-
-                --health-cmd mongo
+                --health-cmd "echo 'db.runCommand("ping").ok' | mongosh --quiet"
                 --health-interval 10s
                 --health-timeout 5s
                 --health-retries 5
