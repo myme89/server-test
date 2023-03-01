@@ -88,5 +88,5 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ secrets.owner }}/${{ secrets.repo }}
-          token: ${{ secrets.CUSTOM_TOKEN }}
