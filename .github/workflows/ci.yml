@@ -2,9 +2,9 @@ name: ci-test
 
 on:
   push:
-    # branches: ["master"]
-    tags:
-      - 'v*'
+    branches: ["master"]
+    # tags:
+    #   - "v*"
 
 jobs:
   test:
@@ -25,14 +25,13 @@ jobs:
           # Maps tcp port 5432 on service container to the host
           - 5432:5432
 
-        
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      
+
       mysql:
         image: mysql:8
         env:
@@ -41,29 +40,28 @@ jobs:
           MYSQL_ROOT_PASSWORD: 1
           MYSQL_DATABASE: test
         ports:
-        - 3306:3306
-        options: >- 
+          - 3306:3306
+        options: >-
           --health-cmd "mysqladmin ping" 
           --health-interval 10s 
           --health-timeout 5s 
           --health-retries 3
 
       mongodb:
-              image: mongo
-              env:
-                MONGO_INITDB_ROOT_USERNAME: mongo
-                MONGO_INITDB_ROOT_PASSWORD: 1
-                MONGO_INITDB_DATABASE: data
-              options: >-
-                --health-cmd "echo 'db.runCommand("ping").ok' | mongosh --quiet"
-                --health-interval 10s
-                --health-timeout 5s
-                --health-retries 5
-              ports:
-                - 27017:27017
+        image: mongo
+        env:
+          MONGO_INITDB_ROOT_USERNAME: mongo
+          MONGO_INITDB_ROOT_PASSWORD: 1
+          MONGO_INITDB_DATABASE: data
+        options: >-
+          --health-cmd "echo 'db.runCommand("ping").ok' | mongosh --quiet"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 27017:27017
 
     steps:
-
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
 
@@ -86,3 +84,5 @@ jobs:
           release_name: Release ${{ github.ref }}
           body: |
             Release Test
+          repo: ${{ secrets.owner }}/${{ secrets.SAVE_RELEASE }}
+          # token: ${{ secrets.CUSTOM_TOKEN }}

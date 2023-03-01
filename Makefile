@@ -22,7 +22,7 @@
 # mongo: docker run -d -p 27017:27017 --name data-test-mongo mongo:latest
 # redis: docker run -d --name some-redis -p 6379:6379 redis
 
-
+#key_release: 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
 
 test:
 	go test -v -cover ./database/...
