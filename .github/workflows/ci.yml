@@ -51,6 +51,7 @@ jobs:
               image: mongo:latest
               env:
                 MONGO_INITDB_ROOT_USERNAME: data-test-mongo
+                MONGO_INITDB_ROOT_PASSWORD: 1
                 MONGO_INITDB_DATABASE: data
               options: >-
                 --health-cmd mongo
