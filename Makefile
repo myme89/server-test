@@ -25,6 +25,4 @@
 
 
 test:
-	go test -v -cover ./database/db
-	go test -v -cover ./database/levedb
-	go test -v -cover ./database/mysql
+	go test -v -cover ./database/...
