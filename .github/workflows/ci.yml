@@ -34,19 +34,16 @@ jobs:
           --health-retries 5
       
       mysql:
-        image: mysql:latest
+        image: mysql:8
         env:
-          MYSQL_DATABASE: test
-          MYSQL_USER: nhatnt
+          MYSQL_USER: nhatnt_user
           MYSQL_PASSWORD: 1
           MYSQL_ROOT_PASSWORD: 1
+          MYSQL_DATABASE: test
         ports:
         - 3306:3306
-        options: >-
-          --health-cmd mysql
-          --health-interval 10s 
-          --health-timeout 5s 
-          --health-retries 5
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
       # mongodb:
       #         image: mongo
       #         env:
