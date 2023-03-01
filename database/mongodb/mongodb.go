@@ -42,8 +42,16 @@ func InitMongoDB(config *config.Config) *mongo.Client {
 	host := config.Sever.ServerMongoDB.DBHost
 	port := config.Sever.ServerMongoDB.DBPort
 
+	username := config.Sever.ServerMongoDB.DBUserName
+	password := config.Sever.ServerMongoDB.DBPassword
+
+	credential := options.Credential{
+		Username: username,
+		Password: password,
+	}
+
 	connStr := fmt.Sprintf("mongodb://%s:%s", host, port)
-	clientOpts := options.Client().ApplyURI(connStr)
+	clientOpts := options.Client().ApplyURI(connStr).SetAuth(credential)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
