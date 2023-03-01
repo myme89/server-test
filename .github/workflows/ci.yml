@@ -2,13 +2,18 @@ name: ci-test
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [master]
+    # tags:
+    #   - 'v*'
 
 jobs:
   test:
     name: Test
     runs-on: [self-hosted, linux]
+
+    strategy:
+      matrix:
+        mongodb-version: ['4.2', '4.4', '5.0', '6.0']
 
     services:
       # Label used to access the service container
@@ -31,6 +36,19 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_DATABASE: test
+          MYSQL_USER: nhatnt
+          MYSQL_PASSWORD: 1
+        ports:
+        - 33306:3306
+        options: >-
+          --health-cmd="mysqladmin ping" 
+          --health-interval=10s --health-timeout=5s 
+          --health-retries=3u
 
 
     steps:
@@ -43,6 +61,13 @@ jobs:
         with:
           go-version: ^1.20
         id: go
+
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.9.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }} 
+          mongodb-db: data
+          mongodb-port: 27017
 
       - name: Test
         run: make test
