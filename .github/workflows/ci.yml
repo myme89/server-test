@@ -11,10 +11,6 @@ jobs:
     name: Test
     runs-on: [self-hosted, linux]
 
-    strategy:
-      matrix:
-        mongodb-version: ['6.0']
-
     services:
       # Label used to access the service container
       postgres:
@@ -43,13 +39,26 @@ jobs:
           MYSQL_DATABASE: test
           MYSQL_USER: nhatnt
           MYSQL_PASSWORD: 1
+          MYSQL_ROOT_PASSWORD: 1
         ports:
         - 33306:3306
         options: >-
-          --health-cmd="mysqladmin ping" 
-          --health-interval=10s --health-timeout=5s 
-          --health-retries=3u
-
+          --health-cmd mysql
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
+      mongodb:
+              image: mongo:latest
+              env:
+                MONGO_INITDB_ROOT_USERNAME: data-test-mongo
+                MONGO_INITDB_DATABASE: data
+              options: >-
+                --health-cmd mongo
+                --health-interval 10s
+                --health-timeout 5s
+                --health-retries 5
+              ports:
+                - 27017:27017
 
     steps:
 
@@ -62,23 +71,16 @@ jobs:
           go-version: ^1.20
         id: go
 
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.9.0
-        with:
-          mongodb-version: ${{ matrix.mongodb-version }} 
-          mongodb-db: data
-          mongodb-port: 27017
-
       - name: Test
         run: make test
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            Release Test
+      # - name: Create Release
+      #   id: create_release
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      #   with:
+      #     tag_name: ${{ github.ref }}
+      #     release_name: Release ${{ github.ref }}
+      #     body: |
+      #       Release Test
