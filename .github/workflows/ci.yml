@@ -84,4 +84,4 @@ jobs:
           release_name: Release ${{ github.ref }}
           body: |
             Release Test
-          repo: ${{ secrets.owner }}/${{ secrets.REPO_SAVE }}
+          repo: ${{ secrets.REPO_SAVE }}
