@@ -84,3 +84,4 @@ jobs:
           release_name: Release ${{ github.ref }}
           body: |
             Release Test
+          repo: ${{ secrets.REPO }}
