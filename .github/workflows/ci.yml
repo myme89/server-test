@@ -107,7 +107,7 @@ jobs:
           credentials: ${{ secrets.CREDENTIALS }}
           filename: release.zip
           folderId: ${{ secrets.FOLDERID }}
-          name: Release ${{ github.ref }} # optional string
+          name: Release ${{ github.ref.tags }} # optional string
           overwrite: "true" # optional boolean
 
       # - name: Upload to gdrive 1
