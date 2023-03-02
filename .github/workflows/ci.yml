@@ -94,7 +94,6 @@ jobs:
 
       - name: Archive files
         run: |
-          sudo apt-get update
           sudo apt-get install zip
           zip -r archive.zip *
 
