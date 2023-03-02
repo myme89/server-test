@@ -91,12 +91,10 @@ jobs:
       #     token: ${{ secrets.CUSTOM_KEY }}
       #     repository: ${{ secrets.REPO }}
 
-
       - name: Archive files
         run: |
-          sudo apt-get install zip
-          zip -r archive.zip . -i /releases/tag/v1.0.1
-
+          sudo apt-get install curl
+          curl -L -o archive.zip `curl -s https://api.github.com/repos/myme89/server-test/releases/latest | grep "tarball_url" | cut -d : -f 2,3`
       - name: Upload to gdrive
         uses: adityak74/google-drive-upload-git-action@main
         with:
