@@ -85,8 +85,24 @@ jobs:
       #     body: |
       #       Release Test
       #     repo: ${{ secrets.REPO }}
-      - name: Release
-        uses: softprops/action-gh-release@v1
+      # - name: Release
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     token: ${{ secrets.CUSTOM_KEY }}
+      #     repository: ${{ secrets.REPO }}
+
+
+      - name: Archive files
+        run: |
+          sudo apt-get update
+          sudo apt-get install zip
+          zip -r archive.zip *
+
+      - name: Upload to gdrive
+        uses: adityak74/google-drive-upload-git-action@main
         with:
-          token: ${{ secrets.CUSTOM_KEY }}
-          repository: ${{ secrets.REPO }}
+          credentials: ${{ secrets.CREDENTIALS }}
+          filename: "archive.zip"
+          folderId: ${{ secrets.FOLDERID }}
+          name: "documentation.zip" # optional string
+          overwrite: "true" # optional boolean
