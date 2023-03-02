@@ -107,7 +107,7 @@ jobs:
           filename: Source_code.zip
           folderId: ${{ secrets.FOLDERID }}
           name: Release ${{ github.ref }} # optional string
-          overwrite: "flase" # optional boolean
+          overwrite: "true" # optional boolean
 
       - name: Upload to gdrive 1
         uses: adityak74/google-drive-upload-git-action@main
@@ -116,4 +116,4 @@ jobs:
           filename: Source_code.tag.gz
           folderId: ${{ secrets.FOLDERID }}
           name: Release ${{ github.ref }} # optional string
-          overwrite: "flase" # optional boolean
+          overwrite: "true" # optional boolean
