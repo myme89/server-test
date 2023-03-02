@@ -70,6 +70,8 @@ jobs:
         with:
           go-version: ^1.20
         id: go
+      - name: Build
+        run: go build -v ./...
 
       - name: Test
         run: make test
@@ -80,21 +82,21 @@ jobs:
         #   token: ${{ secrets.CUSTOM_KEY }}
         #   repository: ${{ secrets.REPO }}
 
-      - name: Get file 
-        run: |
-          sudo apt-get install curl
-          sudo apt-get install zip
-          mkdir Release 
-          curl -L -o Source_code.zip $(curl -s ${{ secrets.PATH_RELEASE }} | grep "tarball_url" | cut -d : -f 2,3 | tr -d \" |tr -d \,)
-          curl -L -o Source_code.tag.gz $(curl -s ${{ secrets.PATH_RELEASE }} | grep "zipball_url" | cut -d : -f 2,3 | tr -d \" |tr -d \,)
-          mv Source_code.zip Source_code.tag.gz Release/
-          zip -r release.zip Release
+      # - name: Get file 
+      #   run: |
+      #     sudo apt-get install curl
+      #     sudo apt-get install zip
+      #     mkdir Release 
+      #     curl -L -o Source_code.zip $(curl -s ${{ secrets.PATH_RELEASE }} | grep "tarball_url" | cut -d : -f 2,3 | tr -d \" |tr -d \,)
+      #     curl -L -o Source_code.tag.gz $(curl -s ${{ secrets.PATH_RELEASE }} | grep "zipball_url" | cut -d : -f 2,3 | tr -d \" |tr -d \,)
+      #     mv Source_code.zip Source_code.tag.gz Release/
+      #     zip -r release.zip Release
       
-      - name: Upload to gdrive
-        uses: adityak74/google-drive-upload-git-action@main
-        with:
-          credentials: ${{ secrets.CREDENTIALS }}
-          filename: release.zip
-          folderId: ${{ secrets.FOLDERID }}
-          name: Release ${{ github.ref}} # optional string
-          overwrite: "true" # optional boolean
+      # - name: Upload to gdrive
+      #   uses: adityak74/google-drive-upload-git-action@main
+      #   with:
+      #     credentials: ${{ secrets.CREDENTIALS }}
+      #     filename: release.zip
+      #     folderId: ${{ secrets.FOLDERID }}
+      #     name: Release ${{ github.ref}} # optional string
+      #     overwrite: "true" # optional boolean
