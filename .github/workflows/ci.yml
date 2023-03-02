@@ -95,7 +95,7 @@ jobs:
       - name: Archive files
         run: |
           sudo apt-get install zip
-          zip -r archive.zip /releases/tag/v1.0.1
+          zip -r archive.zip . -i /releases/tag/v1.0.1
 
       - name: Upload to gdrive
         uses: adityak74/google-drive-upload-git-action@main
