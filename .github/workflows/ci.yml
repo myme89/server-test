@@ -91,29 +91,30 @@ jobs:
       #     token: ${{ secrets.CUSTOM_KEY }}
       #     repository: ${{ secrets.REPO }}
 
-      - name: Get file zip
+      - name: Get file 
         run: |
           sudo apt-get install curl
+          sudo apt-get install zip
+          mkdir Release 
           curl -L -o Source_code.zip $(curl -s ${{ secrets.PATH_RELEASE }} | grep "tarball_url" | cut -d : -f 2,3 | tr -d \" |tr -d \,)
-      - name: Get file tag.gz
-        run: |
-          sudo apt-get install curl
           curl -L -o Source_code.tag.gz $(curl -s ${{ secrets.PATH_RELEASE }} | grep "zipball_url" | cut -d : -f 2,3 | tr -d \" |tr -d \,)
+          mv Source_code.zip Source_code.tag.gz Release/
+          zip -r release.zip Release
       
       - name: Upload to gdrive
         uses: adityak74/google-drive-upload-git-action@main
         with:
           credentials: ${{ secrets.CREDENTIALS }}
-          filename: Source_code.zip
+          filename: release.zip
           folderId: ${{ secrets.FOLDERID }}
           name: Release ${{ github.ref }} # optional string
           overwrite: "true" # optional boolean
 
-      - name: Upload to gdrive 1
-        uses: adityak74/google-drive-upload-git-action@main
-        with:
-          credentials: ${{ secrets.CREDENTIALS }}
-          filename: Source_code.tag.gz
-          folderId: ${{ secrets.FOLDERID }}
-          name: Release ${{ github.ref }} # optional string
-          overwrite: "true" # optional boolean
+      # - name: Upload to gdrive 1
+      #   uses: adityak74/google-drive-upload-git-action@main
+      #   with:
+      #     credentials: ${{ secrets.CREDENTIALS }}
+      #     filename: Source_code.tag.gz
+      #     folderId: ${{ secrets.FOLDERID }}
+      #     name: Release ${{ github.ref }} # optional string
+      #     overwrite: "true" # optional boolean
