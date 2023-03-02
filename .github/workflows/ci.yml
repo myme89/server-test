@@ -89,4 +89,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.CUSTOM_KEY }}
-          repository: ${{ secrets.REPO }}
+          repository: ${{ secrets.DRIVE }}
