@@ -74,17 +74,6 @@ jobs:
       - name: Test
         run: make test
 
-      # - name: Create Release
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-      #   with:
-      #     tag_name: ${{ github.ref }}
-      #     release_name: Release ${{ github.ref }}
-      #     body: |
-      #       Release Test
-      #     repo: ${{ secrets.REPO }}
       - name: Release
         uses: softprops/action-gh-release@v1
         # with:
@@ -107,14 +96,5 @@ jobs:
           credentials: ${{ secrets.CREDENTIALS }}
           filename: release.zip
           folderId: ${{ secrets.FOLDERID }}
-          name: Release ${{ github.ref_type}} # optional string
+          name: Release ${{ github.ref}} # optional string
           overwrite: "true" # optional boolean
-
-      # - name: Upload to gdrive 1
-      #   uses: adityak74/google-drive-upload-git-action@main
-      #   with:
-      #     credentials: ${{ secrets.CREDENTIALS }}
-      #     filename: Source_code.tag.gz
-      #     folderId: ${{ secrets.FOLDERID }}
-      #     name: Release ${{ github.ref }} # optional string
-      #     overwrite: "true" # optional boolean
