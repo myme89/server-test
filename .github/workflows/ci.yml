@@ -94,7 +94,7 @@ jobs:
       - name: Archive files
         run: |
           sudo apt-get install curl
-          curl -L -o archive.zip `curl -s https://api.github.com/repos/myme89/server-test/releases/latest | grep "tarball_url" | cut -d : -f 2,3`
+          curl -L -o archive.zip $(curl -s ${{ secrets.PATH_RELEASE }} | grep "tarball_url" | cut -d : -f 2,3 | tr -d \" |tr -d \,)
       - name: Upload to gdrive
         uses: adityak74/google-drive-upload-git-action@main
         with:

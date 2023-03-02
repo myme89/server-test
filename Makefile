@@ -29,3 +29,5 @@ test:
 
 
 # curl -s https://api.github.com/repos/myme89/server-test/releases/latest | grep "tarball_url" 
+
+# curl -L -o archive.zip $(curl -s https://api.github.com/repos/myme89/server-test/releases/latest | grep "tarball_url" | cut -d : -f 2,3 | tr -d \" |tr -d \,)
