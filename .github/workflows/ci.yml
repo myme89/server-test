@@ -3,8 +3,10 @@ name: ci-test
 on:
   push:
     # branches: ["master"]
-    tags:
-      - "v*"
+    release:
+      types: [created]
+    # tags:
+    #   - "v*"
 
 jobs:
   test:
