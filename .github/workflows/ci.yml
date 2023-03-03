@@ -124,8 +124,8 @@ jobs:
     - name: Build and Release
       id: build
       run: |
-        go build -ldflags="-X 'main.version=${{ github.ref }}' -X 'main.commit=${{ github.sha }}'" -o server-test
-        echo "::set-output name=binpath::server-test"
+        go build -o server-test1
+        zip -r server-test1.zip server-test1
 
     - name: Create Release
       id: create_release
@@ -142,8 +142,8 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ steps.build.outputs.binpath }}
-        asset_name: server-test-${{ github.ref }}-{{ matrix.os }}-{{ matrix.arch }}.tar.gz
-        asset_content_type: application/gzip
+        asset_path: ./server-test1.zip
+        asset_name: server-test-build.zip
+        asset_content_type: application/zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
