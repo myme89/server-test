@@ -77,12 +77,6 @@ jobs:
       - name: Test
         run: make test
 
-      # - name: Release
-      #   uses: softprops/action-gh-release@v1
-
-        # with:
-        #   token: ${{ secrets.CUSTOM_KEY }}
-        #   repository: ${{ secrets.REPO }}
 
       # - name: Get file 
       #   run: |
@@ -123,15 +117,22 @@ jobs:
 
 
     - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
+
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: false  
+        token: ${{ secrets.CUSTOM_KEY }}
+        repository: ${{ secrets.REPO }}
+
+    # - name: Create Release
+    #   id: create_release
+    #   uses: actions/create-release@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     tag_name: ${{ github.ref }}
+    #     release_name: Release ${{ github.ref }}
+    #     draft: false
+    #     prerelease: false  
 
     - name: Build
       id: build
