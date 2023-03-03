@@ -136,16 +136,16 @@ jobs:
     - name: Build
       id: build
       run: |
-        go build -o server-test-$(git describe --tags)
-        zip -r build-$(git describe --tags).zip server-test-$(git describe --tags)
-        echo "::set-output name=zippath::build-$(git describe --tags).zip"
+        mkdir Build
+        mv $(go build -o server-test-$(git describe --tags)) Build/
+        zip -r Build.zip Build
 
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ steps.build.outputs.binpath }}
-        asset_name: ${{ steps.build.outputs.binpath }}
+        asset_path: ./Build.zip
+        asset_name: build.zip
         asset_content_type: application/zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
