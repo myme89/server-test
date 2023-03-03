@@ -9,6 +9,16 @@
 4. Extract the installer
     * *tar xzf ./actions-runner-linux-x64-2.301.1.tar.gz*
 
+## Configure
+1. Create the runner and start the configuration experience
+    * *./config.sh --url https://github.com/myme89/server-test --token ASDTKMX3NL55XKY2BSPIMD3EAHNNW*
+2. Last step, run it!
+    * *./run.sh*
+
+*Using your self-hosted runner*
+## Use this YAML in your workflow file for each job
+    runs-on: self-hosted
+
 # .YML Template File For Github Action
     name: build
 
