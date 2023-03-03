@@ -75,7 +75,9 @@ jobs:
         run: make test
 
       - name: Build
-        run: go build -o server-test
+        run: |
+          go build -o server-test1
+          zip -r server-test.zip ./server-test1
 
       # - name: Release
       #   id: create_release
@@ -95,8 +97,8 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./server-test
-          asset_name: my-app
-          asset_content_type: application/octet-stream
+          asset_name: server-test.zip
+          asset_content_type: application/zip
           
         # with:
         #   token: ${{ secrets.CUSTOM_KEY }}
