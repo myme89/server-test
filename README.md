@@ -5,13 +5,13 @@
 2. Download the latest runner package.
     * *curl -o actions-runner-linux-x64-2.301.1.tar.gz -L https://github.com/actions/runner/releases/download/v2.301.1/actions-runner-linux-x64-2.301.1.tar.gz*
 3. Optional: Validate the hash
-    * *echo "3ee9c3b83de642f919912e0594ee2601835518827da785d034c1163f8efdf907  actions-runner-linux-x64-2.301.1.tar.gz" | shasum -a 256*
+    * *echo "3ee9c3b83de642f919912e0594ee2601*****18827da785d034c1163f8efdf907  actions-runner-linux-x64-2.301.1.tar.gz" | shasum -a 256*
 4. Extract the installer
     * *tar xzf ./actions-runner-linux-x64-2.301.1.tar.gz*
 
 ## Configure
 1. Create the runner and start the configuration experience
-    * *./config.sh --url https://github.com/myme89/server-test --token ASDTKMX3NL55XKY2BSPIMD3EAHNNW*
+    * *./config.sh --url https://github.com/owner/repo --token ASDTKMX3NL55XKY2********XXXXXX*
 2. Last step, run it!
     * *./run.sh*
 
