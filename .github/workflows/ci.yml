@@ -77,49 +77,9 @@ jobs:
       - name: Test
         run: make test
 
-      # - name: Build
-      #   run: |
-      #     go build -o server-test1
-      #     zip -r server-test.zip ./server-test1
-
       # - name: Release
-      #   id: create_release
       #   uses: softprops/action-gh-release@v1
 
-      # - name: Create Release
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ github.ref }}
-      #     release_name: Release ${{ github.ref }}
-
-      # - name: Upload Release Artifacts
-      #   uses: actions/upload-release-asset@v1
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: ./server-test
-      #     asset_name: server-test.zip
-      #     asset_content_type: application/zip
-
-
-      - name: Build and Release
-        run: |
-          go build -ldflags="-X 'main.version=${{ github.ref }}' -X 'main.commit=${{ github.sha }}'" -o my-app
-          echo "::set-output name=binpath::my-app"
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.build.outputs.binpath }}
-          asset_name: my-app-${{ github.ref }}-{{ matrix.os }}-{{ matrix.arch }}.tar.gz
-          asset_content_type: application/gzip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-          
         # with:
         #   token: ${{ secrets.CUSTOM_KEY }}
         #   repository: ${{ secrets.REPO }}
@@ -142,3 +102,40 @@ jobs:
       #     folderId: ${{ secrets.FOLDERID }}
       #     name: Release ${{ github.ref}} # optional string
       #     overwrite: "true" # optional boolean
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: '1.20'
+
+    - name: Build and Release
+      run: |
+        go build -ldflags="-X 'main.version=${{ github.ref }}' -X 'main.commit=${{ github.sha }}'" -o server-test
+        echo "::set-output name=binpath::server-test"
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false  
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ steps.build.outputs.binpath }}
+        asset_name: server-test-${{ github.ref }}-{{ matrix.os }}-{{ matrix.arch }}.tar.gz
+        asset_content_type: application/gzip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
