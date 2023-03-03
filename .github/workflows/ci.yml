@@ -77,8 +77,8 @@ jobs:
       - name: Test
         run: make test
 
-      - name: Release
-        uses: softprops/action-gh-release@v1
+      # - name: Release
+      #   uses: softprops/action-gh-release@v1
 
         # with:
         #   token: ${{ secrets.CUSTOM_KEY }}
