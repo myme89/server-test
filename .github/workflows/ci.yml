@@ -137,7 +137,8 @@ jobs:
       id: build
       run: |
         mkdir Build
-        mv $(go build -o server-test-$(git describe --tags)) Build/
+        go build -o server-test-$(git describe --tags) 
+        mv server-test-$(git describe --tags) Build/
         zip -r Build.zip Build
 
     - name: Upload Release Asset
