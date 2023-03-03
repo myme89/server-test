@@ -133,18 +133,18 @@ jobs:
         draft: false
         prerelease: false  
 
-    - name: Build and Release
+    - name: Build
       id: build
       run: |
-        go build -o server-test-$GITHUB_REF.tag
-        zip -r build.zip server-test-$GITHUB_REF.tag
+        go build -o server-test-$(git describe --tags)
+        zip -r build-$(git describe --tags).zip server-test-$(git describe --tags)
 
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./build.zip
-        asset_name: build.zip
+        asset_path: ./build-$(git describe --tags).zip
+        asset_name: build-$(git describe --tags).zip
         asset_content_type: application/zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
