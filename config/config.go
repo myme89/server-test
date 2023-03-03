@@ -116,7 +116,7 @@ func ParseFlags() (string, error) {
 
 	// Return the configuration path
 
-	fmt.Println(configPath)
+	// fmt.Println(configPath)
 	return configPath, nil
 }
 

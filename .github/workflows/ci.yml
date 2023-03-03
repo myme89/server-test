@@ -136,17 +136,17 @@ jobs:
     - name: Build
       id: build
       run: |
-        mkdir Build
-        go build -o server-test-$(git describe --tags) 
-        mv server-test-$(git describe --tags) Build/
-        zip -r Build.zip Build
+        go build -ldflags="-X 'main.version=$(git describe --tags)'" -o server-test-$(git describe --tags) 
+        mkdir Source-build
+        mv server-test-$(git describe --tags) Source-build/
+        zip -r Source-build.zip Source-build
 
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./Build.zip
-        asset_name: build.zip
+        asset_path: ./Source-build.zip
+        asset_name: Source-build.zip
         asset_content_type: application/zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

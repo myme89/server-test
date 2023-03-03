@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 	"server-test/api"
 	"server-test/cache"
 	"server-test/config"
@@ -18,58 +19,64 @@ type Author struct {
 	Age  int    `json:"age"`
 }
 
+var (
+	version string
+)
+
 func main() {
-	fmt.Println("Hello Trong Nhat")
+	arg := os.Args[1]
 
-	config := config.GetConfig()
+	if arg == "--version" {
+		fmt.Println("Version: ", version)
+	} else {
+		config := config.GetConfig()
 
-	fmt.Println(config)
+		switch config.Sever.TypeServer.Name {
 
-	switch config.Sever.TypeServer.Name {
+		case "server_levedb":
+			// leveldb, err := levedb.InitLeveDb(config)
 
-	case "server_levedb":
-		// leveldb, err := levedb.InitLeveDb(config)
+			// if err != nil {
+			// 	fmt.Println("Error connecting to database : error=% ", err, leveldb)
+			// }
 
-		// if err != nil {
-		// 	fmt.Println("Error connecting to database : error=% ", err, leveldb)
-		// }
+		case "server_mysql":
+			_, err := mysqldb.InitMySqlDb(config)
+			if err != nil {
+				fmt.Println("Error connecting to database : error=% ", err)
+			}
+		case "server_postgressql":
 
-	case "server_mysql":
-		_, err := mysqldb.InitMySqlDb(config)
-		if err != nil {
-			fmt.Println("Error connecting to database : error=% ", err)
+			db, err := db.Init(config)
+
+			if err != nil {
+				panic(err)
+			}
+
+			err = db.Ping()
+			if err != nil {
+				panic(err)
+			}
+		case "server_mongodb":
+			mongodb.InitMongoDB(config)
+		default:
+			fmt.Println("Don't have sever  " + config.Sever.TypeServer.Name)
 		}
-	case "server_postgressql":
 
-		db, err := db.Init(config)
+		//----------------------------------------------------------------------------//
+		fmt.Println("Successfully " + config.Sever.TypeServer.Name + " connected")
+		ctx := context.TODO()
+		cache.ConnectRedis(ctx)
 
-		if err != nil {
-			panic(err)
-		}
+		values := cache.GetAllKeys(ctx, "id*")
 
-		err = db.Ping()
-		if err != nil {
-			panic(err)
-		}
-	case "server_mongodb":
-		mongodb.InitMongoDB(config)
-	default:
-		fmt.Println("Don't have sever  " + config.Sever.TypeServer.Name)
+		log.Info("All values : %v \n", values)
+
+		serverAddr := "0.0.0.0:3000"
+		// serverAddrhttp := "0.0.0.0:3003"
+
+		// go api.GRPCSever(serverAddrhttp)
+		api.GatewaySever(serverAddr, config)
 	}
-
-	//----------------------------------------------------------------------------//
-	fmt.Println("Successfully " + config.Sever.TypeServer.Name + " connected")
-	ctx := context.TODO()
-	cache.ConnectRedis(ctx)
-
-	values := cache.GetAllKeys(ctx, "id*")
-
-	log.Info("All values : %v \n", values)
-
-	serverAddr := "0.0.0.0:3000"
-	// serverAddrhttp := "0.0.0.0:3003"
-
-	// go api.GRPCSever(serverAddrhttp)
-	api.GatewaySever(serverAddr, config)
 
 }

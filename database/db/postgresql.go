@@ -43,7 +43,7 @@ func Init(config *config.Config) (*sql.DB, error) {
 		psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 		db, err = sql.Open("postgres", psqlInfo)
 
-		log.Info("nhatnt", psqlInfo)
+		// log.Info("nhatnt", psqlInfo)
 
 	})
 	return db, err
