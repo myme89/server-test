@@ -121,11 +121,6 @@ jobs:
           go-version: ^1.20
       id: go
 
-    - name: Build and Release
-      id: build
-      run: |
-        go build -o server-test1
-        zip -r server-test1.zip server-test1
 
     - name: Create Release
       id: create_release
@@ -138,12 +133,18 @@ jobs:
         draft: false
         prerelease: false  
 
+    - name: Build and Release
+      id: build
+      run: |
+        go build -o server-test-${{curl -s ${{ secrets.PATH_RELEASE }} | grep "tag_name" | cut -d : -f 2,3 | tr -d \" |tr -d \,}}
+        zip -r build.zip server-test-${{curl -s ${{ secrets.PATH_RELEASE }} | grep "tag_name" | cut -d : -f 2,3 | tr -d \" |tr -d \,}}
+
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./server-test1.zip
-        asset_name: server-test-build.zip
+        asset_path: ./build.zip
+        asset_name: build.zip
         asset_content_type: application/zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
