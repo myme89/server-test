@@ -6,8 +6,8 @@ on:
     tags:
       - "v*"
 
-  release:
-      types: [created]
+  # release:
+  #     types: [created]
 
 jobs:
   test:
@@ -102,3 +102,47 @@ jobs:
       #     folderId: ${{ secrets.FOLDERID }}
       #     name: Release ${{ github.ref}} # optional string
       #     overwrite: "true" # optional boolean
+
+
+
+
+  build:
+    
+    runs-on: [self-hosted, linux]
+    needs: test
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: '1.20'
+
+    - name: Build and Release
+      id: build
+      run: |
+        go build -ldflags="-X 'main.version=${{ github.ref }}' -X 'main.commit=${{ github.sha }}'" -o server-test
+        echo "::set-output name=binpath::server-test"
+
+    # - name: Create Release
+    #   id: create_release
+    #   uses: actions/create-release@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     tag_name: ${{ github.ref }}
+    #     release_name: Release ${{ github.ref }}
+    #     draft: false
+    #     prerelease: false  
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{  github.event.release.upload_url }}
+        asset_path: ${{ steps.build.outputs.binpath }}
+        asset_name: server-test-${{ github.ref }}-{{ matrix.os }}-{{ matrix.arch }}.tar.gz
+        asset_content_type: application/gzip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
