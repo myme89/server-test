@@ -40,22 +40,97 @@ Steps to setup Github Host-self Runner
         2022-03-04 09:45:56Z: Listening for Jobs
 
 # .YML Template File For Github Action
-    name: build
 
-    on:
-    push:
-        tags:
-        - "v*"
-    jobs:
-    build:
-        name: Build
+Here's a basic YAML template file for a GitHub Action:
+
+        name: Template GitHub Action
+        on:
+            push:
+                branches: [master]
+
+            pull_request:
+
+                branches: [master]
+       
+        jobs:
+            build:
+                runs-on: ubuntu-latest
+                steps:
+                - name: Checkout repository
+                    uses: actions/checkout@v3
+
+                - name: Setup Go 
+                    uses: actions/setup-go@v3
+                    with:
+                        go-version: ^1.20
+
+
+                - name: Run tests
+                    run: npm test
+
+                - name: Release
+                    uses:  actions/create-release@v1
+
+                    env:
+                        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                    with:
+                        tag_name:  ${{ github.ref }}
+                        release_name: Release ${{ github.ref }}
+                        draft: false
+                        prerelease: false  
+
+An explanation of the various parameters:
+
+* **name**: *The name of your GitHub Action.*
+  
+        name: Template GitHub Action
+
+* **on**: *Specifies the events that will trigger your action. In this case, the action will run on any push or pull request to the **master** branch.*
+
+        on:
+            push:
+                branches: [master]
+
+            pull_request:
+
+                branches: [master]
+
+* **jobs**: *Defines one or more jobs that make up the action.*
+    
+* **build**: *The name of the job.*
+
+* **runs-on**: *The type of machine that the job will run on.*
+  
+Can use the latest version of Ubuntu (GitHub-hosted runners)
+
+        runs-on: ubuntu-latest
+
+Or Github Host-self Runner
+
         runs-on: [self-hosted, linux]
-        steps:
-        - name: Check out code into the Go module directory
+
+* **steps**: *The list of steps to execute in the job.*
+
+* **uses**: *A pre-built action to use.* 
+  
+In this case, it's the actions/checkout@v3 action which checks out your repository on the runner.*
+
         uses: actions/checkout@v3
 
-        - name: Set up Go
+Or it's the actions/setup-go@v3 action which set up Golang on the runner.
+    
         uses: actions/setup-go@v3
-        with:
-            go-version: ^1.20
-        id: go
+
+* **name**: *The name of the step. This is purely for informational purposes.*
+  
+* **run**: *The command to run in the step. In this case, it's a series of steps that run tests.*
+  
+* **with**: *Provides inputs to the action.* 
+  
+In this case, it provides the environment, target, and secret key required for the release. Note that the tag_nam value is loaded from a GitHub with github.ref or GITHUB_TOKEN value is loaded from a Github secret named GITHUB_TOKEN
+
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        tag_name:  ${{ github.ref }}
+
+
