@@ -144,27 +144,17 @@ func AddManyInfo(config *config.Config, info []model.DataPost) error {
 	return nil
 }
 
-func AddManyInfoNotModel(config *config.Config, info []interface{}) error {
+func AddManyInfoNotModel(config *config.Config, info []interface{}, nameCollection string) error {
 	// collectionDB := config.Sever.ServerMongoDB.DBcollection
 	dbName := config.Sever.ServerMongoDB.DBName
 
-	err := createCollection(dbName, "test1")
+	err := createCollection(dbName, nameCollection)
 	if err != nil {
 		log.Fatal("Cannot create collection DB", err)
 	}
-	// err := clientMongo.Database((dbName)).CreateCollection(context.TODO(), "test1")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 
-	collection := clientMongo.Database(dbName).Collection("test1")
+	collection := clientMongo.Database(dbName).Collection(nameCollection)
 
-	// infos := make([]interface{}, len(info))
-	// for i, s := range info {
-	// 	infos[i] = s
-	// }
-
-	// log.Info("infos", info)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	_, err = collection.InsertMany(ctx, info)

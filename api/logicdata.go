@@ -292,132 +292,145 @@ func (server *Server) ExportData(ctx context.Context, res *pb.ExportDataResquest
 
 //Version using GRPC-Gateway body using JSON
 
-func (server *Server) ImportData_V1(ctx context.Context, res *pb.ImportDataResquest) (*pb.ImportDataRespone, error) {
+// func (server *Server) ImportData_V1(ctx context.Context, res *pb.ImportDataResquest) (*pb.ImportDataRespone, error) {
 
-	var noticeDb string
+// 	var noticeDb string
 
-	// pathImport := res.GetPathimport()
-	pathImport := "/home/nhatnt/nhatnt/probationary-project/server-test/importfile/DataImportToDB.xlsx"
-	file, err := excelize.OpenFile(pathImport)
-	if err != nil {
-		return nil, status.Errorf(codes.Unimplemented, "Open file err", err)
-	}
-	defer func() {
-		// Close the spreadsheet.
-		if err := file.Close(); err != nil {
-			fmt.Println(err)
-		}
-	}()
+// 	// pathImport := res.GetPathimport()
+// 	pathImport := "/home/nhatnt/nhatnt/probationary-project/server-test/importfile/DataImportToDB.xlsx"
+// 	file, err := excelize.OpenFile(pathImport)
+// 	if err != nil {
+// 		return nil, status.Errorf(codes.Unimplemented, "Open file err", err)
+// 	}
+// 	defer func() {
+// 		// Close the spreadsheet.
+// 		if err := file.Close(); err != nil {
+// 			fmt.Println(err)
+// 		}
+// 	}()
 
-	// for index, name := range file.GetSheetMap() {
-	// 	fmt.Println(index, name)
-	// }
+// 	// for index, name := range file.GetSheetMap() {
+// 	// 	fmt.Println(index, name)
+// 	// }
 
-	data1, err := file.GetRows("Sheet1")
+// 	data1, err := file.GetRows("Sheet1")
 
-	if err != nil {
-		return nil, status.Errorf(codes.Unimplemented, "GetRows failed")
-	}
+// 	if err != nil {
+// 		return nil, status.Errorf(codes.Unimplemented, "GetRows failed")
+// 	}
 
-	var data []map[string]string
-	for _, row := range data1 {
-		item := make(map[string]string)
-		for i, colCell := range row {
-			temp, _ := excelize.ColumnNumberToName(i + 1)
+// 	var data []map[string]string
+// 	for _, row := range data1 {
+// 		item := make(map[string]string)
+// 		for i, colCell := range row {
+// 			temp, _ := excelize.ColumnNumberToName(i + 1)
 
-			temp1, _ := file.GetCellValue("Sheet1", temp+"1")
+// 			temp1, _ := file.GetCellValue("Sheet1", temp+"1")
 
-			item[temp1] = colCell
-		}
-		data = append(data, item)
-	}
+// 			item[temp1] = colCell
+// 		}
+// 		data = append(data, item)
+// 	}
 
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		fmt.Println(err)
-	}
+// 	jsonData, err := json.Marshal(data)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
 
-	// fmt.Println("jsonData = ", string(jsonData))
+// 	// fmt.Println("jsonData = ", string(jsonData))
 
-	// Create an empty map to unmarshal JSON into
-	var person []map[string]interface{}
+// 	// Create an empty map to unmarshal JSON into
+// 	var person []map[string]interface{}
 
-	// Unmarshal the JSON data into the map
-	err1 := json.Unmarshal([]byte(jsonData), &person)
-	if err != nil {
-		fmt.Println(err1)
-	}
+// 	// Unmarshal the JSON data into the map
+// 	err1 := json.Unmarshal([]byte(jsonData), &person)
+// 	if err != nil {
+// 		fmt.Println(err1)
+// 	}
 
-	infos := make([]interface{}, len(person))
-	for i, s := range person {
-		infos[i] = s
-	}
+// 	infos := make([]interface{}, len(person))
+// 	for i, s := range person {
+// 		infos[i] = s
+// 	}
 
-	infos = infos[1:]
+// 	infos = infos[1:]
 
-	// var datasAdd []model.DataPost
+// 	var datasAdd []model.DataPost
 
-	// for i := 0; i < len(data); i++ {
-	// 	idInt, _ := strconv.Atoi(data[i][0])
-	// 	datasAdd = append(datasAdd, model.DataPost{Id: idInt, Name: data[i][1], FullName: data[i][2]})
+// 	for i := 0; i < len(data); i++ {
+// 		idInt, _ := strconv.Atoi(data[i][0])
+// 		datasAdd = append(datasAdd, model.DataPost{Id: idInt, Name: data[i][1], FullName: data[i][2]})
 
-	// }
+// 	}
 
-	// fmt.Println(infos)
-	err = mongodb.AddManyInfoNotModel(server.config, infos)
-	if err != nil {
-		return nil, status.Errorf(codes.Unimplemented, "Post Data to Mongo Database failed")
-	}
-	noticeDb = "Post Done"
+// 	// fmt.Println(infos)
+// 	err = mongodb.AddManyInfoNotModel(server.config, infos)
+// 	if err != nil {
+// 		return nil, status.Errorf(codes.Unimplemented, "Post Data to Mongo Database failed")
+// 	}
+// 	noticeDb = "Post Done"
 
-	rsp := &pb.ImportDataRespone{
-		Notice: noticeDb,
-	}
-	return rsp, nil
+// 	rsp := &pb.ImportDataRespone{
+// 		Notice: noticeDb,
+// 	}
+// 	return rsp, nil
+// }
+
+type InfoFile struct {
+	name    string
+	content []byte
 }
 
 // Handle data with form-data
-func ImportDataWithHttp(w http.ResponseWriter, r *http.Request) []byte {
-	file1, _, err := r.FormFile("file")
+func ImportDataWithHttp(w http.ResponseWriter, r *http.Request) ([]InfoFile, error) {
+	file_ex, _, err := r.FormFile("file")
 	if err != nil {
 		http.Error(w, "Failed to retrieve file from form data", http.StatusBadRequest)
 	}
-	defer file1.Close()
+	defer file_ex.Close()
 
 	// fmt.Println("file", file)
 
-	content, err := ioutil.ReadAll(file1)
+	content, err := ioutil.ReadAll(file_ex)
 
 	xlsx, err := excelize.OpenReader(bytes.NewReader(content))
 	if err != nil {
 		http.Error(w, "Failed to open Excel file", http.StatusBadRequest)
+		return nil, err
 	}
 
-	data1, err := xlsx.GetRows("Sheet1")
-
-	if err != nil {
-		http.Error(w, "GetRows failed", http.StatusBadRequest)
-	}
-
-	var data []map[string]string
-	for _, row := range data1 {
-		item := make(map[string]string)
-		for i, colCell := range row {
-			temp, _ := excelize.ColumnNumberToName(i + 1)
-
-			temp1, _ := xlsx.GetCellValue("Sheet1", temp+"1")
-
-			item[temp1] = colCell
+	var info_file []InfoFile
+	for _, name := range xlsx.GetSheetMap() {
+		// fmt.Println(index, name)
+		// nameSheet = append(nameSheet, name)
+		dataRows, err := xlsx.GetRows(name)
+		if err != nil {
+			http.Error(w, "GetRows failed", http.StatusBadRequest)
+			return nil, err
 		}
-		data = append(data, item)
+
+		var data []map[string]string
+		for _, row := range dataRows {
+			item := make(map[string]string)
+			for i, colCell := range row {
+				temp, _ := excelize.ColumnNumberToName(i + 1)
+
+				temp1, _ := xlsx.GetCellValue(name, temp+"1")
+
+				item[temp1] = colCell
+			}
+			data = append(data, item)
+		}
+		jsonData, err := json.Marshal(data)
+
+		if err != nil {
+			return nil, err
+		}
+
+		info_file = append(info_file, InfoFile{name: name, content: jsonData})
 	}
 
-	jsonData, err := json.Marshal(data)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-	return jsonData
+	return info_file, nil
 }
 
 // Version using GRPC
@@ -426,6 +439,7 @@ func (server *Server) ImportData(ctx context.Context, res *pb.ImportDataResquest
 	var noticeDb string
 
 	data_ex := res.GetData()
+	name := res.GetName()
 
 	// Create an empty map to unmarshal JSON into
 	var person []map[string]interface{}
@@ -443,7 +457,7 @@ func (server *Server) ImportData(ctx context.Context, res *pb.ImportDataResquest
 
 	infos = infos[1:]
 
-	err = mongodb.AddManyInfoNotModel(server.config, infos)
+	err = mongodb.AddManyInfoNotModel(server.config, infos, name)
 	if err != nil {
 		return nil, status.Errorf(codes.Unimplemented, "Post Data to Mongo Database failed")
 	}

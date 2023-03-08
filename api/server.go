@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net"
 	"net/http"
 	"server-test/config"
@@ -103,16 +104,28 @@ func GatewaySever(serverAddr string, config *config.Config) {
 func RegisterDeliverooHandlerServerCustom(ctx context.Context, mux *runtime.ServeMux, server pb.DeliverooServer) error {
 
 	mux.HandlePath("POST", "/v1/uploadfile", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		data_ex := ImportDataWithHttp(w, req)
+		data_ex, err := ImportDataWithHttp(w, req)
 
-		data := &pb.ImportDataResquest{
-			Data: data_ex,
-		}
-
-		msg, err := server.ImportData(ctx, data)
 		if err != nil {
-			log.Error("cannot import data to database")
+			log.Error("cannot hander data to file or form-data")
 		}
+		fmt.Println("test_data", data_ex)
+
+		for i := 0; i < len(data_ex); i++ {
+
+			data := &pb.ImportDataResquest{
+				Data: data_ex[i].content,
+				Name: data_ex[i].name,
+			}
+			_, err := server.ImportData(ctx, data)
+			if err != nil {
+				log.Error("cannot import data to database")
+			}
+		}
+		msg := &pb.ImportDataRespone{
+			Notice: "Post Done",
+		}
+
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(msg)
 	})
