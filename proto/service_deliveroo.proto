@@ -35,9 +35,9 @@ service Deliveroo {
     }
 
     rpc ImportData(ImportDataResquest) returns (ImportDataRespone) {
-        option (google.api.http) = {
-            post: "/v1/importdata"
-            body: "*"
-        };
+        // option (google.api.http) = {
+        //     post: "/v1/importdata"
+        //     body: "*"
+        // };
     }
 } 

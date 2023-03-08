@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"net"
 	"net/http"
 	"server-test/config"
@@ -16,9 +17,9 @@ import (
 
 type Server struct {
 	pb.UnimplementedDeliverooServer
-	Addr    string
-	Handler http.Handler
-	config  *config.Config
+	Addr string
+	// Handler http.Handler
+	config *config.Config
 }
 
 func GRPCSever(serverAddr string, config *config.Config) {
@@ -51,6 +52,21 @@ func GatewaySever(serverAddr string, config *config.Config) {
 		config: config,
 	}
 
+	/////////////////////////////////////////////////////
+
+	// srv1 := &Server{
+	// 	config: config,
+	// }
+	// grpcServer := grpc.NewServer()
+	// pb.RegisterDeliverooServer(grpcServer, srv1)
+
+	// conn, err := grpc.Dial("localhost:3000", grpc.WithInsecure())
+	// if err != nil {
+	// 	log.Fatalf("could not connect: %v", err)
+	// }
+	// defer conn.Close()
+
+	////////////////////////////////////////////////////
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -64,6 +80,12 @@ func GatewaySever(serverAddr string, config *config.Config) {
 	mux := http.NewServeMux()
 	mux.Handle("/", grpcMux)
 
+	err = RegisterDeliverooHandlerServerCustom(ctx, grpcMux, srv)
+
+	if err != nil {
+		log.Fatal("cannot register handler server custom", err)
+	}
+
 	listener, err := net.Listen("tcp", serverAddr)
 	if err != nil {
 		log.Fatal("cannot create listener", err)
@@ -76,4 +98,24 @@ func GatewaySever(serverAddr string, config *config.Config) {
 	if err != nil {
 		log.Fatal("cannot start http gateway server")
 	}
+}
+
+func RegisterDeliverooHandlerServerCustom(ctx context.Context, mux *runtime.ServeMux, server pb.DeliverooServer) error {
+
+	mux.HandlePath("POST", "/v1/uploadfile", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		data_ex := ImportDataWithHttp(w, req)
+
+		data := &pb.ImportDataResquest{
+			Data: data_ex,
+		}
+
+		msg, err := server.ImportData(ctx, data)
+		if err != nil {
+			log.Error("cannot import data to database")
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(msg)
+	})
+
+	return nil
 }
