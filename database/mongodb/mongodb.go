@@ -73,14 +73,12 @@ func InitMongoDB(config *config.Config) *mongo.Client {
 
 	err = createCollection(dbName, collectionDB)
 	if err != nil {
-		logs.Logger.Fatal("Cannot create collection DB", err)
+		logs.Logger.Error("Cannot create collection DB", err)
 	}
 
 	err = clientMongo.Ping(ctx, readpref.Primary())
 	if err != nil {
-		logs.Logger.Fatal("Cannot ping to mongo server :", err)
-	} else {
-		logs.Logger.Info(" Connect MongoDB success ")
+		logs.Logger.Error("Cannot ping to mongo server :", err)
 	}
 
 	return clientMongo
