@@ -19,9 +19,9 @@ func TestGetData(t *testing.T) {
 }
 
 func TestPutData(t *testing.T) {
-	Id := 1
-	Name := "nhat"
-	FullName := "NTN"
+	Id := 2
+	Name := "nhat1"
+	FullName := "NTN2"
 
 	path := "./../../config/config.yml"
 	config, err := config.NewConfig(path)
