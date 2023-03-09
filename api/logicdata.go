@@ -13,6 +13,7 @@ import (
 	"server-test/database/levedb"
 	"server-test/database/mongodb"
 	"server-test/database/mysqldb"
+	"server-test/logs"
 	"server-test/model"
 	"server-test/pb"
 
@@ -23,6 +24,8 @@ import (
 )
 
 func (server *Server) GetData(ctx context.Context, res *pb.DataInfoResquest) (*pb.DataInfoRespone, error) {
+
+	logs.Logger.Info("GetData - API call GetData ")
 
 	valueCache := cache.GetFromRedis(ctx, "data_test")
 
@@ -43,6 +46,7 @@ func (server *Server) GetData(ctx context.Context, res *pb.DataInfoResquest) (*p
 			var data []model.DataPost
 			err := mysqldb.GetData(&data)
 			if err != nil {
+				logs.Logger.Error("GetData - Get Data server_mysql failed: ", err)
 				return nil, status.Errorf(codes.Unimplemented, "get Data failed")
 			}
 			for i := 0; i < len(data); i++ {
@@ -51,11 +55,17 @@ func (server *Server) GetData(ctx context.Context, res *pb.DataInfoResquest) (*p
 		case "server_postgressql":
 			dataInfo, err = db.GetData()
 			if err != nil {
+				logs.Logger.Error("GetData - Get Data server_postgressql failed: ", err)
 				return nil, status.Errorf(codes.Unimplemented, "get Data failed")
 			}
 		case "server_mongodb":
 			dataInfo, err = mongodb.GetAllInfo(server.config)
+			if err != nil {
+				logs.Logger.Error("GetData - Get Data server_mongodb failed: ", err)
+				return nil, status.Errorf(codes.Unimplemented, "get Data failed")
+			}
 		default:
+			logs.Logger.Error("GetData - Don't have database")
 			return nil, status.Errorf(codes.Unimplemented, "Don't have database")
 		}
 
@@ -69,29 +79,34 @@ func (server *Server) GetData(ctx context.Context, res *pb.DataInfoResquest) (*p
 		}
 		json1, err := json.Marshal(DataInfo)
 		if err != nil {
+			logs.Logger.Error("GetData - Error Marshal: ", err)
 			fmt.Println(err)
 		}
 
 		fmt.Println("value Database ")
+		logs.Logger.Info("GetData - Value Database ")
 		cache.SetToRedis(ctx, "data_test", json1)
 	} else {
 		var temp []model.DataInfo
 		err := json.Unmarshal([]byte(valueCache), &temp)
 		if err != nil {
+			logs.Logger.Error("GetData - Error Unmarshal: ", err)
 			fmt.Println(err)
 		}
 		fmt.Println("value Cache ")
+		logs.Logger.Info("GetData - Value Cache ")
 
 		rsp = &pb.DataInfoRespone{
 			Data: ConvertData(temp),
 		}
 
 	}
-
 	return rsp, nil
 }
 
 func (server *Server) PostData(ctx context.Context, res *pb.DataPostResqest) (*pb.DataPostRespone, error) {
+
+	logs.Logger.Info("PostData - API call PostData ")
 
 	Id := int(res.GetId())
 	Name := res.GetName()
@@ -147,6 +162,7 @@ func (server *Server) PostData(ctx context.Context, res *pb.DataPostResqest) (*p
 	case "server_levedb":
 		err := levedb.PutData(server.config, Id, Name, FullName)
 		if err != nil {
+			logs.Logger.Error("PostData - Post Data to Leve Database failed: ", err)
 			return nil, status.Errorf(codes.Unimplemented, "Post Data to Leve Database failed")
 		}
 		noticeDb = "Post Done"
@@ -154,6 +170,7 @@ func (server *Server) PostData(ctx context.Context, res *pb.DataPostResqest) (*p
 	case "server_mysql":
 		err := mysqldb.PostData(Id, Name, FullName)
 		if err != nil {
+			logs.Logger.Error("PostData - Post Data to MySql Database failed: ", err)
 			return nil, status.Errorf(codes.Unimplemented, "Post Data to MySql Database failed")
 		}
 		noticeDb = "Post Done"
@@ -162,6 +179,7 @@ func (server *Server) PostData(ctx context.Context, res *pb.DataPostResqest) (*p
 
 		info, err := db.PostData(Id, Name, FullName)
 		if err != nil {
+			logs.Logger.Error("PostData - Post Data to Postges Database failed: ", err)
 			return nil, status.Errorf(codes.Unimplemented, "Post Data to Postges Database failed")
 		}
 		noticeDb = info
@@ -169,11 +187,13 @@ func (server *Server) PostData(ctx context.Context, res *pb.DataPostResqest) (*p
 	case "server_mongodb":
 		err := mongodb.AddInfo(server.config, Id, Name, FullName)
 		if err != nil {
+			logs.Logger.Error("PostData - Post Data to Mongo Database failed: ", err)
 			return nil, status.Errorf(codes.Unimplemented, "Post Data to Mongo Database failed")
 		}
 		noticeDb = "Post Done"
 
 	default:
+		logs.Logger.Error("PostData - Don't have database")
 		return nil, status.Errorf(codes.Unimplemented, "Don't have database")
 	}
 
@@ -185,6 +205,8 @@ func (server *Server) PostData(ctx context.Context, res *pb.DataPostResqest) (*p
 
 func (server *Server) UpdateData(ctx context.Context, res *pb.DataUpdateResqest) (*pb.DataUpdateRespone, error) {
 
+	logs.Logger.Info("UpdateData - API call UpdateData ")
+
 	oldName := res.GetOldname()
 	newName := res.GetNewname()
 	newFullName := res.GetNewfullname()
@@ -193,6 +215,7 @@ func (server *Server) UpdateData(ctx context.Context, res *pb.DataUpdateResqest)
 	// InfoGroup := "data received : "
 
 	if err != nil {
+		logs.Logger.Error("UpdateData - Update Data failed error: ", err)
 		return nil, status.Errorf(codes.Unimplemented, "Update Data failed")
 	}
 
@@ -204,6 +227,8 @@ func (server *Server) UpdateData(ctx context.Context, res *pb.DataUpdateResqest)
 }
 
 func (server *Server) ExportData(ctx context.Context, res *pb.ExportDataResquest) (*pb.ExportDataRespone, error) {
+
+	logs.Logger.Info("ExportData - API call ExportData ")
 
 	var dataInfo []model.DataInfo
 	var err error
@@ -219,6 +244,7 @@ func (server *Server) ExportData(ctx context.Context, res *pb.ExportDataResquest
 		var data []model.DataPost
 		err := mysqldb.GetData(&data)
 		if err != nil {
+			logs.Logger.Error("ExportData: server_mysql get Data failed error:", err)
 			return nil, status.Errorf(codes.Unimplemented, "get Data failed")
 		}
 		for i := 0; i < len(data); i++ {
@@ -227,11 +253,17 @@ func (server *Server) ExportData(ctx context.Context, res *pb.ExportDataResquest
 	case "server_postgressql":
 		dataInfo, err = db.GetData()
 		if err != nil {
+			logs.Logger.Error("ExportData: server_postgressql get Data failed error:", err)
 			return nil, status.Errorf(codes.Unimplemented, "get Data failed")
 		}
 	case "server_mongodb":
 		dataInfo, err = mongodb.GetAllInfo(server.config)
+		if err != nil {
+			logs.Logger.Error("ExportData: server_mongodb get Data failed error:", err)
+			return nil, status.Errorf(codes.Unimplemented, "get Data failed")
+		}
 	default:
+		logs.Logger.Error("ExportData: Don't have database")
 		return nil, status.Errorf(codes.Unimplemented, "Don't have database")
 	}
 
@@ -251,20 +283,20 @@ func (server *Server) ExportData(ctx context.Context, res *pb.ExportDataResquest
 	err = f.SetSheetRow("Sheet1", "A1", &[]interface{}{"Name", "FullName"})
 	if err != nil {
 
-		log.Error("Error SetSheetRow ", err)
+		logs.Logger.Error("ExportData: Error SetSheetRow: ", err)
 	}
 	err = f.SetColWidth("Sheet1", "A", "G", 30)
 
 	if err != nil {
 
-		log.Error("Error SetColWidth ", err)
+		logs.Logger.Error("ExportData: Error SetColWidth: ", err)
 	}
 
 	startRow := 2
 	for i := startRow; i < (len(expenseData) + startRow); i++ {
 		err = f.SetSheetRow("Sheet1", fmt.Sprintf("A%d", i), &expenseData[i-2])
 		if err != nil {
-			log.Error("Error SetSheetRow ", err)
+			logs.Logger.Error("ExportData: Error SetSheetRow: ", err)
 		}
 	}
 
@@ -274,7 +306,7 @@ func (server *Server) ExportData(ctx context.Context, res *pb.ExportDataResquest
 	}
 
 	if err != nil {
-		log.Error("Error SaveAs ", err)
+		logs.Logger.Error("ExportData: Error SaveAs: ", err)
 	}
 
 	dir, err := filepath.Abs(filepath.Dir("DataExportFromDB.xlsx"))
@@ -383,8 +415,11 @@ type InfoFile struct {
 
 // Handle data with form-data
 func ImportDataWithHttp(w http.ResponseWriter, r *http.Request) ([]InfoFile, error) {
+
+	logs.Logger.Info("ImportDataWithHttp: API call ImportDataWithHttp")
 	file_ex, _, err := r.FormFile("file")
 	if err != nil {
+		logs.Logger.Error("ImportDataWithHttp: Failed to retrieve file from form data")
 		http.Error(w, "Failed to retrieve file from form data", http.StatusBadRequest)
 	}
 	defer file_ex.Close()
@@ -395,6 +430,7 @@ func ImportDataWithHttp(w http.ResponseWriter, r *http.Request) ([]InfoFile, err
 
 	xlsx, err := excelize.OpenReader(bytes.NewReader(content))
 	if err != nil {
+		logs.Logger.Error("ImportDataWithHttp: Failed to open Excel file")
 		http.Error(w, "Failed to open Excel file", http.StatusBadRequest)
 		return nil, err
 	}
@@ -405,6 +441,7 @@ func ImportDataWithHttp(w http.ResponseWriter, r *http.Request) ([]InfoFile, err
 		// nameSheet = append(nameSheet, name)
 		dataRows, err := xlsx.GetRows(name)
 		if err != nil {
+			logs.Logger.Error("ImportDataWithHttp: GetRows failed")
 			http.Error(w, "GetRows failed", http.StatusBadRequest)
 			return nil, err
 		}
@@ -424,6 +461,7 @@ func ImportDataWithHttp(w http.ResponseWriter, r *http.Request) ([]InfoFile, err
 		jsonData, err := json.Marshal(data)
 
 		if err != nil {
+			logs.Logger.Error("ImportDataWithHttp: Masrhal Data error:", err)
 			return nil, err
 		}
 
@@ -436,6 +474,7 @@ func ImportDataWithHttp(w http.ResponseWriter, r *http.Request) ([]InfoFile, err
 // Version using GRPC
 func (server *Server) ImportData(ctx context.Context, res *pb.ImportDataResquest) (*pb.ImportDataRespone, error) {
 
+	logs.Logger.Info("ImportData: API call ImportData")
 	var noticeDb string
 
 	data_ex := res.GetData()

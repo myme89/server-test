@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net"
 	"net/http"
 	"server-test/config"
@@ -53,21 +52,6 @@ func GatewaySever(serverAddr string, config *config.Config) {
 		config: config,
 	}
 
-	/////////////////////////////////////////////////////
-
-	// srv1 := &Server{
-	// 	config: config,
-	// }
-	// grpcServer := grpc.NewServer()
-	// pb.RegisterDeliverooServer(grpcServer, srv1)
-
-	// conn, err := grpc.Dial("localhost:3000", grpc.WithInsecure())
-	// if err != nil {
-	// 	log.Fatalf("could not connect: %v", err)
-	// }
-	// defer conn.Close()
-
-	////////////////////////////////////////////////////
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -109,7 +93,7 @@ func RegisterDeliverooHandlerServerCustom(ctx context.Context, mux *runtime.Serv
 		if err != nil {
 			log.Error("cannot hander data to file or form-data")
 		}
-		fmt.Println("test_data", data_ex)
+		// fmt.Println("test_data", data_ex)
 
 		for i := 0; i < len(data_ex); i++ {
 

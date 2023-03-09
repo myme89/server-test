@@ -4,11 +4,11 @@ import (
 	sql "database/sql"
 	"fmt"
 	"server-test/config"
+	"server-test/logs"
 	"server-test/model"
 	"sync"
 
 	_ "github.com/lib/pq"
-	log "github.com/sirupsen/logrus"
 )
 
 // const (
@@ -61,7 +61,7 @@ func GetData() ([]model.DataInfo, error) {
 	)
 
 	if err != nil {
-		log.Error(err)
+		logs.Logger.Error("GetData - Query data Postgres error: ", err)
 		return []model.DataInfo{}, err
 	}
 	defer rows.Close()
@@ -70,7 +70,7 @@ func GetData() ([]model.DataInfo, error) {
 	for rows.Next() {
 		err := rows.Scan(&Id, &Name, &FullName)
 		if err != nil {
-			log.Error(err)
+			logs.Logger.Error("GetData - Scan data Postgres error: ", err)
 			return []model.DataInfo{}, err
 		}
 		TempDataInfo := model.DataInfo{Name: Name, FullName: FullName}
@@ -85,7 +85,8 @@ func PostData(id int, name, fullName string) (string, error) {
 	VALUES ($1, $2, $3)`, id, name, fullName)
 
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
+		logs.Logger.Error("PostData - Scan data Postgres error: ", err)
 		return "error", err
 	}
 
@@ -100,7 +101,8 @@ func UpdateData(oldName, newName, newFullname string) (string, error) {
 					   WHERE name = $3;`, newName, newFullname, oldName)
 
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
+		logs.Logger.Error("PostData - Exec data Postgres error: ", err)
 		return "error", err
 	}
 
