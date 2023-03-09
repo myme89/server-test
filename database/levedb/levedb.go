@@ -33,15 +33,11 @@ func PutData(config *config.Config, Id int, Name, FullName string) error {
 		logs.Logger.Error("PutData - Marshal data leveDb error: ", err)
 		fmt.Println(err)
 	}
+	// logs.Logger.Info("PutData - data leveDb: ", byteArray)
 
 	err = db.Put([]byte("data_test1"), byteArray, nil)
-	if err != nil {
-		logs.Logger.Error("PutData - Put data leveDb error: ", err)
-		fmt.Println(err)
-	}
 
 	fmt.Println(byteArray)
-	logs.Logger.Info("PutData - data leveDb: ", byteArray)
 
 	return err
 }
