@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"server-test/logs"
 
 	"gopkg.in/yaml.v2"
 )
@@ -68,6 +69,7 @@ func NewConfig(configPath string) (*Config, error) {
 	// Open config file
 	file, err := os.Open(configPath)
 	if err != nil {
+		logs.Logger.Error("NewConfig - Error open config: ", err)
 		return nil, err
 	}
 	defer file.Close()
@@ -77,6 +79,7 @@ func NewConfig(configPath string) (*Config, error) {
 
 	// Start YAML decoding from file
 	if err := d.Decode(&config); err != nil {
+		logs.Logger.Error("NewConfig - Error Decode config: ", err)
 		return nil, err
 	}
 
@@ -111,6 +114,7 @@ func ParseFlags() (string, error) {
 
 	// Validate the path first
 	if err := ValidateConfigPath(configPath); err != nil {
+		logs.Logger.Error("NewConfig - Error validate the path first: ", err)
 		return "", err
 	}
 
@@ -125,11 +129,13 @@ func GetConfig() *Config {
 
 	cfgPath, err := ParseFlags()
 	if err != nil {
+		logs.Logger.Error("NewConfig - Error ParseFlags: ", err)
 		log.Fatal(err)
 	}
 	cfg, err := NewConfig(cfgPath)
 	if err != nil {
 		log.Fatal(err)
+		logs.Logger.Error("NewConfig - Error NewConfig: ", err)
 	}
 	return cfg
 }

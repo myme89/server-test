@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"server-test/cmd"
 )
@@ -9,7 +8,6 @@ import (
 var version string
 
 func main() {
-	fmt.Println(os.Args[1])
 	if len(os.Args) == 2 {
 
 		switch os.Args[1] {

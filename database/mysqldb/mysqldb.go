@@ -3,6 +3,7 @@ package mysqldb
 import (
 	"fmt"
 	"server-test/config"
+	"server-test/logs"
 	"server-test/model"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -22,6 +23,11 @@ func InitMySqlDb(config *config.Config) (*gorm.DB, error) {
 
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
+	if err != nil {
+		logs.Logger.Fatal("InitMySqlDb - Open Mysql error: ", err)
+		fmt.Println(err)
+	}
+
 	db.AutoMigrate(&model.DataPost{})
 
 	return db, err
@@ -30,7 +36,9 @@ func InitMySqlDb(config *config.Config) (*gorm.DB, error) {
 func PostData(Id int, Name, FullName string) error {
 	temp := model.DataPost{Id: Id, Name: Name, FullName: FullName}
 	err := db.Create(temp).Error
+
 	if err != nil {
+		logs.Logger.Error("PostData - Create table mysql error: ", err)
 		return err
 	}
 	return nil
@@ -41,6 +49,7 @@ func GetData(info *[]model.DataPost) error {
 	fmt.Println("db= ", info)
 	err := db.Find(info).Error
 	if err != nil {
+		logs.Logger.Error("PostData - Find data mysql error: ", err)
 		return err
 	}
 	return nil
