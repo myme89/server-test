@@ -79,8 +79,6 @@ func InitMongoDB(config *config.Config) *mongo.Client {
 	err = clientMongo.Ping(ctx, readpref.Primary())
 	if err != nil {
 		logs.Logger.Fatal("Cannot ping to mongo server :", err)
-	} else {
-		logs.Logger.Info(" Connect MongoDB success ")
 	}
 
 	return clientMongo
