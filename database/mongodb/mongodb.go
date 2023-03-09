@@ -17,13 +17,6 @@ import (
 
 var clientMongo *mongo.Client
 
-// var (
-// 	collectionDB string
-// 	host         string
-// 	port         string
-// 	dbName       string
-// )
-
 func contains(s []string, str string) bool {
 	for _, v := range s {
 		if v == str {
@@ -32,6 +25,25 @@ func contains(s []string, str string) bool {
 	}
 
 	return false
+}
+
+func createCollection(dbName string, collectionDB string) error {
+
+	collectionNames, err := clientMongo.Database(dbName).ListCollectionNames(
+		context.TODO(),
+		bson.D{})
+	if err != nil {
+		log.Error(err)
+	}
+
+	if !contains(collectionNames, collectionDB) {
+		err := clientMongo.Database((dbName)).CreateCollection(context.TODO(), collectionDB)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	return err
 }
 
 func InitMongoDB(config *config.Config) *mongo.Client {
@@ -52,6 +64,8 @@ func InitMongoDB(config *config.Config) *mongo.Client {
 
 	connStr := fmt.Sprintf("mongodb://%s:%s", host, port)
 	clientOpts := options.Client().ApplyURI(connStr).SetAuth(credential)
+	// clientOpts := options.Client().ApplyURI(connStr)
+
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -60,18 +74,9 @@ func InitMongoDB(config *config.Config) *mongo.Client {
 		log.Fatal("cannot connect to mongo db :", err)
 	}
 
-	collectionNames, err := clientMongo.Database(dbName).ListCollectionNames(
-		context.TODO(),
-		bson.D{})
+	err = createCollection(dbName, collectionDB)
 	if err != nil {
-		log.Error(err)
-	}
-
-	if !contains(collectionNames, collectionDB) {
-		err := clientMongo.Database((dbName)).CreateCollection(context.TODO(), collectionDB)
-		if err != nil {
-			log.Fatal(err)
-		}
+		log.Fatal("Cannot create collection DB", err)
 	}
 
 	err = clientMongo.Ping(ctx, readpref.Primary())
@@ -133,6 +138,26 @@ func AddManyInfo(config *config.Config, info []model.DataPost) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	_, err := collection.InsertMany(ctx, infos)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func AddManyInfoNotModel(config *config.Config, info []interface{}, nameCollection string) error {
+	// collectionDB := config.Sever.ServerMongoDB.DBcollection
+	dbName := config.Sever.ServerMongoDB.DBName
+
+	err := createCollection(dbName, nameCollection)
+	if err != nil {
+		log.Fatal("Cannot create collection DB", err)
+	}
+
+	collection := clientMongo.Database(dbName).Collection(nameCollection)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	_, err = collection.InsertMany(ctx, info)
 	if err != nil {
 		return err
 	}

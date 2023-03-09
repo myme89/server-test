@@ -41,7 +41,8 @@ message ExportDataRespone{
 }
 
 message ImportDataResquest{
-    string pathimport =  1;
+    bytes data = 1;
+    string name = 2;
 }
 
 message ImportDataRespone{
