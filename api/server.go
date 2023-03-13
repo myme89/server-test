@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"encoding/json"
 	"net"
 	"net/http"
 	"server-test/config"
@@ -65,7 +64,11 @@ func GatewaySever(serverAddr string, config *config.Config) {
 	mux := http.NewServeMux()
 	mux.Handle("/", grpcMux)
 
-	err = RegisterDeliverooHandlerServerCustom(ctx, grpcMux, srv)
+	// err = RegisterDeliverooHandlerServerCustom(ctx, grpcMux, srv)
+
+	grpcMux.HandlePath("POST", "/v1/uploadfile", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		srv.ImportDataWithHttp(w, req)
+	})
 
 	if err != nil {
 		log.Fatal("cannot register handler server custom", err)
@@ -85,34 +88,34 @@ func GatewaySever(serverAddr string, config *config.Config) {
 	}
 }
 
-func RegisterDeliverooHandlerServerCustom(ctx context.Context, mux *runtime.ServeMux, server pb.DeliverooServer) error {
+// func RegisterDeliverooHandlerServerCustom(ctx context.Context, mux *runtime.ServeMux, server pb.DeliverooServer) error {
 
-	mux.HandlePath("POST", "/v1/uploadfile", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		data_ex, err := ImportDataWithHttp(w, req)
+// 	mux.HandlePath("POST", "/v1/uploadfile", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+// 		data_ex, err := ImportDataWithHttp(w, req)
 
-		if err != nil {
-			log.Error("cannot hander data to file or form-data")
-		}
-		// fmt.Println("test_data", data_ex)
+// 		if err != nil {
+// 			log.Error("cannot hander data to file or form-data")
+// 		}
+// 		// fmt.Println("test_data", data_ex)
 
-		for i := 0; i < len(data_ex); i++ {
+// 		for i := 0; i < len(data_ex); i++ {
 
-			data := &pb.ImportDataResquest{
-				Data: data_ex[i].content,
-				Name: data_ex[i].name,
-			}
-			_, err := server.ImportData(ctx, data)
-			if err != nil {
-				log.Error("cannot import data to database")
-			}
-		}
-		msg := &pb.ImportDataRespone{
-			Notice: "Post Done",
-		}
+// 			data := &pb.ImportDataResquest{
+// 				Data: data_ex[i].content,
+// 				Name: data_ex[i].name,
+// 			}
+// 			_, err := server.ImportData(ctx, data)
+// 			if err != nil {
+// 				log.Error("cannot import data to database")
+// 			}
+// 		}
+// 		msg := &pb.ImportDataRespone{
+// 			Notice: "Post Done",
+// 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(msg)
-	})
+// 		w.Header().Set("Content-Type", "application/json")
+// 		json.NewEncoder(w).Encode(msg)
+// 	})
 
-	return nil
-}
+// 	return nil
+// }
