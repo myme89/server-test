@@ -414,7 +414,7 @@ type InfoFile struct {
 }
 
 // Handle data with form-data
-func ImportDataWithHttp(w http.ResponseWriter, r *http.Request) ([]InfoFile, error) {
+func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request) {
 
 	logs.Logger.Info("ImportDataWithHttp: API call ImportDataWithHttp")
 	file_ex, _, err := r.FormFile("file")
@@ -432,7 +432,7 @@ func ImportDataWithHttp(w http.ResponseWriter, r *http.Request) ([]InfoFile, err
 	if err != nil {
 		logs.Logger.Error("ImportDataWithHttp: Failed to open Excel file")
 		http.Error(w, "Failed to open Excel file", http.StatusBadRequest)
-		return nil, err
+		return
 	}
 
 	var info_file []InfoFile
@@ -443,7 +443,7 @@ func ImportDataWithHttp(w http.ResponseWriter, r *http.Request) ([]InfoFile, err
 		if err != nil {
 			logs.Logger.Error("ImportDataWithHttp: GetRows failed")
 			http.Error(w, "GetRows failed", http.StatusBadRequest)
-			return nil, err
+			return
 		}
 
 		var data []map[string]string
@@ -462,48 +462,74 @@ func ImportDataWithHttp(w http.ResponseWriter, r *http.Request) ([]InfoFile, err
 
 		if err != nil {
 			logs.Logger.Error("ImportDataWithHttp: Masrhal Data error:", err)
-			return nil, err
+			return
 		}
 
 		info_file = append(info_file, InfoFile{name: name, content: jsonData})
 	}
 
-	return info_file, nil
+	for i := 0; i < len(info_file); i++ {
+		// Create an empty map to unmarshal JSON into
+		var person []map[string]interface{}
+
+		// Unmarshal the JSON data into the map
+		err = json.Unmarshal([]byte(info_file[i].content), &person)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		infos := make([]interface{}, len(person))
+		for i, s := range person {
+			infos[i] = s
+		}
+
+		infos = infos[1:]
+
+		err = mongodb.AddManyInfoNotModel(server.config, infos, info_file[i].name)
+		if err != nil {
+			logs.Logger.Error("ImportDataWithHttp: Post Data to Mongo Database failed:", err)
+		}
+
+	}
+
+	noticeDb := "Post Done"
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(noticeDb)
 }
 
 // Version using GRPC
-func (server *Server) ImportData(ctx context.Context, res *pb.ImportDataResquest) (*pb.ImportDataRespone, error) {
+// func (server *Server) ImportData(ctx context.Context, res *pb.ImportDataResquest) (*pb.ImportDataRespone, error) {
 
-	logs.Logger.Info("ImportData: API call ImportData")
-	var noticeDb string
+// 	logs.Logger.Info("ImportData: API call ImportData")
+// 	var noticeDb string
 
-	data_ex := res.GetData()
-	name := res.GetName()
+// 	data_ex := res.GetData()
+// 	name := res.GetName()
 
-	// Create an empty map to unmarshal JSON into
-	var person []map[string]interface{}
+// 	// Create an empty map to unmarshal JSON into
+// 	var person []map[string]interface{}
 
-	// Unmarshal the JSON data into the map
-	err := json.Unmarshal([]byte(data_ex), &person)
-	if err != nil {
-		fmt.Println(err)
-	}
+// 	// Unmarshal the JSON data into the map
+// 	err := json.Unmarshal([]byte(data_ex), &person)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
 
-	infos := make([]interface{}, len(person))
-	for i, s := range person {
-		infos[i] = s
-	}
+// 	infos := make([]interface{}, len(person))
+// 	for i, s := range person {
+// 		infos[i] = s
+// 	}
 
-	infos = infos[1:]
+// 	infos = infos[1:]
 
-	err = mongodb.AddManyInfoNotModel(server.config, infos, name)
-	if err != nil {
-		return nil, status.Errorf(codes.Unimplemented, "Post Data to Mongo Database failed")
-	}
-	noticeDb = "Post Done"
+// 	err = mongodb.AddManyInfoNotModel(server.config, infos, name)
+// 	if err != nil {
+// 		return nil, status.Errorf(codes.Unimplemented, "Post Data to Mongo Database failed")
+// 	}
+// 	noticeDb = "Post Done"
 
-	rsp := &pb.ImportDataRespone{
-		Notice: noticeDb,
-	}
-	return rsp, nil
-}
+// 	rsp := &pb.ImportDataRespone{
+// 		Notice: noticeDb,
+// 	}
+// 	return rsp, nil
+// }
