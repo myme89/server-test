@@ -1,4 +1,4 @@
-# Monitor and write reports of wallets
+# Theo dõi và báo cáo hoạt động của ví
 
 Để  theo dõi và có dữ để làm báo cáo về hoạt động của ví => sử dụng hai hệ thống:
 
@@ -58,7 +58,7 @@
     - Theo dõi TPS của Nginx: TPS (Transactions Per Second) là một đơn vị đo lường hiệu suất thường được sử dụng để đo lường số lượng resquest được thực hiện trong một giây
         
         ![alt](img/image_nginx_2.png)
-- ***Note***: Hệ thống Grafana chỉ lưu dữ liệu trong vòng 48h
+- ***Note***: Hệ thống Grafana chỉ thống kê dữ liệu trong vòng 48h
 
 
 ## Hệ thống Graylog
