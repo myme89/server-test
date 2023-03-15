@@ -1,11 +1,9 @@
 package api
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"path/filepath"
 	"server-test/cache"
@@ -417,20 +415,35 @@ type InfoFile struct {
 func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request) {
 
 	logs.Logger.Info("ImportDataWithHttp: API call ImportDataWithHttp")
-	file_ex, _, err := r.FormFile("file")
+
+	file_ex, a, err := r.FormFile("file")
+
 	if err != nil {
 		logs.Logger.Error("ImportDataWithHttp: Failed to retrieve file from form data")
 		http.Error(w, "Failed to retrieve file from form data", http.StatusBadRequest)
+		return
 	}
 	defer file_ex.Close()
 
-	// fmt.Println("file", file)
+	if a.Header.Get("Content-Type") != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" {
+		logs.Logger.Error("ImportDataWithHttp: Format file error")
+		http.Error(w, "Format file error (xlsx)", http.StatusBadRequest)
+		return
+	}
 
-	content, err := ioutil.ReadAll(file_ex)
+	// if a.Size > 1024*1024 {
+	// 	logs.Logger.Error("ImportDataWithHttp: File too lagre")
+	// 	http.Error(w, "File too lagre (<=1 Mb)", http.StatusBadRequest)
+	// 	return
+	// }
 
-	xlsx, err := excelize.OpenReader(bytes.NewReader(content))
+	// content, err := ioutil.ReadAll(file_ex)
+
+	// xlsx, err := excelize.OpenReader(bytes.NewReader(content))
+	xlsx, err := excelize.OpenReader(file_ex)
+
 	if err != nil {
-		logs.Logger.Error("ImportDataWithHttp: Failed to open Excel file")
+		logs.Logger.Error("ImportDataWithHttp: Failed to open Excel file ", err)
 		http.Error(w, "Failed to open Excel file", http.StatusBadRequest)
 		return
 	}
