@@ -1,4 +1,4 @@
-# Theo dõi và báo cáo hoạt động của ví
+# Theo dõi và viết báo cáo hoạt động của ví
 
 Để  theo dõi và có dữ để làm báo cáo về hoạt động của ví => sử dụng hai hệ thống:
 
