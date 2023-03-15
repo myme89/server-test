@@ -58,6 +58,10 @@
     - Theo dõi TPS của Nginx: TPS (Transactions Per Second) là một đơn vị đo lường hiệu suất thường được sử dụng để đo lường số lượng resquest được thực hiện trong một giây
         
         ![alt](img/image_nginx_2.png)
+
+    - Theo dõi thời gian Upstream Response KEYMAN
+        ![alt](img/nginx_3.png)
+
 - ***Note***: Hệ thống Grafana chỉ thống kê dữ liệu trong vòng 48h
 
 
@@ -87,7 +91,7 @@
 ![alt](img/report.png)
 
 
-Dữ liệu trong báo cáo được lấy hàng ngày và theo tuần
+Dữ liệu trong báo cáo được lấy hàng ngày và theo tuần. Khi lấy dữ liệu chỉnh thời gian lấy trong 1 ngày.
 
 Chi tiết:
 
