@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 	"net/http"
+	"server-test/clients"
 	"server-test/config"
 	"server-test/pb"
 
@@ -19,6 +20,7 @@ type Server struct {
 	Addr string
 	// Handler http.Handler
 	config *config.Config
+	client clients.StorageClient
 }
 
 func GRPCSever(serverAddr string, config *config.Config) {

@@ -546,3 +546,14 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 // 	}
 // 	return rsp, nil
 // }
+
+func (server *Server) TestData1(ctx context.Context, res *pb.TestResquest) (*pb.TestRespone, error) {
+
+	temp := res.GetTestdata()
+
+	temp1, err := server.client.TestData(ctx, temp)
+
+	fmt.Println(err)
+
+	return &pb.TestRespone{Notice: temp1}, nil
+}

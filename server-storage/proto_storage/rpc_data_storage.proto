@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package pb_storage;
+
+// import "data.proto";
+
+option go_package = "server-test/server-storage/pb_storage";
+// option go_package = "server-test/pb";
+
+message DataInfoTestResquest{
+    string dataTest = 1;
+}
+
+message DataInfoTestRespone{
+    string  dataResp = 1;
+}
+

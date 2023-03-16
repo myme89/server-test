@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package pb_storage;
+
+
+option go_package = "server-test/server-storage/pb_storage";
+
+message DataInfo{
+    string name = 1;
+    string fullname = 2;
+}

@@ -48,3 +48,12 @@ message ImportDataResquest{
 message ImportDataRespone{
     string notice = 1;
 }
+
+
+message TestResquest{
+    string testdata = 1;
+}
+
+message TestRespone{
+    string notice = 1;
+}

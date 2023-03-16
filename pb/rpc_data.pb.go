@@ -512,6 +512,100 @@ func (x *ImportDataRespone) GetNotice() string {
 	return ""
 }
 
+type TestResquest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Testdata string `protobuf:"bytes,1,opt,name=testdata,proto3" json:"testdata,omitempty"`
+}
+
+func (x *TestResquest) Reset() {
+	*x = TestResquest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rpc_data_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *TestResquest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TestResquest) ProtoMessage() {}
+
+func (x *TestResquest) ProtoReflect() protoreflect.Message {
+	mi := &file_rpc_data_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TestResquest.ProtoReflect.Descriptor instead.
+func (*TestResquest) Descriptor() ([]byte, []int) {
+	return file_rpc_data_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *TestResquest) GetTestdata() string {
+	if x != nil {
+		return x.Testdata
+	}
+	return ""
+}
+
+type TestRespone struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Notice string `protobuf:"bytes,1,opt,name=notice,proto3" json:"notice,omitempty"`
+}
+
+func (x *TestRespone) Reset() {
+	*x = TestRespone{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rpc_data_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *TestRespone) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TestRespone) ProtoMessage() {}
+
+func (x *TestRespone) ProtoReflect() protoreflect.Message {
+	mi := &file_rpc_data_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TestRespone.ProtoReflect.Descriptor instead.
+func (*TestRespone) Descriptor() ([]byte, []int) {
+	return file_rpc_data_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *TestRespone) GetNotice() string {
+	if x != nil {
+		return x.Notice
+	}
+	return ""
+}
+
 var File_rpc_data_proto protoreflect.FileDescriptor
 
 var file_rpc_data_proto_rawDesc = []byte{
@@ -550,8 +644,14 @@ var file_rpc_data_proto_rawDesc = []byte{
 	0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x22, 0x2b, 0x0a, 0x11, 0x49, 0x6d, 0x70, 0x6f,
 	0x72, 0x74, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x65, 0x12, 0x16, 0x0a,
 	0x06, 0x6e, 0x6f, 0x74, 0x69, 0x63, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x6e,
-	0x6f, 0x74, 0x69, 0x63, 0x65, 0x42, 0x10, 0x5a, 0x0e, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2d,
-	0x74, 0x65, 0x73, 0x74, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6f, 0x74, 0x69, 0x63, 0x65, 0x22, 0x2a, 0x0a, 0x0c, 0x54, 0x65, 0x73, 0x74, 0x52, 0x65, 0x73,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1a, 0x0a, 0x08, 0x74, 0x65, 0x73, 0x74, 0x64, 0x61, 0x74,
+	0x61, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x74, 0x65, 0x73, 0x74, 0x64, 0x61, 0x74,
+	0x61, 0x22, 0x25, 0x0a, 0x0b, 0x54, 0x65, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x65,
+	0x12, 0x16, 0x0a, 0x06, 0x6e, 0x6f, 0x74, 0x69, 0x63, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x06, 0x6e, 0x6f, 0x74, 0x69, 0x63, 0x65, 0x42, 0x10, 0x5a, 0x0e, 0x73, 0x65, 0x72, 0x76,
+	0x65, 0x72, 0x2d, 0x74, 0x65, 0x73, 0x74, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x33,
 }
 
 var (
@@ -566,7 +666,7 @@ func file_rpc_data_proto_rawDescGZIP() []byte {
 	return file_rpc_data_proto_rawDescData
 }
 
-var file_rpc_data_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_rpc_data_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_rpc_data_proto_goTypes = []interface{}{
 	(*DataInfoResquest)(nil),   // 0: pb.DataInfoResquest
 	(*DataInfoRespone)(nil),    // 1: pb.DataInfoRespone
@@ -578,10 +678,12 @@ var file_rpc_data_proto_goTypes = []interface{}{
 	(*ExportDataRespone)(nil),  // 7: pb.ExportDataRespone
 	(*ImportDataResquest)(nil), // 8: pb.ImportDataResquest
 	(*ImportDataRespone)(nil),  // 9: pb.ImportDataRespone
-	(*DataInfo)(nil),           // 10: pb.DataInfo
+	(*TestResquest)(nil),       // 10: pb.TestResquest
+	(*TestRespone)(nil),        // 11: pb.TestRespone
+	(*DataInfo)(nil),           // 12: pb.DataInfo
 }
 var file_rpc_data_proto_depIdxs = []int32{
-	10, // 0: pb.DataInfoRespone.data:type_name -> pb.DataInfo
+	12, // 0: pb.DataInfoRespone.data:type_name -> pb.DataInfo
 	1,  // [1:1] is the sub-list for method output_type
 	1,  // [1:1] is the sub-list for method input_type
 	1,  // [1:1] is the sub-list for extension type_name
@@ -716,6 +818,30 @@ func file_rpc_data_proto_init() {
 				return nil
 			}
 		}
+		file_rpc_data_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*TestResquest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_rpc_data_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*TestRespone); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -723,7 +849,7 @@ func file_rpc_data_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_rpc_data_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
