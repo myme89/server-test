@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package pb_storage;
+
+import "rpc_data_processing.proto";
+import "data_processing.proto";
+
+option go_package = "server-test/server-process-data/pb_processing";
+
+
+service Processing {
+    rpc TestData2(DataInfoTestResquest1) returns (DataInfoTestRespone1) {
+    }
+} 

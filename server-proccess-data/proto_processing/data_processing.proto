@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package pb_storage;
+
+
+option go_package = "server-test/server-process-data/pb_processing";
+
+message DataInfo1{
+    string test = 1;
+}

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package pb_storage;
+
+option go_package = "server-test/server-process-data/pb_processing";
+
+message DataInfoTestResquest1{
+    string dataTest = 1;
+}
+
+message DataInfoTestRespone1{
+    string  dataResp = 1;
+}
+
