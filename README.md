@@ -44,7 +44,7 @@
 
     ## Setup a Github Host-self Runner with multiple Repository
 
-    ***NOTE:*** Tài khoản cá nhân github miễn phí không setup được, nâng cấp lên tài khoản doanh nghiệp sử dụng runner groups
+    ***NOTE:*** Tài khoản github cá nhân miễn phí không setup được, nâng cấp lên tài khoản doanh nghiệp sử dụng runner groups
     
     https://docs.github.com/en/actions/hosting-your-own-runners/managing-access-to-self-hosted-runners-using-groups
 
