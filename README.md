@@ -46,7 +46,7 @@
 
     ***NOTE:*** Tài khoản cá nhân github miễn phí không setup được, update lên tài khoản doanh nghiệp sử dụng Group Runners
     
-        https://docs.github.com/en/actions/hosting-your-own-runners/managing-access-to-self-hosted-runners-using-groups
+    https://docs.github.com/en/actions/hosting-your-own-runners/managing-access-to-self-hosted-runners-using-groups
 
     ## Setup a Repository with multiple Github Host-self Runner
 
