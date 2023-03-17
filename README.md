@@ -50,10 +50,9 @@
 
     ## Setup a Repository with multiple Github Host-self Runner
 
-    Tạo các runner trên các Repository theo các bước ***Steps to setup Github Host-self Runner** 
+    Tạo các runner trên repository theo các bước ***Steps to setup Github Host-self Runner** 
 
-    *   Nếu các runner cùng chạy trên hệ điều hành (khác hệ điều hành chưa test ) thì khi thực đến bước cấu hình: Chạy dòng lệnh và thực hiện lần lươt các bước đến bước điền tên label thì thêm label cho các runner (Nếu không thêm 
-        các ruuner sẽ mặc định 3 label là self-host, x64, linux)
+    *   Nếu các runner cùng chạy trên hệ điều hành (khác hệ điều hành chưa test ) thì khi thực đến bước cấu hình: Chạy dòng lệnh và thực hiện lần lươt các bước đến bước điền tên label thì thêm label cho các runner (Nếu không thêm các ruuner sẽ mặc định 3 label là self-host, x64, linux)
     
     * Sử dụng file .yml: Sử dụng các runner trong các jobs khác nhau (Không sử  dụng nhiều runner trong 1 jobs) Ví dụ:
             
