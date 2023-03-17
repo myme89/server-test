@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package pb_storage;
 
-// import "data.proto";
+import "data_storage.proto";
 
 option go_package = "server-test/server-storage/pb_storage";
 // option go_package = "server-test/pb";
@@ -14,4 +14,13 @@ message DataInfoTestResquest{
 message DataInfoTestRespone{
     string  dataResp = 1;
 }
+
+message FileInfoResquest{
+    FileInfo file = 1;
+}
+
+message FileInfoRespone{
+    string  link = 1;
+}
+
 

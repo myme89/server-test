@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StogareClient interface {
 	TestData(ctx context.Context, in *DataInfoTestResquest, opts ...grpc.CallOption) (*DataInfoTestRespone, error)
+	UploadFile(ctx context.Context, in *FileInfoResquest, opts ...grpc.CallOption) (*FileInfoRespone, error)
 }
 
 type stogareClient struct {
@@ -42,11 +43,21 @@ func (c *stogareClient) TestData(ctx context.Context, in *DataInfoTestResquest, 
 	return out, nil
 }
 
+func (c *stogareClient) UploadFile(ctx context.Context, in *FileInfoResquest, opts ...grpc.CallOption) (*FileInfoRespone, error) {
+	out := new(FileInfoRespone)
+	err := c.cc.Invoke(ctx, "/pb_storage.Stogare/UploadFile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StogareServer is the server API for Stogare service.
 // All implementations must embed UnimplementedStogareServer
 // for forward compatibility
 type StogareServer interface {
 	TestData(context.Context, *DataInfoTestResquest) (*DataInfoTestRespone, error)
+	UploadFile(context.Context, *FileInfoResquest) (*FileInfoRespone, error)
 	mustEmbedUnimplementedStogareServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedStogareServer struct {
 
 func (UnimplementedStogareServer) TestData(context.Context, *DataInfoTestResquest) (*DataInfoTestRespone, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TestData not implemented")
+}
+func (UnimplementedStogareServer) UploadFile(context.Context, *FileInfoResquest) (*FileInfoRespone, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
 }
 func (UnimplementedStogareServer) mustEmbedUnimplementedStogareServer() {}
 
@@ -88,6 +102,24 @@ func _Stogare_TestData_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Stogare_UploadFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FileInfoResquest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StogareServer).UploadFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb_storage.Stogare/UploadFile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StogareServer).UploadFile(ctx, req.(*FileInfoResquest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Stogare_ServiceDesc is the grpc.ServiceDesc for Stogare service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +130,10 @@ var Stogare_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TestData",
 			Handler:    _Stogare_TestData_Handler,
+		},
+		{
+			MethodName: "UploadFile",
+			Handler:    _Stogare_UploadFile_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

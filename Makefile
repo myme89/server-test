@@ -7,10 +7,10 @@
 #     	proto/*.proto
 
 
-# proto-storage:
-# 	protoc --proto_path=server-storage/proto_storage --go_out=server-storage/pb_storage --go_opt=paths=source_relative \
-#         --go-grpc_out=server-storage/pb_storage --go-grpc_opt=paths=source_relative \
-#     	server-storage/proto_storage/*.proto
+proto-storage:
+	protoc --proto_path=server-storage/proto_storage --go_out=server-storage/pb_storage --go_opt=paths=source_relative \
+        --go-grpc_out=server-storage/pb_storage --go-grpc_opt=paths=source_relative \
+    	server-storage/proto_storage/*.proto
 
 
 proto-process:

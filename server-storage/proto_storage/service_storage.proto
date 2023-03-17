@@ -3,12 +3,15 @@ syntax = "proto3";
 package pb_storage;
 
 import "rpc_data_storage.proto";
-import "data_storage.proto";
+// import "data_storage.proto";
 
 option go_package = "server-test/server-storage/pb_storage";
 
 
 service Stogare {
     rpc TestData(DataInfoTestResquest) returns (DataInfoTestRespone) {
+    }
+
+    rpc UploadFile(FileInfoResquest) returns (FileInfoRespone) {
     }
 } 
