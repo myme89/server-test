@@ -1,6 +1,6 @@
 # Setup Github Host-self Runner
 
-Steps to setup Github Host-self Runner
+## Steps to setup Github Host-self Runner
 
 
 1. On GitHub.com, navigate to the main page of the repository.
@@ -38,6 +38,39 @@ Steps to setup Github Host-self Runner
         √ Connected to GitHub
 
         2022-03-04 09:45:56Z: Listening for Jobs
+
+
+    ***NOTE:*** Để có thể tạo Github Host-self Runner thì cần được chủ sở hữu của repository cấp quyền truy cập vào repository nếu không phải là chủ sở hữu của repository.
+
+    ## Setup a Github Host-self Runner with multiple Repository
+
+    ***NOTE:*** Tài khoản cá nhân github miễn phí không setup được, update lên tài khoản doanh nghiệp sử dụng Group Runners
+    
+        https://docs.github.com/en/actions/hosting-your-own-runners/managing-access-to-self-hosted-runners-using-groups
+
+    ## Setup a Repository with multiple Github Host-self Runner
+
+    Tạo các runner trên các Repository theo các bước ***Steps to setup Github Host-self Runner** 
+
+    *   Nếu các runner cùng chạy trên hệ điều hành (khác hệ điều hành chưa test ) thì khi thực đến bước cấu hình: Chạy dòng lệnh và thực hiện lần lươt các bước đến bước điền tên label thì thêm label cho các runner (Nếu không thêm 
+        các ruuner sẽ mặc định 3 label là self-host, x64, linux)
+    
+    * Sử dụng file .yml: Sử dụng các runner trong các jobs khác nhau (Không sử  dụng nhiều runner trong 1 jobs) Ví dụ:
+            
+            jobs:
+
+                build:
+                    runs-on: [self-hosted, linux, test]
+                    - name: Echo message
+                    run: echo "Hello, World Trong  Nhat!"
+
+                test:
+                    runs-on: [self-hosted, linux, test2]
+                    steps:
+                    - name: Echo message
+                run: echo "Hello, World Trong  Nhat!"
+
+    ***Note:*** Trong ví dụ đã tạo ra 2 runner self-hosted vào đặt label là test và test2 và cấu hình chạy trên 2 job là build và test
 
 # .YML Template File For Github Action
 
