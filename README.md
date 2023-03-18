@@ -1,24 +1,65 @@
-# Setup Github Host-self Runner
+# Github Self-hosted Runners
 
-## Steps to setup Github Host-self Runner
+## Giới thiệu Self-hosted runners
+
+Self-hosted runner là một hệ thống mà bạn tự triển khai và quản lý để thực hiện các công việc từ Github Actions trên GitHub.
+
+Bạn có thể  thêm Self-hosted runners cho:
+* Repository:  Triển khai  dể xử lý công việc dành riêng cho một repository duy nhất.
+* Organization: Triển khai để xử lý công việc cho nhiều repository trong một organization.
+* Enterprise: Triển khai để chỉ định các organization trong một tài khoản  enterprise
 
 
-1. On GitHub.com, navigate to the main page of the repository.
-2. Under your repository name, click  **Settings**
-3. In the left sidebar, click  **Actions**, then click **Runners**.
-4. Click **New self-hosted runner**.
-5. Select the operating system image and architecture of your self-hosted runner machine.
-6. You will see instructions showing you how to download the runner application and install it on your self-hosted runner machine.
-   
-    Example: Setup Github Host-self Runner with Linux operating system and x64 architecture
+***Note:*** Một self-hosted runner sẽ được tự động xóa khỏi Github nếu nó không được kết nối với Github Action quá 14 ngày.
+
+## Các thuộc tính của Self-hosted runners
+
+* Name: Tên của runner, được sử dụng để định danh runner trên GitHub.
+
+* Labels: Nhãn được gán cho runner, được sử dụng để phân loại các runner trong repository.
+  
+
+* Version: Phiên bản của runner - thông tin hiện lên khi run Self-hosted runners trên termial
+  
+        Current runner version: '2.303.0'
+  
+* Status: Trạng thái hiện tại của runner, bao gồm cả trạng thái kết nối đến GitHub và trạng thái hoạt động của runner.
+  
+* Concurrent jobs: Số lượng job tối đa có thể được chạy trên runner cùng một lúc.
+  ***Note:*** Concurrent jobs phụ thuộc vào khả năng xử lý của máy chủ hoặc thiết bị chạy runner đó.
+
+    ![Alt](./img_doc/runner.png)
+
+    Ví dụ: Trên là 1 Self-hosted runners đã được tạo với các thông tin: 
+    *  Name:  Test-Server
+    *  Labels: self-hosted, Linux, X64
+    *  Status: Offline
+
+## Các bước để  triển khai một Github Host-self Runner cho một Repository
+
+1. Vào GitHub.com, chọn repository muốn triển khai
+2. Dưới tên của repository, chọn **Settings**
+      ![Alt](./img_doc/setting.png)
+3. Ở phía bên trái, chọn  **Actions** và chọn chọn tiếp **Runners**.
+      ![Alt](./img_doc/action.png)
+     
+4. Chọn **New self-hosted runner**.
+      ![Alt](./img_doc/new_runner.png)
+
+5. Chọn hệ điều hành và kiến trúc cho self-hosted runner.
+      ![Alt](./img_doc/select_os.png)
+
+6. Sau đó sẽ thấy hướng dẫn download và cài đặt self-hosted runner. Mở terminal và làm theo hướng dẫn.
+     
+    Ví dụ: Cài đặt Github Host-self Runner với hệ điều hành Linux and kiến trúc x64
 
         1. Download
             # Create a folder
                 $ mkdir actions-runner && cd actions-runner
-        
+          
             # Download the latest runner package
             $ curl -o actions-runner-linux-x64-2.302.1.tar.gz -L https://github.com/actions/runner/releases/download/v2.302.1/actions-runner-linux-x64-2.302.1.tar.gz
-        
+          
             # Optional: Validate the hash
                 $ echo "3d357d4da3449a3b2c644dee1cc245436c09b6e5ece3e26a05bb302501xxxx  actions-runner-linux-x64-2.302.1.tar.gz" | shasum -a 256 -c# Extract the installer
                 $ tar xzf ./actions-runner-linux-x64-2.302.1.tar.gz
@@ -26,50 +67,71 @@
         2. Configure
             # Create the runner and start the configuration experience
                 $ ./config.sh --url https://github.com/myme89/server-test --token ASDTKMQHWJOA4VZQPLBCJUDExxxxx
-            
+              
             # Last step, run it!
                 $ ./run.sh
 
             //Using your self-hosted runner
             # Use this YAML in your workflow file for each job
-             runs-on: self-hosted
-   7.Checking that your self-hosted runner was successfully added: when the runner application is connected to GitHub and ready to receive jobs, you will see the following message on the machine's terminal.
+               runs-on: self-hosted
 
-        √ Connected to GitHub
+7. Kiểm tra cài đặt self-hosted runner: Khi runner được kết nối với GitHub thành công và sẵn sàng thực hiện công việc thì sẽ thấy thông báo sau trên terminal vừa chạy ở bước 6.
+     
+          √ Connected to GitHub
 
-        2022-03-04 09:45:56Z: Listening for Jobs
+          2022-03-04 09:45:56Z: Listening for Jobs
+
+***Note:*** 
+* *Nếu repository tạo cá nhân thì chỉ có chủ sở hữu của repository mới có quyền triển khai self-hosted runner trên repository đó - Chỉ có chủ sở hữu của repository mới thực hiện được các bước nêu trên để tạo ra một self-hosted runner*
+* *Nếu repository tạo trong organizations thì cần:*
+  * *Được chủ sở hữu của organizations cấp quyền **maintain** hoặc **admin***
+  * *Thành viên của organizations đươc organizations cấp quyền **admin** cấp quyền **maintain** hoặc **admin***
+
+## Các bước để  triển khai một Github Host-self Runner cho một Organization
+
+1. Vào GitHub.com, vào **Organizations** và chọn Organizations muốn triển khai
+   
+2. Dưới tên của organizations, chọn **Settings**
+      ![Alt](./img_doc/org_seeting.png)
+3. Làm các bước tiếp theo tương tự như các bước 3, 4, 5, 6, 7 của ***Triển khai một Github Host-self Runner cho một Repository***
+   
+    ***Note:*** *Chỉ có chủ sở hữu của Organization hoặc các thành viên được cấp quyền chủ sở hữu mới có quyền triển khai self-hosted runner trên Organization đó - Chỉ có chủ sở hữu của Organization mới thực hiện được các bước nêu trên để tạo ra một self-hosted runner*
+
+## Các bước tạo một Organization trong tài khoản Github
+1. Chọn vào **Avatar** góc bên phải, sau đó chọn **Your organizations**.
+   
+      ![Alt](./img_doc/avatar.png)
+
+    ***Note:*** Nếu làm như trên mà không có thì chọn vào **Avatar** góc bên phải, sau đó chọn **Settings**. Phái bên trái chọn **Organizations**
+
+      ![Alt](./img_doc/left_org.png)
+
+2. Chọn **New organization**
+      ![Alt](./img_doc/new-org.png)
+3. Chọn loại organization muốn tạo.
+    ![Alt](./img_doc/type-org.png)
+   ***Note***: Chọn loại organization phù hợp với nhu cầu sử dụng thông tin tại https://github.com/organizations/plan
+   
+   Trong ví dụ ở đây, chọn **Create a free organization**
+4. Tạo thành công sẽ được như được như dưới đây:
+    ![Alt](./img_doc/org_comp.png)
+   
+
+## Các bước để  triển khai một Github Host-self Runner cho nhiều Repository
+
+Để  triển khai thành công một Github Host-self Runner cho nhiều Repository:
+1. Trong tài khoản github tạo một Organization các bước thực hiện như ở trên **Các bước tạo một Organization trong tài khoản Github**
+
+2. Tạo các Repository trong Organization vừa tạo
+
+3. Tạo Github Host-self Runner cho Organization theo ***Các bước để  triển khai một Github Host-self Runner cho một Organization***
+
+4. Khi triển khai thành công sẽ được như dưới đây:
+    ![Alt](./img_doc/runner_org.png)
+   
 
 
-    ***NOTE:*** Để có thể tạo Github Host-self Runner thì cần được chủ sở hữu của repository cấp quyền truy cập vào repository nếu không phải là chủ sở hữu của repository.
 
-    ## Setup a Github Host-self Runner with multiple Repository
-
-    ***NOTE:*** Tài khoản github cá nhân miễn phí không setup được, nâng cấp lên tài khoản doanh nghiệp sử dụng runner groups
-    
-    https://docs.github.com/en/actions/hosting-your-own-runners/managing-access-to-self-hosted-runners-using-groups
-
-    ## Setup a Repository with multiple Github Host-self Runner
-
-    Tạo các runner trên repository theo các bước **Steps to setup Github Host-self Runner**
-
-    *   Nếu các runner chaỵ trên cùng hệ điều hành (khác hệ điều hành chưa test ) thì khi thực đến bước cấu hình: Chạy dòng lệnh và thực hiện lần lươt các bước đến bước điền tên label thì thêm label cho các runner (Nếu không thêm các runner sẽ có 3 label mặc định là self-host, x64, linux - với hệ điều hành linux)
-    
-    * Sử dụng file .yml: Sử dụng các runner trong các jobs khác nhau (Không sử  dụng nhiều runner trong 1 jobs) Ví dụ:
-            
-            jobs:
-
-                build:
-                    runs-on: [self-hosted, linux, test]
-                    - name: Echo message
-                    run: echo "Hello, World Trong  Nhat!"
-
-                test:
-                    runs-on: [self-hosted, linux, test2]
-                    steps:
-                    - name: Echo message
-                run: echo "Hello, World Trong  Nhat!"
-
-    ***Note:*** Trong ví dụ đã tạo ra 2 runner self-hosted vào đặt label là test và test2 và cấu hình chạy trên 2 job là build và test
 
 # .YML Template File For Github Action
 
