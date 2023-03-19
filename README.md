@@ -24,6 +24,9 @@ Bạn có thể  thêm Self-hosted runners cho:
         Current runner version: '2.303.0'
   
 * Status: Trạng thái hiện tại của runner, bao gồm cả trạng thái kết nối đến GitHub và trạng thái hoạt động của runner.
+  * Idle: Runner được kết nối với GitHub và sẵn sàng thực hiện các công việc.
+  * Active: Runner hiện đang thực hiện một công việc.
+  * Offline: Runner không được kết nối với GitHub. Điều này có thể do đang ngoại tuyến, ruuner không chạy hoặc runner không thể giao tiếp với GitHub.
   
 * Concurrent jobs: Số lượng job tối đa có thể được chạy trên runner cùng một lúc.
   ***Note:*** Concurrent jobs phụ thuộc vào khả năng xử lý của máy chủ hoặc thiết bị chạy runner đó.
@@ -35,7 +38,7 @@ Bạn có thể  thêm Self-hosted runners cho:
     *  Labels: self-hosted, Linux, X64
     *  Status: Offline
 
-## Các bước để  triển khai một Github Host-self Runner cho một Repository
+## Các bước để  triển khai một Github Self-hosted Runner cho một Repository
 
 1. Vào GitHub.com, chọn repository muốn triển khai
 2. Dưới tên của repository, chọn **Settings**
@@ -51,7 +54,7 @@ Bạn có thể  thêm Self-hosted runners cho:
 
 6. Sau đó sẽ thấy hướng dẫn download và cài đặt self-hosted runner. Mở terminal và làm theo hướng dẫn.
      
-    Ví dụ: Cài đặt Github Host-self Runner với hệ điều hành Linux and kiến trúc x64
+    Ví dụ: Cài đặt Github Self-hosted Runner với hệ điều hành Linux and kiến trúc x64
 
         1. Download
             # Create a folder
@@ -87,13 +90,13 @@ Bạn có thể  thêm Self-hosted runners cho:
   * *Được chủ sở hữu của organizations cấp quyền **maintain** hoặc **admin***
   * *Thành viên của organizations đươc organizations cấp quyền **admin** cấp quyền **maintain** hoặc **admin***
 
-## Các bước để  triển khai một Github Host-self Runner cho một Organization
+## Các bước để  triển khai một Github Self-hosted Runner cho một Organization
 
 1. Vào GitHub.com, vào **Organizations** và chọn Organizations muốn triển khai
    
 2. Dưới tên của organizations, chọn **Settings**
       ![Alt](./img_doc/org_seeting.png)
-3. Làm các bước tiếp theo tương tự như các bước 3, 4, 5, 6, 7 của ***Triển khai một Github Host-self Runner cho một Repository***
+3. Làm các bước tiếp theo tương tự như các bước 3, 4, 5, 6, 7 của ***Triển khai một Github Self-hosted Runner cho một Repository***
    
     ***Note:*** *Chỉ có chủ sở hữu của Organization hoặc các thành viên được cấp quyền chủ sở hữu mới có quyền triển khai self-hosted runner trên Organization đó - Chỉ có chủ sở hữu của Organization mới thực hiện được các bước nêu trên để tạo ra một self-hosted runner*
 
@@ -117,19 +120,45 @@ Bạn có thể  thêm Self-hosted runners cho:
     ![Alt](./img_doc/org_comp.png)
    
 
-## Các bước để  triển khai một Github Host-self Runner cho nhiều Repository
+## Các bước để  triển khai một Github Self-hosted Runner cho nhiều Repository
 
-Để  triển khai thành công một Github Host-self Runner cho nhiều Repository:
+Để  triển khai thành công một Github Self-hosted Runner cho nhiều Repository:
 1. Trong tài khoản github tạo một Organization các bước thực hiện như ở trên **Các bước tạo một Organization trong tài khoản Github**
 
 2. Tạo các Repository trong Organization vừa tạo
 
-3. Tạo Github Host-self Runner cho Organization theo ***Các bước để  triển khai một Github Host-self Runner cho một Organization***
+3. Tạo Github Self-hosted Runner cho Organization theo ***Các bước để  triển khai một Github Self-hosted Runner cho một Organization***
 
 4. Khi triển khai thành công sẽ được như dưới đây:
     ![Alt](./img_doc/runner_org.png)
-   
 
+
+## Các bước để  triển khai nhiều Github Self-hosted Runner cho một Repository
+
+Để  triển khai thành công nhiều Github Self-hosted Runner cho một Repository:
+1. Chọn Repository muốn tạo
+
+2. Tạo các runners theo **Các bước để  triển khai một Github Self-hosted Runner cho một Repository** đến bước cấu hình run trên terminal -> Cấu hình tên **Lable** cho từng runner ngoài 3 **Label** mặc định
+   
+   ***Note:*** Ở mặc định, các Self-hosted Runner có 3 Label mặc định giống nhau được sử dụng trong **run-on** ở file .YML là:
+   * Self-hosted: Công việc thực hiện Github Self-hosted Runner
+   * Architecture, Operator System: Kiến trúc của Self-hosted Runner phụ thuộc lựa chọn kiến trúc và hệ điều hành mà người tạo chọn. Ví dụ khi người tạo chọn hệ điều hành Linux và kiến trúc X64 thì sẽ có 2 Label là X64 và Linux
+
+3. Sử dụng trong file .YML: Khi đã thêm **Label** cho từng runners ở bước 2 thì khi sử dụng trong file .YML mỗi runner sẽ chạy cho mỗi công việc khác nhau. Ví dụ: Tạo 2 runner trong 1 Repository với hệ điều hành Linux, kiến trúc x64 và đặt tên Label cho từng runner lần lượt là test và test2. Sau khi tạo ta sẽ dùng như sau trong file .YML:
+    
+        jobs:
+
+            build: //name jobs 1
+                runs-on: [self-hosted, linux, x64, test]
+                steps:
+                - name: Echo message
+                run: echo "Hello, World Trong  Nhat!"
+
+            test: //name jobs 2
+                runs-on: [self-hosted, linux, x64 test2]
+                steps:
+                - name: Echo message
+                run: echo "Hello, World Trong  Nhat!"
 
 
 
@@ -188,8 +217,13 @@ An explanation of the various parameters:
             pull_request:
 
                 branches: [master]
+    *Additional resources:*
+    * Event activity type: https://docs.github.com/en/actions/using-workflows/triggering-a-workflow
+    * Details each event type activity type: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
 
 * **jobs**: *Defines one or more jobs that make up the action.*
+  
+    *Additional resources:* https://docs.github.com/en/actions/using-jobs
     
 * **build**: *The name of the job.*
 
@@ -199,9 +233,11 @@ Can use the latest version of Ubuntu (GitHub-hosted runners)
 
         runs-on: ubuntu-latest
 
-Or Github Host-self Runner
+Or Github Self-hosted Runner
 
         runs-on: [self-hosted, linux]
+
+*Additional resources:* https://docs.github.com/en/actions/using-jobs/choosing-the-runner-for-a-job
 
 * **steps**: *The list of steps to execute in the job.*
 
