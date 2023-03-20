@@ -164,6 +164,8 @@ Bạn có thể  thêm Self-hosted runners cho:
 
 # .YML Template File For Github Action
 
+[YML Template File For Github Action](./template-github-action/template.yml)
+
 Here's a basic YAML template file for a GitHub Action:
 
         name: Template GitHub Action

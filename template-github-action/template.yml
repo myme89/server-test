@@ -1,0 +1,109 @@
+# The name of the workflow
+name: .YML File Template GitHub Actions
+# The name for workflow runs generated from the workflow,
+run-name: ${{ github.actor }} .YML File Template GitHub Actions
+# Specifies the events that will trigger your action.
+on:
+  # This event is triggered whenever code is pushed to a repository
+  # Using filters to target specific branches, tags or specific paths for push events
+
+  push:
+    # Running your workflow only when a push to specific branches occurs
+    branches:
+      - main
+    # Running your workflow only when a push of specific tags occurs
+    tags:
+      - v1.*
+    # Running your workflow only when a push affects specific files
+    paths:
+      - "**.js"
+
+  # This event is triggered when a pull request is opened or updated.
+  pull_request:
+    # Run a workflow when a pull request has been opened or reopened
+    types: [opened, reopened]
+    # Run  a workflow when a pull request that targets a branch
+    branches:
+      - "releases/**"
+    #Run a workflow when a pull request changes specific files
+    paths:
+      - "**.js"
+
+  # This event is triggered on a specified schedule.
+  schedule:
+    - cron: "30 5 * * 1,3" #Triggers the workflow every day at 5:30 and 17:30 UTC:
+
+  #  This event allows manual triggering of workflows.
+  workflow_dispatch:
+
+  # This event is triggered by custom events, which can be created using the GitHub API  when you want to trigger a workflow for activity that happens outside of GitHub.
+  repository_dispatch:
+    types: [on-demand-test]
+
+  # This event is triggered when an issue comment is created or updated.
+  issue_comment:
+    # Runs a workflow when an issue or pull request comment is created, edited, or deleted
+    types: [created, edited, deleted]
+
+  # This event is triggered when a pull request review is submitted.
+  pull_request_review: 
+    # Runs a workflow when a pull request review is submitted, edited, or dismissed
+    types: [submitted, edited, dismissed]
+  
+  # This event is triggered when a deployment is created
+  deployment: 
+
+  # This event is triggered when a new release is published.
+  release: 
+    types: [published]
+
+  # This event is triggered when the status of a Git commit changes.
+  status: 
+
+  # This event is triggered when  activity related to a check run occurs.
+  check_run: 
+    # Run a workflow when a check run has been rerequested, completed, created or requested_actiorerequested.
+    types: [created, rerequested, completed, requested_actiorerequested]
+
+  # This event is triggered when  activity related to a check run occurs.
+  check_suite:
+    # Run a workflow when a check suite has been completed
+    types: [completed]
+
+# Defines one or more jobs that make up the action.
+jobs:
+  # Name job 1
+  template-version-1: 
+
+    # Using conditions to control job execution
+    if: github.repository == 'repository/name-repository' #Only run job for specific repository
+
+    # Specifying an operating system
+    runs-on: ubuntu-latest
+
+    # Choosing runners in a group
+    # runs-on: 
+    #   group: ubuntu-runners
+
+    # The list of steps to execute in the job
+    steps:
+
+    - name: Checkout repository  # The name of the step. This is purely for informational purposes.
+      uses: actions/checkout@v3  # A pre-built action to use
+
+    - name: Setup Go 
+      uses: actions/setup-go@v3
+      with:
+          go-version: ^1.20 # Provides inputs to the action.
+
+    - name: Echo message
+      run: echo "Hello, World Trong  Nhat!" # The command to run in the step
+
+
+ # Name job 2
+  template-version-2:
+    # Requiring successful dependent jobs
+    needs: template-version-1
+    # Using labels for runner selection
+    runs-on: [self-hosted, linux, x64, version2 ]
+
