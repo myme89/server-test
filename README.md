@@ -29,6 +29,7 @@ Bạn có thể  thêm Self-hosted runners cho:
   * Offline: Runner không được kết nối với GitHub. Điều này có thể do đang ngoại tuyến, ruuner không chạy hoặc runner không thể giao tiếp với GitHub.
   
 * Concurrent jobs: Số lượng job tối đa có thể được chạy trên runner cùng một lúc.
+
   ***Note:*** Concurrent jobs phụ thuộc vào khả năng xử lý của máy chủ hoặc thiết bị chạy runner đó.
 
     ![Alt](./img_doc/runner.png)
@@ -146,10 +147,11 @@ Bạn có thể  thêm Self-hosted runners cho:
         runs-on: [self-hosted, linux]
 
         hoặc 
-        
+
         runs-on: 
             group: Group-runner
 
+***Note:*** Các runner khi tạo ra sẽ được thêm vào groups runner. Mỗi runner được tạo ra tại một chỉ chạy với 1 một công việc khi nào chạy xong mới chạy công việc tiếp theo. Vì vậy muốn chạy nhiều job song song của nhiều reposotory thì bao nhiều job cần bấy nhiêu runners 
 
 ## Các bước để  triển khai nhiều Github Self-hosted Runner cho một Repository
 
@@ -162,7 +164,9 @@ Bạn có thể  thêm Self-hosted runners cho:
    * Self-hosted: Công việc thực hiện Github Self-hosted Runner
    * Architecture, Operator System: Kiến trúc của Self-hosted Runner phụ thuộc lựa chọn kiến trúc và hệ điều hành mà người tạo chọn. Ví dụ khi người tạo chọn hệ điều hành Linux và kiến trúc X64 thì sẽ có 2 Label là X64 và Linux
 
-3. Sử dụng trong file .YML: Khi đã thêm **Label** cho từng runners ở bước 2 thì khi sử dụng trong file .YML mỗi runner sẽ chạy cho mỗi công việc khác nhau. Ví dụ: Tạo 2 runner trong 1 Repository với hệ điều hành Linux, kiến trúc x64 và đặt tên Label cho từng runner lần lượt là test và test2. Sau khi tạo ta sẽ dùng như sau trong file .YML:
+3. Sử dụng trong file .YML: Khi đã thêm **Label** cho từng runners ở bước 2 thì khi sử dụng trong file .YML mỗi runner sẽ chạy cho mỗi công việc khác nhau. 
+    
+    Ví dụ: Tạo 2 runner trong 1 Repository với hệ điều hành Linux, kiến trúc x64 và đặt tên Label cho từng runner lần lượt là test và test2. Sau khi tạo ta sẽ dùng như sau trong file .YML:
     
         jobs:
 
