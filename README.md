@@ -132,6 +132,24 @@ Bạn có thể  thêm Self-hosted runners cho:
 4. Khi triển khai thành công sẽ được như dưới đây:
     ![Alt](./img_doc/runner_org.png)
 
+5. Viết vào file YAML của mỗi repository
+    
+        runs-on: [Label runner của Organization]
+
+        hoặc
+
+        runs-on: 
+            group: Tên group runner của Organization
+
+    Ví dụ: 
+
+        runs-on: [self-hosted, linux]
+
+        hoặc 
+        
+        runs-on: 
+            group: Group-runner
+
 
 ## Các bước để  triển khai nhiều Github Self-hosted Runner cho một Repository
 
