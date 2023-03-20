@@ -88,7 +88,7 @@ Bạn có thể  thêm Self-hosted runners cho:
 * *Nếu repository tạo cá nhân thì chỉ có chủ sở hữu của repository mới có quyền triển khai self-hosted runner trên repository đó - Chỉ có chủ sở hữu của repository mới thực hiện được các bước nêu trên để tạo ra một self-hosted runner*
 * *Nếu repository tạo trong organizations thì cần:*
   * *Được chủ sở hữu của organizations cấp quyền **maintain** hoặc **admin***
-  * *Thành viên của organizations đươc organizations cấp quyền **admin** cấp quyền **maintain** hoặc **admin***
+  * *Được thành viên của organizations có quyền **admin** cấp quyền **maintain** hoặc **admin***
 
 ## Các bước để  triển khai một Github Self-hosted Runner cho một Organization
 
