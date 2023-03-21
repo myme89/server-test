@@ -2,7 +2,7 @@ package db
 
 import (
 	"log"
-	"server-test/config"
+	"server-test/server-database/config"
 	"testing"
 
 	"github.com/stretchr/testify/require"

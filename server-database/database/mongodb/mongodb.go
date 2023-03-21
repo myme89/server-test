@@ -3,11 +3,11 @@ package mongodb
 import (
 	"context"
 	"fmt"
-	"server-test/config"
-	"server-test/logs"
-	"server-test/model"
+	"server-test/server-database/config"
+	"server-test/server-database/model"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -31,13 +31,13 @@ func createCollection(dbName string, collectionDB string) error {
 		context.TODO(),
 		bson.D{})
 	if err != nil {
-		logs.Logger.Error("createCollection erro err: ", err)
+		log.Error("createCollection erro err: ", err)
 	}
 
 	if !contains(collectionNames, collectionDB) {
 		err := clientMongo.Database((dbName)).CreateCollection(context.TODO(), collectionDB)
 		if err != nil {
-			logs.Logger.Fatal("createCollection erro err: ", err)
+			log.Fatal("createCollection erro err: ", err)
 		}
 	}
 	return err
@@ -68,17 +68,22 @@ func InitMongoDB(config *config.Config) *mongo.Client {
 
 	clientMongo, err = mongo.Connect(ctx, clientOpts)
 	if err != nil {
-		logs.Logger.Fatal("cannot connect to mongo db :", err)
+		log.Fatal("cannot connect to mongo db :", err)
 	}
 
 	err = createCollection(dbName, collectionDB)
 	if err != nil {
-		logs.Logger.Fatal("Cannot create collection DB", err)
+		log.Fatal("Cannot create collection DB", err)
+	}
+
+	err = createCollection(dbName, "User")
+	if err != nil {
+		log.Fatal("Cannot create collection User DB", err)
 	}
 
 	err = clientMongo.Ping(ctx, readpref.Primary())
 	if err != nil {
-		logs.Logger.Fatal("Cannot ping to mongo server :", err)
+		log.Fatal("Cannot ping to mongo server :", err)
 	}
 
 	return clientMongo
@@ -96,7 +101,7 @@ func GetAllInfo(config *config.Config) ([]model.DataInfo, error) {
 
 	cursor, err := collection.Find(context.TODO(), queryString, option)
 	if err = cursor.All(context.TODO(), &arr); err != nil {
-		logs.Logger.Error("GetAllInfo error err: ", err)
+		log.Error("GetAllInfo error err: ", err)
 		return arr, err
 	}
 
@@ -118,7 +123,7 @@ func AddInfo(config *config.Config, id int, name, fullName string) error {
 	defer cancel()
 	_, err := collection.InsertOne(ctx, insert)
 	if err != nil {
-		logs.Logger.Error("AddInfo err = ", err)
+		log.Error("AddInfo err = ", err)
 		return err
 	}
 
@@ -140,7 +145,7 @@ func AddManyInfo(config *config.Config, info []model.DataPost) error {
 	defer cancel()
 	_, err := collection.InsertMany(ctx, infos)
 	if err != nil {
-		logs.Logger.Error("AddManyInfo error : ", err)
+		log.Error("AddManyInfo error : ", err)
 		return err
 	}
 
@@ -153,7 +158,7 @@ func AddManyInfoNotModel(config *config.Config, info []interface{}, nameCollecti
 
 	err := createCollection(dbName, nameCollection)
 	if err != nil {
-		logs.Logger.Fatal("Cannot create collection DB", err)
+		log.Fatal("Cannot create collection DB", err)
 	}
 
 	collection := clientMongo.Database(dbName).Collection(nameCollection)
@@ -162,8 +167,61 @@ func AddManyInfoNotModel(config *config.Config, info []interface{}, nameCollecti
 	defer cancel()
 	_, err = collection.InsertMany(ctx, info)
 	if err != nil {
-		logs.Logger.Error("AddManyInfoNotModel error: ", err)
+		log.Error("AddManyInfoNotModel error: ", err)
 		return err
 	}
+	return nil
+}
+
+// func AddUserInfoSignUp(userName, password, lastName, firstName, dbName, collectionDB string) error {
+
+// 	// collectionDB := config.Sever.ServerMongoDB.DBcollection
+// 	// dbName := config.Sever.ServerMongoDB.DBName
+// 	collection := clientMongo.Database(dbName).Collection(collectionDB)
+// 	fmt.Println("nhatnt check collection ", collection)
+
+// 	// insert := bson.D{
+// 	// 	{Key: "user_name", Value: userName},
+// 	// 	{Key: "full_name", Value: password},
+// 	// 	{Key: "last_name", Value: lastName},
+// 	// 	{Key: "first_name", Value: firstName},
+// 	// 	{Key: "full_name", Value: firstName + " " + lastName},
+// 	// }
+
+// 	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+// 	// defer cancel()
+// 	// _, err := collection.InsertOne(ctx, insert)
+// 	// if err != nil {
+// 	// 	log.Error("AddInfo err = ", err)
+// 	// 	return err
+// 	// }
+
+// 	return nil
+// }
+
+func AddUserInfoSignUp(config *config.Config, userName, password, lastName, firstName string) error {
+
+	// collectionDB := config.Sever.ServerMongoDB.DBcollection
+	collectionDB := "User"
+	dbName := config.Sever.ServerMongoDB.DBName
+	collection := clientMongo.Database(dbName).Collection(collectionDB)
+	fmt.Println("nhatnt check collection ", collection)
+
+	insert := bson.D{
+		{Key: "user_name", Value: userName},
+		{Key: "password", Value: password},
+		{Key: "last_name", Value: lastName},
+		{Key: "first_name", Value: firstName},
+		{Key: "full_name", Value: firstName + " " + lastName},
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	_, err := collection.InsertOne(ctx, insert)
+	if err != nil {
+		log.Error("AddInfo err = ", err)
+		return err
+	}
+
 	return nil
 }

@@ -2,7 +2,7 @@ package mongodb
 
 import (
 	"fmt"
-	"server-test/config"
+	"server-test/server-database/config"
 	"testing"
 
 	log "github.com/sirupsen/logrus"

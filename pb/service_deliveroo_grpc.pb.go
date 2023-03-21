@@ -28,6 +28,7 @@ type DeliverooClient interface {
 	ExportData(ctx context.Context, in *ExportDataResquest, opts ...grpc.CallOption) (*ExportDataRespone, error)
 	ImportData(ctx context.Context, in *ImportDataResquest, opts ...grpc.CallOption) (*ImportDataRespone, error)
 	TestData1(ctx context.Context, in *TestResquest, opts ...grpc.CallOption) (*TestRespone, error)
+	SignUp(ctx context.Context, in *SignUpResquest, opts ...grpc.CallOption) (*SignUpRespone, error)
 }
 
 type deliverooClient struct {
@@ -92,6 +93,15 @@ func (c *deliverooClient) TestData1(ctx context.Context, in *TestResquest, opts 
 	return out, nil
 }
 
+func (c *deliverooClient) SignUp(ctx context.Context, in *SignUpResquest, opts ...grpc.CallOption) (*SignUpRespone, error) {
+	out := new(SignUpRespone)
+	err := c.cc.Invoke(ctx, "/pb.Deliveroo/SignUp", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DeliverooServer is the server API for Deliveroo service.
 // All implementations must embed UnimplementedDeliverooServer
 // for forward compatibility
@@ -102,6 +112,7 @@ type DeliverooServer interface {
 	ExportData(context.Context, *ExportDataResquest) (*ExportDataRespone, error)
 	ImportData(context.Context, *ImportDataResquest) (*ImportDataRespone, error)
 	TestData1(context.Context, *TestResquest) (*TestRespone, error)
+	SignUp(context.Context, *SignUpResquest) (*SignUpRespone, error)
 	mustEmbedUnimplementedDeliverooServer()
 }
 
@@ -126,6 +137,9 @@ func (UnimplementedDeliverooServer) ImportData(context.Context, *ImportDataResqu
 }
 func (UnimplementedDeliverooServer) TestData1(context.Context, *TestResquest) (*TestRespone, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TestData1 not implemented")
+}
+func (UnimplementedDeliverooServer) SignUp(context.Context, *SignUpResquest) (*SignUpRespone, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignUp not implemented")
 }
 func (UnimplementedDeliverooServer) mustEmbedUnimplementedDeliverooServer() {}
 
@@ -248,6 +262,24 @@ func _Deliveroo_TestData1_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Deliveroo_SignUp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignUpResquest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeliverooServer).SignUp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Deliveroo/SignUp",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeliverooServer).SignUp(ctx, req.(*SignUpResquest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Deliveroo_ServiceDesc is the grpc.ServiceDesc for Deliveroo service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -278,6 +310,10 @@ var Deliveroo_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TestData1",
 			Handler:    _Deliveroo_TestData1_Handler,
+		},
+		{
+			MethodName: "SignUp",
+			Handler:    _Deliveroo_SignUp_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

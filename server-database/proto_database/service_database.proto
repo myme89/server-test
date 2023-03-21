@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package pb_database;
+
+import "rpc_data_database.proto";
+// import "data_database.proto";
+
+option go_package = "server-test/server-database/pb_database";
+
+
+service Database {
+    rpc SignUpAcc(SignUpAccResquest) returns (SignUpAccRespone) {
+    }
+} 

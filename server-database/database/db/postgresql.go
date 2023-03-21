@@ -3,9 +3,9 @@ package db
 import (
 	sql "database/sql"
 	"fmt"
-	"server-test/config"
 	"server-test/logs"
-	"server-test/model"
+	"server-test/server-database/config"
+	"server-test/server-database/model"
 	"sync"
 
 	_ "github.com/lib/pq"

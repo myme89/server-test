@@ -2,8 +2,8 @@ package mysqldb
 
 import (
 	"log"
-	"server-test/config"
-	"server-test/model"
+	"server-test/server-database/config"
+	"server-test/server-database/model"
 	"testing"
 
 	"github.com/stretchr/testify/require"

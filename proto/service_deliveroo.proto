@@ -48,4 +48,12 @@ service Deliveroo {
             body: "*"
         };
     }
+
+
+    rpc SignUp(SignUpResquest) returns (SignUpRespone) {
+        option (google.api.http) = {
+            post: "/v1/signup"
+            body: "*"
+        };
+    }
 } 

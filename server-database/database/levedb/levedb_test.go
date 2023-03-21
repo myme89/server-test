@@ -3,7 +3,7 @@ package levedb
 import (
 	"fmt"
 	"log"
-	"server-test/config"
+	"server-test/server-database/config"
 	"testing"
 )
 

@@ -2,9 +2,9 @@ package mysqldb
 
 import (
 	"fmt"
-	"server-test/config"
 	"server-test/logs"
-	"server-test/model"
+	"server-test/server-database/config"
+	"server-test/server-database/model"
 
 	_ "github.com/go-sql-driver/mysql"
 	"gorm.io/driver/mysql"

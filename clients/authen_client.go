@@ -3,9 +3,11 @@ package clients
 import (
 	"context"
 	"errors"
+	"fmt"
 	"server-test/server-authen/pb_authen"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/status"
 )
 
 type AuthenClient struct {
@@ -18,7 +20,7 @@ var (
 
 func prepareAuthenGrpcClient(ctx context.Context) error {
 
-	conn, err := grpc.DialContext(ctx, stogareGrpcServiceAddr, []grpc.DialOption{
+	conn, err := grpc.DialContext(ctx, authenGrpcServiceAddr, []grpc.DialOption{
 		grpc.WithInsecure(),
 		grpc.WithBlock()}...)
 
@@ -36,21 +38,23 @@ func prepareAuthenGrpcClient(ctx context.Context) error {
 	return nil
 }
 
-// func (stogareClient *StorageClient) TestData(ctx context.Context, data string) (string, error) {
+func (authenClient *AuthenClient) SignUp(ctx context.Context, userName, password, lastName, firstName string) (string, error) {
 
-// 	if err := prepareStorageGrpcClient(ctx); err != nil {
-// 		return "prepareStorageGrpcClient failed", err
-// 	}
+	fmt.Println("SignUp AuthenClient")
+	if err := prepareAuthenGrpcClient(ctx); err != nil {
+		return "prepareStorageGrpcClient failed", err
+	}
 
-// 	res, err := stogareGrpcServiceClient.TestData(ctx, &pb_storage.DataInfoTestResquest{DataTest: data})
-// 	if err != nil {
-// 		return "failed", errors.New(status.Convert(err).Message())
-// 	}
-// 	fmt.Println("TestData server Storage")
+	userInfo := &pb_authen.UserInfo{Username: userName, Password: password, Firstname: firstName, Lastname: lastName}
 
-// 	noti := res.DataResp + " Done"
-// 	return noti, nil
-// }
+	res, err := authenGrpcServiceClient.SignUp(ctx, &pb_authen.UserResquest{Userinfo: userInfo})
+	if err != nil {
+		return "failed", errors.New(status.Convert(err).Message())
+	}
+
+	// noti :=
+	return res.Noti, nil
+}
 
 // func (stogareClient *StorageClient) UploadFile(ctx context.Context, fileName, fileType string, content []byte) (string, error) {
 

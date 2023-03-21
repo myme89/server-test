@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"server-test/config"
 	"server-test/logs"
-	"server-test/model"
+	"server-test/server-database/config"
+	"server-test/server-database/model"
 
 	"github.com/syndtr/goleveldb/leveldb"
 )

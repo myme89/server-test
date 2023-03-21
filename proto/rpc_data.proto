@@ -57,3 +57,14 @@ message TestResquest{
 message TestRespone{
     string notice = 1;
 }
+
+message SignUpResquest{
+    // string username = 1;
+    // string password = 2;
+    // string lastname = 3;
+    // string fistname = 4; 
+}
+
+message SignUpRespone{
+    string token = 1;
+}

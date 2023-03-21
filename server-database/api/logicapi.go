@@ -2,28 +2,27 @@ package api
 
 import (
 	"context"
-	"fmt"
-	"server-test/server-authen/pb_authen"
+	"server-test/server-database/database/mongodb"
+	"server-test/server-database/pb_database"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
+	log "github.com/sirupsen/logrus"
 )
 
-func (serverAuthen *ServerAuthen) SignUp(ctx context.Context, res *pb_authen.UserResquest) (*pb_authen.UserRespone, error) {
+func (serverDatabase *ServerDatabase) SignUpAcc(ctx context.Context, res *pb_database.SignUpAccResquest) (*pb_database.SignUpAccRespone, error) {
 
-	infoSignUp := res.GetUserinfo()
+	infoUser := res.GetUserinfo()
 
-	fmt.Println("username: ", infoSignUp.Username)
-	fmt.Println("password: ", infoSignUp.Password)
-	fmt.Println("lastname: ", infoSignUp.Lastname)
-	fmt.Println("firstname: ", infoSignUp.Firstname)
-
-	resp, err := serverAuthen.clientDatabase.SignUpAcc(ctx, infoSignUp.Username, infoSignUp.Password, infoSignUp.Firstname, infoSignUp.Lastname)
+	err := mongodb.AddUserInfoSignUp(serverDatabase.config, infoUser.Username, infoUser.Password, infoUser.Lastname, infoUser.Firstname)
 
 	if err != nil {
-		fmt.Println(err)
+		log.Error("Create user sign up acc faied ", err)
+		return nil, status.Errorf(codes.Unimplemented, "get Data failed")
 	}
 
-	noti := &pb_authen.UserRespone{Noti: resp}
-
-	return noti, nil
+	return &pb_database.SignUpAccRespone{Noti: "Done"}, nil
 }
 
 // func (serverStorage *ServerStorage) UploadFile(ctx context.Context, res *pb_storage.FileInfoResquest) (*pb_storage.FileInfoRespone, error) {

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package pb_database;
+
+import "user_acc.proto";
+
+option go_package = "server-test/server-database/pb_database";
+// option go_package = "server-test/pb";
+
+message SignUpAccResquest{
+    UserAccInfo userinfo = 1;
+}
+
+message SignUpAccRespone{
+    string  noti = 1;
+}
+

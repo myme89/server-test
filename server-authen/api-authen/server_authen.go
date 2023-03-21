@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net"
+	"server-test/server-authen/clients"
 	"server-test/server-authen/pb_authen"
 
 	"google.golang.org/grpc"
@@ -16,7 +17,7 @@ type ServerAuthen struct {
 	Addr string
 	// Handler http.Handler
 	// config *config.Config
-	// client clients.StorageClient
+	clientDatabase clients.DatabaseClient
 }
 
 // func GRPCSever(serverAddr string, config *config.Config) {
@@ -24,6 +25,7 @@ func GRPCSeverAuthen(serverAddr string) {
 	srv := &ServerAuthen{
 		Addr: serverAddr,
 		// config: config,
+
 	}
 	log.Info("trongnhat")
 	grpcServer := grpc.NewServer()

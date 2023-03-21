@@ -16,3 +16,11 @@ type DataPost struct {
 	Name     string `gorm:"size:255;not null" json:"name"`
 	FullName string `gorm:"size:100;not null" json:"fullname"`
 }
+
+type UserInfo struct {
+	UserName string `json:"user_name"`
+	Password string `json:"password"`
+	LastName string `json:"last_name"`
+	FistName string `json:"fist_name"`
+	FullName string `json:"full_name"`
+}

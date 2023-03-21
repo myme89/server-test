@@ -24,6 +24,12 @@ proto-authen:
         --go-grpc_out=server-authen/pb_authen --go-grpc_opt=paths=source_relative \
     	server-authen/proto_authen/*.proto
 
+
+proto-database:
+	protoc --proto_path=server-database/proto_database --go_out=server-database/pb_database --go_opt=paths=source_relative \
+        --go-grpc_out=server-database/pb_database --go-grpc_opt=paths=source_relative \
+    	server-database/proto_database/*.proto
+
 # //Create table postgess
 # CREATE TABLE "data_test" (
 #   "id" INT  PRIMARY KEY,

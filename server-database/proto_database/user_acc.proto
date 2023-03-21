@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb_database;
+
+
+option go_package = "server-test/server-database/pb_database";
+
+
+message UserAccInfo {
+    string username = 1;
+    string password = 2;
+    string firstname = 3;
+    string lastname = 4;
+    string fullname = 5; 
+}

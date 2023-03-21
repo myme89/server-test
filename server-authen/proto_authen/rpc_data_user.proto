@@ -4,6 +4,7 @@ package pb_authen;
 
 import "user.proto";
 
+
 option go_package = "server-test/server-authen/pb_authen";
 // option go_package = "server-test/pb";
 
@@ -13,7 +14,7 @@ message UserResquest{
 }
 
 message UserRespone{
-    string token = 1;
+    string noti = 1;
 }
 
 

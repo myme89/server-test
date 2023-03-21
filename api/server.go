@@ -5,7 +5,6 @@ import (
 	"net"
 	"net/http"
 	"server-test/clients"
-	"server-test/config"
 	"server-test/pb"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -19,15 +18,16 @@ type Server struct {
 	pb.UnimplementedDeliverooServer
 	Addr string
 	// Handler http.Handler
-	config *config.Config
-	client clients.StorageClient
+	// config        *config.Config
+	clientStogare clients.StorageClient
+	clientAuthen  clients.AuthenClient
 }
 
-func GRPCSever(serverAddr string, config *config.Config) {
+func GRPCSever(serverAddr string) {
 
 	srv := &Server{
-		Addr:   serverAddr,
-		config: config,
+		Addr: serverAddr,
+		// config: config,
 	}
 
 	grpcServer := grpc.NewServer()
@@ -47,10 +47,10 @@ func GRPCSever(serverAddr string, config *config.Config) {
 	log.Info("Successfully connected")
 }
 
-func GatewaySever(serverAddr string, config *config.Config) {
+func GatewaySever(serverAddr string) {
+
 	srv := &Server{
-		Addr:   serverAddr,
-		config: config,
+		Addr: serverAddr,
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -68,9 +68,9 @@ func GatewaySever(serverAddr string, config *config.Config) {
 
 	// err = RegisterDeliverooHandlerServerCustom(ctx, grpcMux, srv)
 
-	grpcMux.HandlePath("POST", "/v1/uploadfile", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		srv.ImportDataWithHttp(w, req)
-	})
+	// grpcMux.HandlePath("POST", "/v1/uploadfile", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	// 	srv.ImportDataWithHttp(w, req)
+	// })
 
 	if err != nil {
 		log.Fatal("cannot register handler server custom", err)
