@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package pb_authen;
+
+
+option go_package = "server-test/server-authen/pb_authen";
+
+message UserInfo{
+    string username = 1;
+    string password = 2;
+    string firstname = 3;
+    string lastname = 4;
+}

@@ -19,6 +19,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/xuri/excelize/v2"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
@@ -106,6 +107,17 @@ func (server *Server) GetData(ctx context.Context, res *pb.DataInfoResquest) (*p
 func (server *Server) PostData(ctx context.Context, res *pb.DataPostResqest) (*pb.DataPostRespone, error) {
 
 	logs.Logger.Info("PostData - API call PostData ")
+
+	// header := metadata.New(map[string]string{"id": ""})
+	// this is the critical step that includes your headers
+
+	// ctx1 := metadata.NewIncomingContext(ctx, header)
+	md, ok := metadata.FromIncomingContext(ctx)
+
+	log.Info("nhatnt: ", md)
+
+	// log.Info("nhatnt: ", md["grpcgateway-id"])
+	log.Info("nhatntq: ", ok)
 
 	Id := int(res.GetId())
 	Name := res.GetName()

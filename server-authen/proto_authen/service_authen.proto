@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+
+
+package pb_authen;
+
+
+import "rpc_data_user.proto";
+// import "data_storage.proto";
+
+option go_package = "server-test/server-authen/pb_authen";
+
+
+service Authen {
+    rpc SignUp(UserResquest) returns (UserRespone) {
+    }
+} 

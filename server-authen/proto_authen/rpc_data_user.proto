@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package pb_authen;
+
+import "user.proto";
+
+option go_package = "server-test/server-authen/pb_authen";
+// option go_package = "server-test/pb";
+
+
+message UserResquest{
+    UserInfo userinfo = 1;
+}
+
+message UserRespone{
+    string token = 1;
+}
+
+

@@ -1,10 +1,10 @@
 
 # gen code from .proto
-# proto-sever:
-# 	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
-#         --go-grpc_out=pb --go-grpc_opt=paths=source_relative \
-# 		--grpc-gateway_out=pb --grpc-gateway_opt=paths=source_relative \
-#     	proto/*.proto
+proto-sever:
+	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
+        --go-grpc_out=pb --go-grpc_opt=paths=source_relative \
+		--grpc-gateway_out=pb --grpc-gateway_opt=paths=source_relative \
+    	proto/*.proto
 
 
 proto-storage:
@@ -18,6 +18,11 @@ proto-process:
         --go-grpc_out=server-proccess-data/pb_processing --go-grpc_opt=paths=source_relative \
     	server-proccess-data/proto_processing/*.proto
 
+
+proto-authen:
+	protoc --proto_path=server-authen/proto_authen --go_out=server-authen/pb_authen --go_opt=paths=source_relative \
+        --go-grpc_out=server-authen/pb_authen --go-grpc_opt=paths=source_relative \
+    	server-authen/proto_authen/*.proto
 
 # //Create table postgess
 # CREATE TABLE "data_test" (
