@@ -225,3 +225,59 @@ func AddUserInfoSignUp(config *config.Config, userName, password, lastName, firs
 
 	return nil
 }
+
+func FilterInfoUser(dbName string, collectionName string, userName string) ([]model.UserInfo, error) {
+
+	collection := clientMongo.Database(dbName).Collection(collectionName)
+
+	var arr []model.UserInfo
+
+	queryString := bson.D{{Key: "user_name", Value: userName}}
+	option := options.Find()
+	var err error
+
+	cursor, err := collection.Find(context.TODO(), queryString, option)
+
+	if err = cursor.All(context.Background(), &arr); err != nil {
+		return arr, err
+	}
+
+	fmt.Println("nhatnt", arr)
+	return arr, err
+}
+
+func GetHashPassword(config *config.Config, useName string) model.UserInfo {
+
+	collectionDB := "User"
+	dbName := config.Sever.ServerMongoDB.DBName
+
+	arr, _ := FilterInfoUser(dbName, collectionDB, useName)
+	var infoAcc model.UserInfo
+	fmt.Println(arr)
+	// var hashPassword, lastName, firstName string
+	if len(arr) > 0 {
+		// hashPassword = arr[0].Password
+		// lastName = arr[0].LastName
+		// firstName = arr[0].FistName
+
+		infoAcc = model.UserInfo{
+			Id:       arr[0].Id,
+			UserName: arr[0].UserName,
+			Password: arr[0].Password,
+			LastName: arr[0].LastName,
+			FistName: arr[0].FistName,
+		}
+	} else {
+		infoAcc = model.UserInfo{
+			Id:       "",
+			UserName: "",
+			Password: "",
+			LastName: "",
+			FistName: "",
+		}
+		log.Error("User don't exit in database")
+	}
+
+	return infoAcc
+
+}

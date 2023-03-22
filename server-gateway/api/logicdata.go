@@ -2,10 +2,17 @@ package api
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"server-test/logs"
 	"server-test/server-gateway/pb"
 
 	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 )
 
 // import (
@@ -416,108 +423,116 @@ import (
 // 	content []byte
 // }
 
-// // Handle data with form-data
-// func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request) {
+// Handle data with form-data
+func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request) {
 
-// 	logs.Logger.Info("ImportDataWithHttp: API call ImportDataWithHttp")
+	token := r.Header.Get("token")
 
-// 	file_ex, a, err := r.FormFile("file")
+	resp, err := server.clientAuthen.AuthenTokenClient(context.Background(), token)
 
-// 	if err != nil {
-// 		logs.Logger.Error("ImportDataWithHttp: Failed to retrieve file from form data")
-// 		http.Error(w, "Failed to retrieve file from form data", http.StatusBadRequest)
-// 		return
-// 	}
-// 	defer file_ex.Close()
+	if err != nil {
+		http.Error(w, "Authen token failed", http.StatusUnauthorized)
+	}
 
-// 	if a.Header.Get("Content-Type") != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" {
-// 		logs.Logger.Error("ImportDataWithHttp: Format file error")
-// 		http.Error(w, "Format file error (xlsx)", http.StatusBadRequest)
-// 		return
-// 	}
+	fmt.Println(resp.Iduser)
 
-// 	// if a.Size > 1024*1024 {
-// 	// 	logs.Logger.Error("ImportDataWithHttp: File too lagre")
-// 	// 	http.Error(w, "File too lagre (<=1 Mb)", http.StatusBadRequest)
-// 	// 	return
-// 	// }
+	file_ex, a, err := r.FormFile("file")
 
-// 	fmt.Println("Gateway server")
+	if err != nil {
+		logs.Logger.Error("ImportDataWithHttp: Failed to retrieve file from form data")
+		http.Error(w, "Failed to retrieve file from form data", http.StatusBadRequest)
+		return
+	}
+	defer file_ex.Close()
 
-// 	content, err := ioutil.ReadAll(file_ex)
+	if a.Header.Get("Content-Type") != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" {
+		logs.Logger.Error("ImportDataWithHttp: Format file error")
+		http.Error(w, "Format file error (xlsx)", http.StatusBadRequest)
+		return
+	}
 
-// 	notice, err := server.clientStogare.UploadFile(context.Background(), a.Filename, a.Header.Get("Content-Type"), content)
+	fmt.Println("Gateway server")
 
-// 	// xlsx, err := excelize.OpenReader(bytes.NewReader(content))
-// 	// xlsx, err := excelize.OpenReader(file_ex)
+	content, err := ioutil.ReadAll(file_ex)
 
-// 	// if err != nil {
-// 	// 	logs.Logger.Error("ImportDataWithHttp: Failed to open Excel file ", err)
-// 	// 	http.Error(w, "Failed to open Excel file", http.StatusBadRequest)
-// 	// 	return
-// 	// }
+	notice, err := server.clientStogare.UploadFile(context.Background(), a.Filename, a.Header.Get("Content-Type"), resp.Iduser, content)
 
-// 	// var info_file []InfoFile
-// 	// for _, name := range xlsx.GetSheetMap() {
-// 	// 	// fmt.Println(index, name)
-// 	// 	// nameSheet = append(nameSheet, name)
-// 	// 	dataRows, err := xlsx.GetRows(name)
-// 	// 	if err != nil {
-// 	// 		logs.Logger.Error("ImportDataWithHttp: GetRows failed")
-// 	// 		http.Error(w, "GetRows failed", http.StatusBadRequest)
-// 	// 		return
-// 	// 	}
+	// if a.Size > 1024*1024 {
+	// 	logs.Logger.Error("ImportDataWithHttp: File too lagre")
+	// 	http.Error(w, "File too lagre (<=1 Mb)", http.StatusBadRequest)
+	// 	return
+	// }
 
-// 	// 	var data []map[string]string
-// 	// 	for _, row := range dataRows {
-// 	// 		item := make(map[string]string)
-// 	// 		for i, colCell := range row {
-// 	// 			temp, _ := excelize.ColumnNumberToName(i + 1)
+	// xlsx, err := excelize.OpenReader(bytes.NewReader(content))
+	// xlsx, err := excelize.OpenReader(file_ex)
 
-// 	// 			temp1, _ := xlsx.GetCellValue(name, temp+"1")
+	// if err != nil {
+	// 	logs.Logger.Error("ImportDataWithHttp: Failed to open Excel file ", err)
+	// 	http.Error(w, "Failed to open Excel file", http.StatusBadRequest)
+	// 	return
+	// }
 
-// 	// 			item[temp1] = colCell
-// 	// 		}
-// 	// 		data = append(data, item)
-// 	// 	}
-// 	// 	jsonData, err := json.Marshal(data)
+	// var info_file []InfoFile
+	// for _, name := range xlsx.GetSheetMap() {
+	// 	// fmt.Println(index, name)
+	// 	// nameSheet = append(nameSheet, name)
+	// 	dataRows, err := xlsx.GetRows(name)
+	// 	if err != nil {
+	// 		logs.Logger.Error("ImportDataWithHttp: GetRows failed")
+	// 		http.Error(w, "GetRows failed", http.StatusBadRequest)
+	// 		return
+	// 	}
 
-// 	// 	if err != nil {
-// 	// 		logs.Logger.Error("ImportDataWithHttp: Masrhal Data error:", err)
-// 	// 		return
-// 	// 	}
+	// 	var data []map[string]string
+	// 	for _, row := range dataRows {
+	// 		item := make(map[string]string)
+	// 		for i, colCell := range row {
+	// 			temp, _ := excelize.ColumnNumberToName(i + 1)
 
-// 	// 	info_file = append(info_file, InfoFile{name: name, content: jsonData})
-// 	// }
+	// 			temp1, _ := xlsx.GetCellValue(name, temp+"1")
 
-// 	// for i := 0; i < len(info_file); i++ {
-// 	// 	// Create an empty map to unmarshal JSON into
-// 	// 	var person []map[string]interface{}
+	// 			item[temp1] = colCell
+	// 		}
+	// 		data = append(data, item)
+	// 	}
+	// 	jsonData, err := json.Marshal(data)
 
-// 	// 	// Unmarshal the JSON data into the map
-// 	// 	err = json.Unmarshal([]byte(info_file[i].content), &person)
-// 	// 	if err != nil {
-// 	// 		fmt.Println(err)
-// 	// 	}
+	// 	if err != nil {
+	// 		logs.Logger.Error("ImportDataWithHttp: Masrhal Data error:", err)
+	// 		return
+	// 	}
 
-// 	// 	infos := make([]interface{}, len(person))
-// 	// 	for i, s := range person {
-// 	// 		infos[i] = s
-// 	// 	}
+	// 	info_file = append(info_file, InfoFile{name: name, content: jsonData})
+	// }
 
-// 	// 	infos = infos[1:]
+	// for i := 0; i < len(info_file); i++ {
+	// 	// Create an empty map to unmarshal JSON into
+	// 	var person []map[string]interface{}
 
-// 	// 	err = mongodb.AddManyInfoNotModel(server.config, infos, info_file[i].name)
-// 	// 	if err != nil {
-// 	// 		logs.Logger.Error("ImportDataWithHttp: Post Data to Mongo Database failed:", err)
-// 	// 	}
+	// 	// Unmarshal the JSON data into the map
+	// 	err = json.Unmarshal([]byte(info_file[i].content), &person)
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
 
-// 	// }
+	// 	infos := make([]interface{}, len(person))
+	// 	for i, s := range person {
+	// 		infos[i] = s
+	// 	}
 
-// 	// noticeDb := "Post Done"
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.NewEncoder(w).Encode(notice)
-// }
+	// 	infos = infos[1:]
+
+	// 	err = mongodb.AddManyInfoNotModel(server.config, infos, info_file[i].name)
+	// 	if err != nil {
+	// 		logs.Logger.Error("ImportDataWithHttp: Post Data to Mongo Database failed:", err)
+	// 	}
+
+	// }
+
+	// noticeDb := "Post Done"
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(notice)
+}
 
 // // Version using GRPC
 // // func (server *Server) ImportData(ctx context.Context, res *pb.ImportDataResquest) (*pb.ImportDataRespone, error) {
@@ -582,4 +597,35 @@ func (server *Server) SignUp(ctx context.Context, res *pb.SignUpResquest) (*pb.S
 	log.Info("nhatnt: ", err)
 	log.Info("nhatntq: ", ok)
 	return &pb.SignUpRespone{Token: resp}, nil
+}
+
+func (server *Server) LogInAcc(ctx context.Context, res *pb.SignInResquest) (*pb.SignInRespone, error) {
+
+	md, ok := metadata.FromIncomingContext(ctx)
+	log.Info("nhatnt md: ", md)
+	temp := md["username"][0]
+
+	log.Info("nhatnt UserName: ", temp)
+
+	log.Info("nhatnt Password: ", md["password"])
+
+	resp, err := server.clientAuthen.SignInClient(ctx, md["username"][0], md["password"][0])
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "User or password is incorrect")
+	}
+
+	log.Info("nhatntq: ", ok)
+
+	infoUser := &pb.UserAccInfo{
+
+		Username: resp.Userinfo.Username,
+		Fullname: resp.Userinfo.Firstname + " " + resp.Userinfo.Lastname,
+	}
+
+	info := &pb.SignInRespone{
+		Useraccinfo: infoUser,
+		Token:       resp.Token,
+	}
+	return info, nil
 }

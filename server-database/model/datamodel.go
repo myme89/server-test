@@ -18,9 +18,10 @@ type DataPost struct {
 }
 
 type UserInfo struct {
-	UserName string `json:"user_name"`
-	Password string `json:"password"`
-	LastName string `json:"last_name"`
-	FistName string `json:"fist_name"`
-	FullName string `json:"full_name"`
+	Id       string `bson:"_id,omitempty" json:"_id"`
+	UserName string `bson:"user_name,omitempty" json:"user_name"`
+	Password string `bson:"password," json:"password"`
+	LastName string `bson:"last_name,omitempty" json:"last_name"`
+	FistName string `bson:"first_name,omitempty" json:"first_name"`
+	FullName string `bson:"full_name,omitempty" json:"full_name"`
 }

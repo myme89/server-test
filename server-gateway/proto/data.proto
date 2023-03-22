@@ -9,3 +9,8 @@ message DataInfo{
     string name = 1;
     string fullname = 2;
 }
+
+message UserAccInfo{
+    string username = 1;
+    string fullname = 2;
+}

@@ -59,12 +59,20 @@ message TestRespone{
 }
 
 message SignUpResquest{
-    // string username = 1;
-    // string password = 2;
-    // string lastname = 3;
-    // string fistname = 4; 
+ 
 }
 
 message SignUpRespone{
     string token = 1;
+}
+
+
+
+message SignInResquest{
+   
+}
+
+message SignInRespone{
+    UserAccInfo useraccinfo = 1;
+    string token = 2;
 }

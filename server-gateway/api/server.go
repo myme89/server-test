@@ -68,9 +68,9 @@ func GatewaySever(serverAddr string) {
 
 	// err = RegisterDeliverooHandlerServerCustom(ctx, grpcMux, srv)
 
-	// grpcMux.HandlePath("POST", "/v1/uploadfile", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-	// 	srv.ImportDataWithHttp(w, req)
-	// })
+	grpcMux.HandlePath("POST", "/v1/uploadfile", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		srv.ImportDataWithHttp(w, req)
+	})
 
 	if err != nil {
 		log.Fatal("cannot register handler server custom", err)

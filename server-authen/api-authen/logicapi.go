@@ -4,7 +4,35 @@ import (
 	"context"
 	"fmt"
 	"server-test/server-authen/pb_authen"
+	"time"
+
+	"github.com/golang-jwt/jwt"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
+	log "github.com/sirupsen/logrus"
 )
+
+func GetLoginToken(username string) (string, error) {
+	//generate JWT
+	var jwtString string
+	// mySigningKey, err := helpers.ConfigGet("jwt", "signkey")
+	// if err != nil {
+	// 	log.Error("cannot get sign key for JWT , set to default")
+	// 	mySigningKey = "weriwoxcr342f234"
+	// }
+
+	mySigningKey := "weriwoxcr342f234"
+	var mapClaim jwt.StandardClaims
+	mapClaim.ExpiresAt = time.Now().Add(time.Hour * 24 * 7).Unix()
+	mapClaim.Issuer = username
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, mapClaim)
+	jwtString, err := token.SignedString([]byte(mySigningKey))
+	if err != nil {
+		return "", err
+	}
+	return jwtString, nil
+}
 
 func (serverAuthen *ServerAuthen) SignUp(ctx context.Context, res *pb_authen.UserResquest) (*pb_authen.UserRespone, error) {
 
@@ -12,8 +40,8 @@ func (serverAuthen *ServerAuthen) SignUp(ctx context.Context, res *pb_authen.Use
 
 	fmt.Println("username: ", infoSignUp.Username)
 	fmt.Println("password: ", infoSignUp.Password)
-	fmt.Println("lastname: ", infoSignUp.Lastname)
-	fmt.Println("firstname: ", infoSignUp.Firstname)
+	// fmt.Println("lastname: ", infoSignUp.Lastname)
+	// fmt.Println("firstname: ", infoSignUp.Firstname)
 
 	resp, err := serverAuthen.clientDatabase.SignUpAcc(ctx, infoSignUp.Username, infoSignUp.Password, infoSignUp.Firstname, infoSignUp.Lastname)
 
@@ -26,57 +54,65 @@ func (serverAuthen *ServerAuthen) SignUp(ctx context.Context, res *pb_authen.Use
 	return noti, nil
 }
 
-// func (serverStorage *ServerStorage) UploadFile(ctx context.Context, res *pb_storage.FileInfoResquest) (*pb_storage.FileInfoRespone, error) {
+func (serverAuthen *ServerAuthen) SignIn(ctx context.Context, res *pb_authen.SignInResquest) (*pb_authen.SignInRespone, error) {
 
-// 	file := res.GetFile()
+	infoSignUp := res.GetUserinfo()
 
-// 	fmt.Println(file.Filename)
-// 	fmt.Println(file.Typefile)
-// 	// fmt.Println(file.Content)
+	resp, err := serverAuthen.clientDatabase.LoginAccClient(ctx, infoSignUp.Username, infoSignUp.Password)
 
-// 	// xlsx, err := excelize.OpenReader(bytes.NewReader(file.Content))
-// 	// xlsx, err := excelize.OpenReader(file_ex)
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "User or password is incorrect")
+	}
 
-// 	// if err != nil {
-// 	// 	logs.Logger.Error("ImportDataWithHttp: Failed to open Excel file ", err)
-// 	// 	return nil, status.Errorf(codes.Unimplemented, "Failed to open Excel file")
-// 	// }
+	token, err := GetLoginToken(resp.Userinfo.Id)
+	if err != nil {
+		fmt.Println(err)
+		return nil, status.Errorf(codes.Internal, "Create Token Failed")
+	}
 
-// 	// fmt.Println(xlsx)
+	userInfo := &pb_authen.UserInfo{
+		Username:  resp.Userinfo.Username,
+		Lastname:  resp.Userinfo.Lastname,
+		Firstname: resp.Userinfo.Firstname,
+	}
 
-// 	tempFile, err := ioutil.TempFile("./folder-storage-file", "upload-*.xlsx")
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	}
-// 	defer tempFile.Close()
+	noti := &pb_authen.SignInRespone{
+		Userinfo: userInfo,
+		Token:    token,
+	}
 
-// 	tempFile.Write(file.Content)
+	return noti, nil
+}
 
-// 	// os.Remove(tempFile.Name()) // Remove the temporary file when the program exits
+func (serverAuthen *ServerAuthen) AuthenToken(ctx context.Context, res *pb_authen.AuthenTokenResquest) (*pb_authen.AuthenTokenRespone, error) {
 
-// 	// Get the directory of the temporary file
-// 	dir := filepath.Dir(tempFile.Name())
-// 	fmt.Println("Directory of the temporary file:", dir)
+	token := res.GetToken()
 
-// 	folderName := "storage1"
+	tokenParse, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 
-// 	// Create the folder
-// 	err = os.Mkdir(folderName, 0755)
-// 	if err != nil {
-// 		panic(err)
-// 	}
+		signkey := "weriwoxcr342f234"
+		// if err != nil {
+		// 	log.Error("get signkey in JWT authen error ", err)
+		// 	return nil, status.Errorf(codes.Unimplemented, "Cannot parse token claim to map claim")
 
-// 	absPath, err := filepath.Abs(folderName)
-// 	if err != nil {
-// 		panic(err)
-// 	}
+		// }
+		return []byte(signkey), nil
+	})
+	var idUserName string
+	if err == nil && tokenParse.Valid {
+		userInfo, ok := tokenParse.Claims.(jwt.MapClaims)
+		if !ok {
+			log.Error("Cannot parse token claim to map claim ")
+			return nil, status.Errorf(codes.Unauthenticated, "Cannot parse token claim to map claim")
+		}
+		idUserName, ok = userInfo["iss"].(string)
+		if !ok {
+			log.Error("Cannot parse contact claim ")
+			return nil, status.Errorf(codes.Unauthenticated, "Cannot parse contact claim")
 
-// 	// Print the absolute path of the folder
-// 	fmt.Println("Folder created:", absPath)
+		}
+		log.Info(" Get request from user :", idUserName)
+	}
 
-// 	fmt.Println("Temporary file created:", tempFile.Name())
-// 	rsp := &pb_storage.FileInfoRespone{
-// 		Link: serverStorage.Addr + tempFile.Name(),
-// 	}
-// 	return rsp, nil
-// }
+	return &pb_authen.AuthenTokenRespone{Iduser: idUserName}, nil
+}

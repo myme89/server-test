@@ -12,4 +12,6 @@ message UserAccInfo {
     string firstname = 3;
     string lastname = 4;
     string fullname = 5; 
+    string id = 6;
 }
+

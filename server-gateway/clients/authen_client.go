@@ -56,6 +56,38 @@ func (authenClient *AuthenClient) SignUp(ctx context.Context, userName, password
 	return res.Noti, nil
 }
 
+func (authenClient *AuthenClient) SignInClient(ctx context.Context, userName, password string) (*pb_authen.SignInRespone, error) {
+
+	fmt.Println("SignIn AuthenClient")
+	if err := prepareAuthenGrpcClient(ctx); err != nil {
+		return nil, err
+	}
+
+	userInfo := &pb_authen.UserInfo{Username: userName, Password: password, Lastname: "", Firstname: ""}
+
+	resp, err := authenGrpcServiceClient.SignIn(ctx, &pb_authen.SignInResquest{Userinfo: userInfo})
+	if err != nil {
+		return nil, errors.New(status.Convert(err).Message())
+	}
+
+	return resp, nil
+}
+
+func (authenClient *AuthenClient) AuthenTokenClient(ctx context.Context, token string) (*pb_authen.AuthenTokenRespone, error) {
+
+	fmt.Println("AuthenTokenClient AuthenClient")
+	if err := prepareAuthenGrpcClient(ctx); err != nil {
+		return nil, err
+	}
+
+	resp, err := authenGrpcServiceClient.AuthenToken(ctx, &pb_authen.AuthenTokenResquest{Token: token})
+	if err != nil {
+		return nil, errors.New(status.Convert(err).Message())
+	}
+
+	return resp, nil
+}
+
 // func (stogareClient *StorageClient) UploadFile(ctx context.Context, fileName, fileType string, content []byte) (string, error) {
 
 // 	fmt.Println("stogareClient Upload file")

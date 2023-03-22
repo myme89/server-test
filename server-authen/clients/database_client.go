@@ -54,3 +54,21 @@ func (databaseClient *DatabaseClient) SignUpAcc(ctx context.Context, userName, p
 	noti := res.Noti
 	return noti, nil
 }
+
+func (databaseClient *DatabaseClient) LoginAccClient(ctx context.Context, userName, password string) (*pb_database.LoginAccRespone, error) {
+	if err := prepareDatabaseGrpcClient(ctx); err != nil {
+		return nil, err
+	}
+
+	userInfo := &pb_database.UserAccInfo{Username: userName, Password: password}
+
+	res, err := databaseGrpcServiceClient.LoginAcc(ctx, &pb_database.LoginAccResquest{Userinfo: userInfo})
+
+	if err != nil {
+		return nil, errors.New(status.Convert(err).Message())
+	}
+
+	fmt.Println("TestData server Storage", res)
+
+	return res, nil
+}

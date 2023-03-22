@@ -1,10 +1,12 @@
 
 # gen code from .proto
-proto-sever:
-	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
-        --go-grpc_out=pb --go-grpc_opt=paths=source_relative \
-		--grpc-gateway_out=pb --grpc-gateway_opt=paths=source_relative \
-    	proto/*.proto
+proto-gateway:
+	protoc --proto_path=server-gateway/proto --go_out=server-gateway/pb --go_opt=paths=source_relative \
+        --go-grpc_out=server-gateway/pb --go-grpc_opt=paths=source_relative \
+		--grpc-gateway_out=server-gateway/pb --grpc-gateway_opt=paths=source_relative \
+    	server-gateway/proto/*.proto
+
+
 
 
 proto-storage:

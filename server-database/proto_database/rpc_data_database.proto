@@ -15,3 +15,13 @@ message SignUpAccRespone{
     string  noti = 1;
 }
 
+
+message LoginAccResquest{
+    UserAccInfo userinfo = 1;
+}
+
+message LoginAccRespone{
+    UserAccInfo userinfo = 1;
+}
+
+

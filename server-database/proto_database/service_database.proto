@@ -11,4 +11,7 @@ option go_package = "server-test/server-database/pb_database";
 service Database {
     rpc SignUpAcc(SignUpAccResquest) returns (SignUpAccRespone) {
     }
+
+    rpc LoginAcc(LoginAccResquest) returns (LoginAccRespone) {
+    }
 } 

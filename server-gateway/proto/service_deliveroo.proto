@@ -56,4 +56,11 @@ service Deliveroo {
             body: "*"
         };
     }
+
+    rpc LogInAcc(SignInResquest) returns (SignInRespone) {
+        option (google.api.http) = {
+            post: "/v1/login"
+            body: "*"
+        };
+    }
 } 

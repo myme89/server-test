@@ -54,7 +54,7 @@ func (stogareClient *StorageClient) TestData(ctx context.Context, data string) (
 	return noti, nil
 }
 
-func (stogareClient *StorageClient) UploadFile(ctx context.Context, fileName, fileType string, content []byte) (string, error) {
+func (stogareClient *StorageClient) UploadFile(ctx context.Context, fileName, fileType, idUser string, content []byte) (string, error) {
 
 	fmt.Println("stogareClient Upload file")
 	if err := prepareStorageGrpcClient(ctx); err != nil {
@@ -63,7 +63,7 @@ func (stogareClient *StorageClient) UploadFile(ctx context.Context, fileName, fi
 
 	file := &pb_storage.FileInfo{Filename: fileName, Typefile: fileType, Content: content}
 
-	res, err := stogareGrpcServiceClient.UploadFile(ctx, &pb_storage.FileInfoResquest{File: file})
+	res, err := stogareGrpcServiceClient.UploadFile(ctx, &pb_storage.FileInfoResquest{File: file, Iduser: idUser})
 	if err != nil {
 		return "failed", errors.New(status.Convert(err).Message())
 	}

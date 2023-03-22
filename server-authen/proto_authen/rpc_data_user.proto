@@ -18,3 +18,21 @@ message UserRespone{
 }
 
 
+message SignInResquest{
+    UserInfo userinfo = 1;
+}
+
+message SignInRespone{
+    UserInfo userinfo = 1;
+    string token = 2;
+}
+
+
+message AuthenTokenResquest{
+   string token = 1;
+}
+
+message AuthenTokenRespone{
+    string iduser = 1;
+}
+

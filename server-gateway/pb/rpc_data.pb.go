@@ -691,6 +691,99 @@ func (x *SignUpRespone) GetToken() string {
 	return ""
 }
 
+type SignInResquest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *SignInResquest) Reset() {
+	*x = SignInResquest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rpc_data_proto_msgTypes[14]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SignInResquest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SignInResquest) ProtoMessage() {}
+
+func (x *SignInResquest) ProtoReflect() protoreflect.Message {
+	mi := &file_rpc_data_proto_msgTypes[14]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SignInResquest.ProtoReflect.Descriptor instead.
+func (*SignInResquest) Descriptor() ([]byte, []int) {
+	return file_rpc_data_proto_rawDescGZIP(), []int{14}
+}
+
+type SignInRespone struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Useraccinfo *UserAccInfo `protobuf:"bytes,1,opt,name=useraccinfo,proto3" json:"useraccinfo,omitempty"`
+	Token       string       `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
+}
+
+func (x *SignInRespone) Reset() {
+	*x = SignInRespone{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rpc_data_proto_msgTypes[15]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SignInRespone) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SignInRespone) ProtoMessage() {}
+
+func (x *SignInRespone) ProtoReflect() protoreflect.Message {
+	mi := &file_rpc_data_proto_msgTypes[15]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SignInRespone.ProtoReflect.Descriptor instead.
+func (*SignInRespone) Descriptor() ([]byte, []int) {
+	return file_rpc_data_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *SignInRespone) GetUseraccinfo() *UserAccInfo {
+	if x != nil {
+		return x.Useraccinfo
+	}
+	return nil
+}
+
+func (x *SignInRespone) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
 var File_rpc_data_proto protoreflect.FileDescriptor
 
 var file_rpc_data_proto_rawDesc = []byte{
@@ -738,8 +831,15 @@ var file_rpc_data_proto_rawDesc = []byte{
 	0x55, 0x70, 0x52, 0x65, 0x73, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x25, 0x0a, 0x0d, 0x53, 0x69,
 	0x67, 0x6e, 0x55, 0x70, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x74,
 	0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x6f, 0x6b, 0x65,
-	0x6e, 0x42, 0x10, 0x5a, 0x0e, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2d, 0x74, 0x65, 0x73, 0x74,
-	0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6e, 0x22, 0x10, 0x0a, 0x0e, 0x53, 0x69, 0x67, 0x6e, 0x49, 0x6e, 0x52, 0x65, 0x73, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x22, 0x58, 0x0a, 0x0d, 0x53, 0x69, 0x67, 0x6e, 0x49, 0x6e, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x65, 0x12, 0x31, 0x0a, 0x0b, 0x75, 0x73, 0x65, 0x72, 0x61, 0x63, 0x63, 0x69,
+	0x6e, 0x66, 0x6f, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x70, 0x62, 0x2e, 0x55,
+	0x73, 0x65, 0x72, 0x41, 0x63, 0x63, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x0b, 0x75, 0x73, 0x65, 0x72,
+	0x61, 0x63, 0x63, 0x69, 0x6e, 0x66, 0x6f, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x42, 0x10, 0x5a,
+	0x0e, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2d, 0x74, 0x65, 0x73, 0x74, 0x2f, 0x70, 0x62, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -754,7 +854,7 @@ func file_rpc_data_proto_rawDescGZIP() []byte {
 	return file_rpc_data_proto_rawDescData
 }
 
-var file_rpc_data_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_rpc_data_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_rpc_data_proto_goTypes = []interface{}{
 	(*DataInfoResquest)(nil),   // 0: pb.DataInfoResquest
 	(*DataInfoRespone)(nil),    // 1: pb.DataInfoRespone
@@ -770,15 +870,19 @@ var file_rpc_data_proto_goTypes = []interface{}{
 	(*TestRespone)(nil),        // 11: pb.TestRespone
 	(*SignUpResquest)(nil),     // 12: pb.SignUpResquest
 	(*SignUpRespone)(nil),      // 13: pb.SignUpRespone
-	(*DataInfo)(nil),           // 14: pb.DataInfo
+	(*SignInResquest)(nil),     // 14: pb.SignInResquest
+	(*SignInRespone)(nil),      // 15: pb.SignInRespone
+	(*DataInfo)(nil),           // 16: pb.DataInfo
+	(*UserAccInfo)(nil),        // 17: pb.UserAccInfo
 }
 var file_rpc_data_proto_depIdxs = []int32{
-	14, // 0: pb.DataInfoRespone.data:type_name -> pb.DataInfo
-	1,  // [1:1] is the sub-list for method output_type
-	1,  // [1:1] is the sub-list for method input_type
-	1,  // [1:1] is the sub-list for extension type_name
-	1,  // [1:1] is the sub-list for extension extendee
-	0,  // [0:1] is the sub-list for field type_name
+	16, // 0: pb.DataInfoRespone.data:type_name -> pb.DataInfo
+	17, // 1: pb.SignInRespone.useraccinfo:type_name -> pb.UserAccInfo
+	2,  // [2:2] is the sub-list for method output_type
+	2,  // [2:2] is the sub-list for method input_type
+	2,  // [2:2] is the sub-list for extension type_name
+	2,  // [2:2] is the sub-list for extension extendee
+	0,  // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_rpc_data_proto_init() }
@@ -956,6 +1060,30 @@ func file_rpc_data_proto_init() {
 				return nil
 			}
 		}
+		file_rpc_data_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SignInResquest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_rpc_data_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SignInRespone); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -963,7 +1091,7 @@ func file_rpc_data_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_rpc_data_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

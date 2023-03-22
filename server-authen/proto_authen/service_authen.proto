@@ -14,4 +14,10 @@ option go_package = "server-test/server-authen/pb_authen";
 service Authen {
     rpc SignUp(UserResquest) returns (UserRespone) {
     }
+
+    rpc SignIn(SignInResquest) returns (SignInRespone) {
+    }
+
+    rpc AuthenToken(AuthenTokenResquest) returns (AuthenTokenRespone) {
+    }
 } 
