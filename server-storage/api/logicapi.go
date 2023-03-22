@@ -37,6 +37,8 @@ func (serverStorage *ServerStorage) UploadFile(ctx context.Context, res *pb_stor
 	fmt.Println(file.Filename)
 	fmt.Println(file.Typefile)
 
+	IdUser := res.GetIduser()
+
 	// Create the folder
 	folderName := "storage"
 	// err := os.Mkdir(folderName, 0755)
@@ -71,7 +73,7 @@ func (serverStorage *ServerStorage) UploadFile(ctx context.Context, res *pb_stor
 	// Print the absolute path of the folder
 	fmt.Println("Folder created:", absPath)
 
-	fmt.Println("Temporary file created:", tempFile.Name())
+	fmt.Println("Temporary file created:", IdUser)
 	rsp := &pb_storage.FileInfoRespone{
 		Link: absPath + "/" + strings.Split(tempFile.Name(), "/")[2],
 	}

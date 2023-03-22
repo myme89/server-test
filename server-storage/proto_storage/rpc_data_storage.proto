@@ -17,6 +17,7 @@ message DataInfoTestRespone{
 
 message FileInfoResquest{
     FileInfo file = 1;
+    string iduser = 2;
 }
 
 message FileInfoRespone{
