@@ -11,5 +11,6 @@ message FileUploadInfo {
     float size       = 2;
 	string typefile  = 3;
 	string iduser    = 4;
+    string link      = 5;
 }
 

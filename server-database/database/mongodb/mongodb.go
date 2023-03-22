@@ -287,7 +287,7 @@ func GetHashPassword(config *config.Config, useName string) model.UserInfo {
 
 }
 
-func AddInfoUploadFile(config *config.Config, fileName, idUser, typeFile string, size float32) error {
+func AddInfoUploadFile(config *config.Config, fileName, idUser, typeFile, link string, size float32) error {
 
 	// collectionDB := config.Sever.ServerMongoDB.DBcollection
 	collectionDB := "FileUpload"
@@ -304,6 +304,7 @@ func AddInfoUploadFile(config *config.Config, fileName, idUser, typeFile string,
 		{Key: "size", Value: size},
 		{Key: "create_at", Value: now.Format("2006-01-02 15:04:05")},
 		{Key: "status", Value: "Complete Upload"},
+		{Key: "link", Value: link},
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

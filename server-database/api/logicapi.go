@@ -49,7 +49,7 @@ func (serverDatabase *ServerDatabase) LoginAcc(ctx context.Context, res *pb_data
 func (serverDatabase *ServerDatabase) UploadFile(ctx context.Context, res *pb_database.UploadFileResquest) (*pb_database.UploadFileRespone, error) {
 	infoUploadFile := res.GetFileUploadInfo()
 
-	err := mongodb.AddInfoUploadFile(serverDatabase.config, infoUploadFile.Filename, infoUploadFile.Iduser, infoUploadFile.Typefile, infoUploadFile.Size)
+	err := mongodb.AddInfoUploadFile(serverDatabase.config, infoUploadFile.Filename, infoUploadFile.Iduser, infoUploadFile.Typefile, infoUploadFile.Link, infoUploadFile.Size)
 	if err != nil {
 		log.Error("Upload info file  faied ", err)
 		return nil, status.Errorf(codes.Unimplemented, "Upload info file  faied")

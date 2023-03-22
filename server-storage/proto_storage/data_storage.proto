@@ -9,4 +9,5 @@ message FileInfo{
     string filename = 1;
     string typefile = 2;
     bytes content = 3;
+    int64 size = 4;
 }

@@ -33,4 +33,5 @@ type FileInfoUpload struct {
 	CreateAt string  `bson:"create_at,omitempty" json:"create_at"`
 	Status   string  `bson:"status,omitempty" json:"status"`
 	IdUser   string  `bson:"id_user,omitempty" json:"id_user"`
+	Link     string  `bson:"link,omitempty" json:"link"`
 }

@@ -38,12 +38,12 @@ func prepareDatabaseGrpcClient(ctx context.Context) error {
 	return nil
 }
 
-func (databaseClient *DatabaseClient) UploadFileClient(ctx context.Context, fileName, typeFile, idUser string, size float32) (string, error) {
+func (databaseClient *DatabaseClient) UploadFileClient(ctx context.Context, fileName, typeFile, idUser, link string, size float32) (string, error) {
 	if err := prepareDatabaseGrpcClient(ctx); err != nil {
 		return "prepareStorageGrpcClient failed", err
 	}
 
-	upLoadFileInfo := &pb_database.FileUploadInfo{Filename: fileName, Typefile: typeFile, Iduser: idUser, Size: size}
+	upLoadFileInfo := &pb_database.FileUploadInfo{Filename: fileName, Typefile: typeFile, Iduser: idUser, Size: size, Link: link}
 
 	res, err := databaseGrpcServiceClient.UploadFile(ctx, &pb_database.UploadFileResquest{FileUploadInfo: upLoadFileInfo})
 	if err != nil {

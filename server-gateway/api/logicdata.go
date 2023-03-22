@@ -455,7 +455,7 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 
 	content, err := ioutil.ReadAll(file_ex)
 
-	notice, err := server.clientStogare.UploadFile(context.Background(), a.Filename, a.Header.Get("Content-Type"), resp.Iduser, content)
+	notice, err := server.clientStogare.UploadFile(context.Background(), a.Filename, a.Header.Get("Content-Type"), resp.Iduser, a.Size, content)
 
 	// if a.Size > 1024*1024 {
 	// 	logs.Logger.Error("ImportDataWithHttp: File too lagre")
