@@ -25,3 +25,12 @@ type UserInfo struct {
 	FistName string `bson:"first_name,omitempty" json:"first_name"`
 	FullName string `bson:"full_name,omitempty" json:"full_name"`
 }
+
+type FileInfoUpload struct {
+	FileName string  `bson:"user_name,omitempty" json:"user_name"`
+	Size     float64 `bson:"size," json:"size"`
+	TypeFile string  `bson:"type_file,omitempty" json:"type_file"`
+	CreateAt string  `bson:"create_at,omitempty" json:"create_at"`
+	Status   string  `bson:"status,omitempty" json:"status"`
+	IdUser   string  `bson:"id_user,omitempty" json:"id_user"`
+}

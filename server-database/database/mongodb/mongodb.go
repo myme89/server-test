@@ -81,6 +81,11 @@ func InitMongoDB(config *config.Config) *mongo.Client {
 		log.Fatal("Cannot create collection User DB", err)
 	}
 
+	err = createCollection(dbName, "FileUpload")
+	if err != nil {
+		log.Fatal("Cannot create collection User DB", err)
+	}
+
 	err = clientMongo.Ping(ctx, readpref.Primary())
 	if err != nil {
 		log.Fatal("Cannot ping to mongo server :", err)
@@ -280,4 +285,34 @@ func GetHashPassword(config *config.Config, useName string) model.UserInfo {
 
 	return infoAcc
 
+}
+
+func AddInfoUploadFile(config *config.Config, fileName, idUser, typeFile string, size float32) error {
+
+	// collectionDB := config.Sever.ServerMongoDB.DBcollection
+	collectionDB := "FileUpload"
+	dbName := config.Sever.ServerMongoDB.DBName
+	collection := clientMongo.Database(dbName).Collection(collectionDB)
+	fmt.Println("nhatnt check collection ")
+
+	now := time.Now()
+
+	insert := bson.D{
+		{Key: "file_name", Value: fileName},
+		{Key: "id_user", Value: idUser},
+		{Key: "type_file", Value: typeFile},
+		{Key: "size", Value: size},
+		{Key: "create_at", Value: now.Format("2006-01-02 15:04:05")},
+		{Key: "status", Value: "Complete Upload"},
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	_, err := collection.InsertOne(ctx, insert)
+	if err != nil {
+		log.Error("AddInfo err = ", err)
+		return err
+	}
+
+	return nil
 }

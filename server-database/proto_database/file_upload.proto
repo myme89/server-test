@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb_database;
+
+
+option go_package = "server-test/server-database/pb_database";
+
+
+message FileUploadInfo {
+    string filename  = 1;
+    float size       = 2;
+	string typefile  = 3;
+	string iduser    = 4;
+}
+

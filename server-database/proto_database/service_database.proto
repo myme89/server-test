@@ -14,4 +14,7 @@ service Database {
 
     rpc LoginAcc(LoginAccResquest) returns (LoginAccRespone) {
     }
+
+    rpc UploadFile(UploadFileResquest) returns (UploadFileRespone) {
+    }
 } 

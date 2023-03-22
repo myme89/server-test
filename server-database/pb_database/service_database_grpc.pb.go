@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type DatabaseClient interface {
 	SignUpAcc(ctx context.Context, in *SignUpAccResquest, opts ...grpc.CallOption) (*SignUpAccRespone, error)
 	LoginAcc(ctx context.Context, in *LoginAccResquest, opts ...grpc.CallOption) (*LoginAccRespone, error)
+	UploadFile(ctx context.Context, in *UploadFileResquest, opts ...grpc.CallOption) (*UploadFileRespone, error)
 }
 
 type databaseClient struct {
@@ -52,12 +53,22 @@ func (c *databaseClient) LoginAcc(ctx context.Context, in *LoginAccResquest, opt
 	return out, nil
 }
 
+func (c *databaseClient) UploadFile(ctx context.Context, in *UploadFileResquest, opts ...grpc.CallOption) (*UploadFileRespone, error) {
+	out := new(UploadFileRespone)
+	err := c.cc.Invoke(ctx, "/pb_database.Database/UploadFile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DatabaseServer is the server API for Database service.
 // All implementations must embed UnimplementedDatabaseServer
 // for forward compatibility
 type DatabaseServer interface {
 	SignUpAcc(context.Context, *SignUpAccResquest) (*SignUpAccRespone, error)
 	LoginAcc(context.Context, *LoginAccResquest) (*LoginAccRespone, error)
+	UploadFile(context.Context, *UploadFileResquest) (*UploadFileRespone, error)
 	mustEmbedUnimplementedDatabaseServer()
 }
 
@@ -70,6 +81,9 @@ func (UnimplementedDatabaseServer) SignUpAcc(context.Context, *SignUpAccResquest
 }
 func (UnimplementedDatabaseServer) LoginAcc(context.Context, *LoginAccResquest) (*LoginAccRespone, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoginAcc not implemented")
+}
+func (UnimplementedDatabaseServer) UploadFile(context.Context, *UploadFileResquest) (*UploadFileRespone, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
 }
 func (UnimplementedDatabaseServer) mustEmbedUnimplementedDatabaseServer() {}
 
@@ -120,6 +134,24 @@ func _Database_LoginAcc_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Database_UploadFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadFileResquest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServer).UploadFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb_database.Database/UploadFile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServer).UploadFile(ctx, req.(*UploadFileResquest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Database_ServiceDesc is the grpc.ServiceDesc for Database service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +166,10 @@ var Database_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LoginAcc",
 			Handler:    _Database_LoginAcc_Handler,
+		},
+		{
+			MethodName: "UploadFile",
+			Handler:    _Database_UploadFile_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
