@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 	"server-test/server-storage/pb_storage"
+	"strings"
 )
 
 func (serverStorage *ServerStorage) TestData(ctx context.Context, res *pb_storage.DataInfoTestResquest) (*pb_storage.DataInfoTestRespone, error) {
@@ -36,19 +36,19 @@ func (serverStorage *ServerStorage) UploadFile(ctx context.Context, res *pb_stor
 
 	fmt.Println(file.Filename)
 	fmt.Println(file.Typefile)
-	// fmt.Println(file.Content)
 
-	// xlsx, err := excelize.OpenReader(bytes.NewReader(file.Content))
-	// xlsx, err := excelize.OpenReader(file_ex)
-
+	// Create the folder
+	folderName := "storage"
+	// err := os.Mkdir(folderName, 0755)
 	// if err != nil {
-	// 	logs.Logger.Error("ImportDataWithHttp: Failed to open Excel file ", err)
-	// 	return nil, status.Errorf(codes.Unimplemented, "Failed to open Excel file")
+	// 	panic(err)
 	// }
 
-	// fmt.Println(xlsx)
+	fileName := strings.Split(file.Filename, ".")
 
-	tempFile, err := ioutil.TempFile("./folder-storage-file", "upload-*.xlsx")
+	fmt.Println(fileName)
+	tempFile, err := ioutil.TempFile("./storage", fileName[0]+"-*.xlsx")
+
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -59,16 +59,9 @@ func (serverStorage *ServerStorage) UploadFile(ctx context.Context, res *pb_stor
 	// os.Remove(tempFile.Name()) // Remove the temporary file when the program exits
 
 	// Get the directory of the temporary file
-	dir := filepath.Dir(tempFile.Name())
-	fmt.Println("Directory of the temporary file:", dir)
+	// dir := filepath.Dir(tempFile.Name())
 
-	folderName := "storage1"
-
-	// Create the folder
-	err = os.Mkdir(folderName, 0755)
-	if err != nil {
-		panic(err)
-	}
+	fmt.Println("Directory of the temporary file:", strings.Split(tempFile.Name(), "/")[2])
 
 	absPath, err := filepath.Abs(folderName)
 	if err != nil {
@@ -80,7 +73,7 @@ func (serverStorage *ServerStorage) UploadFile(ctx context.Context, res *pb_stor
 
 	fmt.Println("Temporary file created:", tempFile.Name())
 	rsp := &pb_storage.FileInfoRespone{
-		Link: serverStorage.Addr + tempFile.Name(),
+		Link: absPath + "/" + strings.Split(tempFile.Name(), "/")[2],
 	}
 	return rsp, nil
 }
