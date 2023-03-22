@@ -18,7 +18,7 @@ func (serverStorage *ServerStorage) TestData(ctx context.Context, res *pb_storag
 	if res.GetDataTest() == "1" {
 		fmt.Println("TestData server Storage  1")
 		go func(temp1 string) {
-			temp2, err := serverStorage.client.TestData(context.Background(), temp1)
+			temp2, err := serverStorage.clientTest.TestData(context.Background(), temp1)
 
 			fmt.Println("TestData server Storage  1", temp2)
 			fmt.Println("TestData server Storage  1", err)
@@ -74,8 +74,12 @@ func (serverStorage *ServerStorage) UploadFile(ctx context.Context, res *pb_stor
 	fmt.Println("Folder created:", absPath)
 
 	fmt.Println("Temporary file created:", IdUser)
+
+	resp, err := serverStorage.clientDatabase.UploadFileClient(ctx, strings.Split(tempFile.Name(), "/")[2], "xlsx", IdUser, 10.32)
+
 	rsp := &pb_storage.FileInfoRespone{
-		Link: absPath + "/" + strings.Split(tempFile.Name(), "/")[2],
+		// Link: absPath + "/" + strings.Split(tempFile.Name(), "/")[2],
+		Link: resp,
 	}
 	return rsp, nil
 }

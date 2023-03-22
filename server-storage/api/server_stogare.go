@@ -17,7 +17,8 @@ type ServerStorage struct {
 	Addr string
 	// Handler http.Handler
 	// config *config.Config
-	client clients.StorageClient
+	clientTest     clients.StorageClient
+	clientDatabase clients.DatabaseClient
 }
 
 // func GRPCSever(serverAddr string, config *config.Config) {
