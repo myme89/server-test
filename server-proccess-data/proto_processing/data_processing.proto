@@ -8,3 +8,9 @@ option go_package = "server-test/server-process-data/pb_processing";
 message DataInfo1{
     string test = 1;
 }
+
+message FileInfoProcess {
+    string filename = 1;
+    bytes content = 2;
+    string idfile =3;
+}

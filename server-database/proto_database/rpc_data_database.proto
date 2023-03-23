@@ -51,3 +51,12 @@ message ExportTemplateFileRespone{
 }
 
 
+message ImportFileExcelResquest{
+    repeated ImportFileExcel importFileExcel = 1;
+}
+
+message ImportFileExcelRespone{
+    string noti = 1;
+}
+
+

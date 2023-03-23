@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"server-test/logs"
 	"server-test/server-gateway/pb"
 
 	log "github.com/sirupsen/logrus"
@@ -439,14 +438,14 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 	file_ex, a, err := r.FormFile("file")
 
 	if err != nil {
-		logs.Logger.Error("ImportDataWithHttp: Failed to retrieve file from form data")
+		// logs.Logger.Error("ImportDataWithHttp: Failed to retrieve file from form data")
 		http.Error(w, "Failed to retrieve file from form data", http.StatusBadRequest)
 		return
 	}
 	defer file_ex.Close()
 
 	if a.Header.Get("Content-Type") != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" {
-		logs.Logger.Error("ImportDataWithHttp: Format file error")
+		// logs.Logger.Error("ImportDataWithHttp: Format file error")
 		http.Error(w, "Format file error (xlsx)", http.StatusBadRequest)
 		return
 	}
@@ -455,7 +454,17 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 
 	content, err := ioutil.ReadAll(file_ex)
 
-	notice, err := server.clientStogare.UploadFile(context.Background(), a.Filename, a.Header.Get("Content-Type"), resp.Iduser, a.Size, content)
+	idFileUpLoad, err := server.clientStogare.UploadFile(context.Background(), a.Filename, a.Header.Get("Content-Type"), resp.Iduser, a.Size, content)
+
+	// fmt.Println("check id File: ", idFile)
+
+	go func(idFile, fileName string, fileContent []byte) {
+		_, err := server.clientProcessing.ProcessingDataClient(context.Background(), idFile, fileName, fileContent)
+
+		if err != nil {
+			http.Error(w, "ProcessingDataClient Failed ", http.StatusBadRequest)
+		}
+	}(idFileUpLoad, a.Filename, content)
 
 	// if a.Size > 1024*1024 {
 	// 	logs.Logger.Error("ImportDataWithHttp: File too lagre")
@@ -529,9 +538,9 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 
 	// }
 
-	// noticeDb := "Post Done"
+	noticeDb := "Upload Done"
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(notice)
+	json.NewEncoder(w).Encode(noticeDb)
 }
 
 // // Version using GRPC

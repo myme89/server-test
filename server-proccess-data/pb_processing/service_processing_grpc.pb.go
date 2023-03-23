@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProcessingClient interface {
 	TestData2(ctx context.Context, in *DataInfoTestResquest1, opts ...grpc.CallOption) (*DataInfoTestRespone1, error)
+	ProcessingFileExcel(ctx context.Context, in *ProcessingFileResquest, opts ...grpc.CallOption) (*ProcessingFileRespone, error)
 }
 
 type processingClient struct {
@@ -42,11 +43,21 @@ func (c *processingClient) TestData2(ctx context.Context, in *DataInfoTestResque
 	return out, nil
 }
 
+func (c *processingClient) ProcessingFileExcel(ctx context.Context, in *ProcessingFileResquest, opts ...grpc.CallOption) (*ProcessingFileRespone, error) {
+	out := new(ProcessingFileRespone)
+	err := c.cc.Invoke(ctx, "/pb_storage.Processing/ProcessingFileExcel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProcessingServer is the server API for Processing service.
 // All implementations must embed UnimplementedProcessingServer
 // for forward compatibility
 type ProcessingServer interface {
 	TestData2(context.Context, *DataInfoTestResquest1) (*DataInfoTestRespone1, error)
+	ProcessingFileExcel(context.Context, *ProcessingFileResquest) (*ProcessingFileRespone, error)
 	mustEmbedUnimplementedProcessingServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedProcessingServer struct {
 
 func (UnimplementedProcessingServer) TestData2(context.Context, *DataInfoTestResquest1) (*DataInfoTestRespone1, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TestData2 not implemented")
+}
+func (UnimplementedProcessingServer) ProcessingFileExcel(context.Context, *ProcessingFileResquest) (*ProcessingFileRespone, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessingFileExcel not implemented")
 }
 func (UnimplementedProcessingServer) mustEmbedUnimplementedProcessingServer() {}
 
@@ -88,6 +102,24 @@ func _Processing_TestData2_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Processing_ProcessingFileExcel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProcessingFileResquest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProcessingServer).ProcessingFileExcel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb_storage.Processing/ProcessingFileExcel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProcessingServer).ProcessingFileExcel(ctx, req.(*ProcessingFileResquest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Processing_ServiceDesc is the grpc.ServiceDesc for Processing service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +130,10 @@ var Processing_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TestData2",
 			Handler:    _Processing_TestData2_Handler,
+		},
+		{
+			MethodName: "ProcessingFileExcel",
+			Handler:    _Processing_ProcessingFileExcel_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

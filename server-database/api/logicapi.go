@@ -2,8 +2,10 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"path/filepath"
+	"server-test/logs"
 	"server-test/server-database/database/mongodb"
 	"server-test/server-database/model"
 	"server-test/server-database/pb_database"
@@ -58,7 +60,14 @@ func (serverDatabase *ServerDatabase) UploadFile(ctx context.Context, res *pb_da
 		return nil, status.Errorf(codes.Unimplemented, "Upload info file  faied")
 	}
 
-	return &pb_database.UploadFileRespone{Noti: "Done"}, nil
+	idFile, err := mongodb.FilterIdFile(serverDatabase.config, infoUploadFile.Filename)
+
+	if err != nil {
+		log.Error("Upload info file  faied ", err)
+		return nil, status.Errorf(codes.Unimplemented, "Get ID file faied")
+	}
+
+	return &pb_database.UploadFileRespone{Noti: idFile}, nil
 }
 
 func (serverDatabase *ServerDatabase) GetListUploadFile(ctx context.Context, res *pb_database.GetListFileResquest) (*pb_database.GetListFileRespone, error) {
@@ -150,4 +159,36 @@ func (serverDatabase *ServerDatabase) ExportTemplateFile(ctx context.Context, re
 	}
 	return rsp, nil
 	// return nil, status.Errorf(codes.Unimplemented, "get list file failed")
+}
+
+func (serverDatabase *ServerDatabase) ImportFileExcel(ctx context.Context, res *pb_database.ImportFileExcelResquest) (*pb_database.ImportFileExcelRespone, error) {
+
+	infoFileEx := res.GetImportFileExcel()
+
+	for i := 0; i < len(infoFileEx); i++ {
+		// Create an empty map to unmarshal JSON into
+		var person []map[string]interface{}
+
+		// Unmarshal the JSON data into the map
+		err := json.Unmarshal([]byte(infoFileEx[i].Content), &person)
+		if err != nil {
+			fmt.Println(err)
+			return &pb_database.ImportFileExcelRespone{Noti: "Proccesing Failed"}, nil
+		}
+
+		infos := make([]interface{}, len(person))
+		for i, s := range person {
+			infos[i] = s
+		}
+
+		infos = infos[1:]
+
+		err = mongodb.AddManyInfoNotModel(serverDatabase.config, infos, infoFileEx[i].Filename)
+		if err != nil {
+			logs.Logger.Error(" Post Data to Mongo Database failed:", err)
+			return &pb_database.ImportFileExcelRespone{Noti: "Proccesing Failed"}, nil
+		}
+
+	}
+	return &pb_database.ImportFileExcelRespone{Noti: "Proccesing Done"}, nil
 }

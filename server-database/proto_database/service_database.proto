@@ -23,4 +23,7 @@ service Database {
 
     rpc ExportTemplateFile(ExportTemplateFileResquest) returns (ExportTemplateFileRespone) {
     }
+
+    rpc ImportFileExcel(ImportFileExcelResquest) returns (ImportFileExcelRespone) {
+    }
 } 

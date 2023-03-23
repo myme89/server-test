@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package pb_storage;
 
+import "data_processing.proto";
+
 option go_package = "server-test/server-process-data/pb_processing";
 
 message DataInfoTestResquest1{
@@ -12,3 +14,12 @@ message DataInfoTestRespone1{
     string  dataResp = 1;
 }
 
+
+
+message ProcessingFileResquest{
+    FileInfoProcess fileinfoprocess = 1;
+}
+
+message ProcessingFileRespone{
+    string noti = 1;
+}

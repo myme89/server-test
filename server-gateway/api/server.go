@@ -19,9 +19,10 @@ type Server struct {
 	Addr string
 	// Handler http.Handler
 	// config        *config.Config
-	clientStogare  clients.StorageClient
-	clientAuthen   clients.AuthenClient
-	clientDatabase clients.DatabaseClient
+	clientStogare    clients.StorageClient
+	clientAuthen     clients.AuthenClient
+	clientDatabase   clients.DatabaseClient
+	clientProcessing clients.ProcessingClient
 }
 
 func GRPCSever(serverAddr string) {

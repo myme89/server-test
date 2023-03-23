@@ -15,3 +15,8 @@ message FileUploadInfo {
     string createat  = 6;
 }
 
+
+message ImportFileExcel {
+    string filename = 1;
+    bytes content = 2 ;
+}

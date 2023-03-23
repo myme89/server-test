@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net"
+	"server-test/server-proccess-data/clients"
 	"server-test/server-proccess-data/pb_processing"
 
 	"google.golang.org/grpc"
@@ -16,10 +17,11 @@ type ServerProcessing struct {
 	Addr string
 	// Handler http.Handler
 	// config *config.Config
+	clientDatabase clients.DatabaseClient
 }
 
 // func GRPCSever(serverAddr string, config *config.Config) {
-func GRPCSeverStorage(serverAddr string) {
+func GRPCSeverProcessing(serverAddr string) {
 	srv := &ServerProcessing{
 		Addr: serverAddr,
 		// config: config,

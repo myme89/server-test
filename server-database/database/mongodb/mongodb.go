@@ -256,6 +256,32 @@ func FilterInfoUser(dbName string, collectionName string, userName string) ([]mo
 	return arr, err
 }
 
+func FilterIdFile(config *config.Config, fileName string) (string, error) {
+
+	collectionDB := "FileUpload"
+	dbName := config.Sever.ServerMongoDB.DBName
+	collection := clientMongo.Database(dbName).Collection(collectionDB)
+
+	var arr []model.FileInfoUpload
+
+	queryString := bson.D{{Key: "file_name", Value: fileName}}
+	option := options.Find()
+	var err error
+
+	cursor, err := collection.Find(context.TODO(), queryString, option)
+
+	if err = cursor.All(context.Background(), &arr); err != nil {
+		if len(arr) > 0 {
+			return arr[0].Id, err
+		} else {
+			arr[0].Id = ""
+			return arr[0].Id, err
+		}
+
+	}
+	return arr[0].Id, err
+}
+
 func GetHashPassword(config *config.Config, useName string) model.UserInfo {
 
 	collectionDB := "User"

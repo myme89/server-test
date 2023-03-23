@@ -27,6 +27,7 @@ type DatabaseClient interface {
 	UploadFile(ctx context.Context, in *UploadFileResquest, opts ...grpc.CallOption) (*UploadFileRespone, error)
 	GetListUploadFile(ctx context.Context, in *GetListFileResquest, opts ...grpc.CallOption) (*GetListFileRespone, error)
 	ExportTemplateFile(ctx context.Context, in *ExportTemplateFileResquest, opts ...grpc.CallOption) (*ExportTemplateFileRespone, error)
+	ImportFileExcel(ctx context.Context, in *ImportFileExcelResquest, opts ...grpc.CallOption) (*ImportFileExcelRespone, error)
 }
 
 type databaseClient struct {
@@ -82,6 +83,15 @@ func (c *databaseClient) ExportTemplateFile(ctx context.Context, in *ExportTempl
 	return out, nil
 }
 
+func (c *databaseClient) ImportFileExcel(ctx context.Context, in *ImportFileExcelResquest, opts ...grpc.CallOption) (*ImportFileExcelRespone, error) {
+	out := new(ImportFileExcelRespone)
+	err := c.cc.Invoke(ctx, "/pb_database.Database/ImportFileExcel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DatabaseServer is the server API for Database service.
 // All implementations must embed UnimplementedDatabaseServer
 // for forward compatibility
@@ -91,6 +101,7 @@ type DatabaseServer interface {
 	UploadFile(context.Context, *UploadFileResquest) (*UploadFileRespone, error)
 	GetListUploadFile(context.Context, *GetListFileResquest) (*GetListFileRespone, error)
 	ExportTemplateFile(context.Context, *ExportTemplateFileResquest) (*ExportTemplateFileRespone, error)
+	ImportFileExcel(context.Context, *ImportFileExcelResquest) (*ImportFileExcelRespone, error)
 	mustEmbedUnimplementedDatabaseServer()
 }
 
@@ -112,6 +123,9 @@ func (UnimplementedDatabaseServer) GetListUploadFile(context.Context, *GetListFi
 }
 func (UnimplementedDatabaseServer) ExportTemplateFile(context.Context, *ExportTemplateFileResquest) (*ExportTemplateFileRespone, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExportTemplateFile not implemented")
+}
+func (UnimplementedDatabaseServer) ImportFileExcel(context.Context, *ImportFileExcelResquest) (*ImportFileExcelRespone, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ImportFileExcel not implemented")
 }
 func (UnimplementedDatabaseServer) mustEmbedUnimplementedDatabaseServer() {}
 
@@ -216,6 +230,24 @@ func _Database_ExportTemplateFile_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Database_ImportFileExcel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImportFileExcelResquest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServer).ImportFileExcel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb_database.Database/ImportFileExcel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServer).ImportFileExcel(ctx, req.(*ImportFileExcelResquest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Database_ServiceDesc is the grpc.ServiceDesc for Database service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +274,10 @@ var Database_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExportTemplateFile",
 			Handler:    _Database_ExportTemplateFile_Handler,
+		},
+		{
+			MethodName: "ImportFileExcel",
+			Handler:    _Database_ImportFileExcel_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
