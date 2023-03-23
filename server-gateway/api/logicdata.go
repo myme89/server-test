@@ -629,3 +629,34 @@ func (server *Server) LogInAcc(ctx context.Context, res *pb.SignInResquest) (*pb
 	}
 	return info, nil
 }
+
+func (server *Server) GetFileUploadInfo(ctx context.Context, res *pb.FileUploadInfoResquest) (*pb.FileUploadInfoRespone, error) {
+
+	md, _ := metadata.FromIncomingContext(ctx)
+	log.Info("nhatnt md: ", md)
+
+	resp, err := server.clientAuthen.AuthenTokenClient(context.Background(), md["token"][0])
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Authen token failed")
+	}
+	respDatabase, err := server.clientDatabase.GetUploadFileInfoClient(ctx, resp.Iduser)
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unimplemented, "Get list file failed")
+	}
+
+	var temp []*pb.FileUploadInfo
+
+	for i := 0; i < len(respDatabase.Fileinfo); i++ {
+		temp = append(temp, &pb.FileUploadInfo{
+			Filename:     respDatabase.Fileinfo[0].Filename,
+			Filetype:     respDatabase.Fileinfo[0].Typefile,
+			Sizefile:     int64(respDatabase.Fileinfo[0].Size),
+			Link:         respDatabase.Fileinfo[0].Link,
+			Timecreateat: respDatabase.Fileinfo[0].Createat,
+		})
+	}
+
+	return &pb.FileUploadInfoRespone{Fileinfo: temp}, nil
+}

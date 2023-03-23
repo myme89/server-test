@@ -784,6 +784,91 @@ func (x *SignInRespone) GetToken() string {
 	return ""
 }
 
+type FileUploadInfoResquest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *FileUploadInfoResquest) Reset() {
+	*x = FileUploadInfoResquest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rpc_data_proto_msgTypes[16]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *FileUploadInfoResquest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FileUploadInfoResquest) ProtoMessage() {}
+
+func (x *FileUploadInfoResquest) ProtoReflect() protoreflect.Message {
+	mi := &file_rpc_data_proto_msgTypes[16]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FileUploadInfoResquest.ProtoReflect.Descriptor instead.
+func (*FileUploadInfoResquest) Descriptor() ([]byte, []int) {
+	return file_rpc_data_proto_rawDescGZIP(), []int{16}
+}
+
+type FileUploadInfoRespone struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Fileinfo []*FileUploadInfo `protobuf:"bytes,1,rep,name=fileinfo,proto3" json:"fileinfo,omitempty"`
+}
+
+func (x *FileUploadInfoRespone) Reset() {
+	*x = FileUploadInfoRespone{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rpc_data_proto_msgTypes[17]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *FileUploadInfoRespone) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FileUploadInfoRespone) ProtoMessage() {}
+
+func (x *FileUploadInfoRespone) ProtoReflect() protoreflect.Message {
+	mi := &file_rpc_data_proto_msgTypes[17]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FileUploadInfoRespone.ProtoReflect.Descriptor instead.
+func (*FileUploadInfoRespone) Descriptor() ([]byte, []int) {
+	return file_rpc_data_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *FileUploadInfoRespone) GetFileinfo() []*FileUploadInfo {
+	if x != nil {
+		return x.Fileinfo
+	}
+	return nil
+}
+
 var File_rpc_data_proto protoreflect.FileDescriptor
 
 var file_rpc_data_proto_rawDesc = []byte{
@@ -837,9 +922,15 @@ var file_rpc_data_proto_rawDesc = []byte{
 	0x6e, 0x66, 0x6f, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x70, 0x62, 0x2e, 0x55,
 	0x73, 0x65, 0x72, 0x41, 0x63, 0x63, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x0b, 0x75, 0x73, 0x65, 0x72,
 	0x61, 0x63, 0x63, 0x69, 0x6e, 0x66, 0x6f, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e,
-	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x42, 0x10, 0x5a,
-	0x0e, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2d, 0x74, 0x65, 0x73, 0x74, 0x2f, 0x70, 0x62, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x18, 0x0a,
+	0x16, 0x46, 0x69, 0x6c, 0x65, 0x55, 0x70, 0x6c, 0x6f, 0x61, 0x64, 0x49, 0x6e, 0x66, 0x6f, 0x52,
+	0x65, 0x73, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x47, 0x0a, 0x15, 0x46, 0x69, 0x6c, 0x65, 0x55,
+	0x70, 0x6c, 0x6f, 0x61, 0x64, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x65,
+	0x12, 0x2e, 0x0a, 0x08, 0x66, 0x69, 0x6c, 0x65, 0x69, 0x6e, 0x66, 0x6f, 0x18, 0x01, 0x20, 0x03,
+	0x28, 0x0b, 0x32, 0x12, 0x2e, 0x70, 0x62, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x55, 0x70, 0x6c, 0x6f,
+	0x61, 0x64, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x08, 0x66, 0x69, 0x6c, 0x65, 0x69, 0x6e, 0x66, 0x6f,
+	0x42, 0x10, 0x5a, 0x0e, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2d, 0x74, 0x65, 0x73, 0x74, 0x2f,
+	0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -854,35 +945,39 @@ func file_rpc_data_proto_rawDescGZIP() []byte {
 	return file_rpc_data_proto_rawDescData
 }
 
-var file_rpc_data_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_rpc_data_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_rpc_data_proto_goTypes = []interface{}{
-	(*DataInfoResquest)(nil),   // 0: pb.DataInfoResquest
-	(*DataInfoRespone)(nil),    // 1: pb.DataInfoRespone
-	(*DataPostResqest)(nil),    // 2: pb.DataPostResqest
-	(*DataPostRespone)(nil),    // 3: pb.DataPostRespone
-	(*DataUpdateResqest)(nil),  // 4: pb.DataUpdateResqest
-	(*DataUpdateRespone)(nil),  // 5: pb.DataUpdateRespone
-	(*ExportDataResquest)(nil), // 6: pb.ExportDataResquest
-	(*ExportDataRespone)(nil),  // 7: pb.ExportDataRespone
-	(*ImportDataResquest)(nil), // 8: pb.ImportDataResquest
-	(*ImportDataRespone)(nil),  // 9: pb.ImportDataRespone
-	(*TestResquest)(nil),       // 10: pb.TestResquest
-	(*TestRespone)(nil),        // 11: pb.TestRespone
-	(*SignUpResquest)(nil),     // 12: pb.SignUpResquest
-	(*SignUpRespone)(nil),      // 13: pb.SignUpRespone
-	(*SignInResquest)(nil),     // 14: pb.SignInResquest
-	(*SignInRespone)(nil),      // 15: pb.SignInRespone
-	(*DataInfo)(nil),           // 16: pb.DataInfo
-	(*UserAccInfo)(nil),        // 17: pb.UserAccInfo
+	(*DataInfoResquest)(nil),       // 0: pb.DataInfoResquest
+	(*DataInfoRespone)(nil),        // 1: pb.DataInfoRespone
+	(*DataPostResqest)(nil),        // 2: pb.DataPostResqest
+	(*DataPostRespone)(nil),        // 3: pb.DataPostRespone
+	(*DataUpdateResqest)(nil),      // 4: pb.DataUpdateResqest
+	(*DataUpdateRespone)(nil),      // 5: pb.DataUpdateRespone
+	(*ExportDataResquest)(nil),     // 6: pb.ExportDataResquest
+	(*ExportDataRespone)(nil),      // 7: pb.ExportDataRespone
+	(*ImportDataResquest)(nil),     // 8: pb.ImportDataResquest
+	(*ImportDataRespone)(nil),      // 9: pb.ImportDataRespone
+	(*TestResquest)(nil),           // 10: pb.TestResquest
+	(*TestRespone)(nil),            // 11: pb.TestRespone
+	(*SignUpResquest)(nil),         // 12: pb.SignUpResquest
+	(*SignUpRespone)(nil),          // 13: pb.SignUpRespone
+	(*SignInResquest)(nil),         // 14: pb.SignInResquest
+	(*SignInRespone)(nil),          // 15: pb.SignInRespone
+	(*FileUploadInfoResquest)(nil), // 16: pb.FileUploadInfoResquest
+	(*FileUploadInfoRespone)(nil),  // 17: pb.FileUploadInfoRespone
+	(*DataInfo)(nil),               // 18: pb.DataInfo
+	(*UserAccInfo)(nil),            // 19: pb.UserAccInfo
+	(*FileUploadInfo)(nil),         // 20: pb.FileUploadInfo
 }
 var file_rpc_data_proto_depIdxs = []int32{
-	16, // 0: pb.DataInfoRespone.data:type_name -> pb.DataInfo
-	17, // 1: pb.SignInRespone.useraccinfo:type_name -> pb.UserAccInfo
-	2,  // [2:2] is the sub-list for method output_type
-	2,  // [2:2] is the sub-list for method input_type
-	2,  // [2:2] is the sub-list for extension type_name
-	2,  // [2:2] is the sub-list for extension extendee
-	0,  // [0:2] is the sub-list for field type_name
+	18, // 0: pb.DataInfoRespone.data:type_name -> pb.DataInfo
+	19, // 1: pb.SignInRespone.useraccinfo:type_name -> pb.UserAccInfo
+	20, // 2: pb.FileUploadInfoRespone.fileinfo:type_name -> pb.FileUploadInfo
+	3,  // [3:3] is the sub-list for method output_type
+	3,  // [3:3] is the sub-list for method input_type
+	3,  // [3:3] is the sub-list for extension type_name
+	3,  // [3:3] is the sub-list for extension extendee
+	0,  // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_rpc_data_proto_init() }
@@ -1084,6 +1179,30 @@ func file_rpc_data_proto_init() {
 				return nil
 			}
 		}
+		file_rpc_data_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*FileUploadInfoResquest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_rpc_data_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*FileUploadInfoRespone); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -1091,7 +1210,7 @@ func file_rpc_data_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_rpc_data_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   16,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

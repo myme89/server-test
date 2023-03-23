@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"server-test/server-database/database/mongodb"
+	"server-test/server-database/model"
 	"server-test/server-database/pb_database"
 
 	"google.golang.org/grpc/codes"
@@ -56,4 +57,27 @@ func (serverDatabase *ServerDatabase) UploadFile(ctx context.Context, res *pb_da
 	}
 
 	return &pb_database.UploadFileRespone{Noti: "Done"}, nil
+}
+
+func (serverDatabase *ServerDatabase) GetListUploadFile(ctx context.Context, res *pb_database.GetListFileResquest) (*pb_database.GetListFileRespone, error) {
+
+	idUser := res.GetIdUser()
+
+	listFile, err := mongodb.GetListFile(serverDatabase.config, idUser)
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unimplemented, "get list file failed")
+	}
+
+	var ListFileInfo []model.FileInfoUpload
+
+	for i := 0; i < len(listFile); i++ {
+		ListFileInfo = append(ListFileInfo, model.FileInfoUpload{FileName: listFile[i].FileName, TypeFile: listFile[i].TypeFile, Size: listFile[i].Size, Link: listFile[i].Link, CreateAt: listFile[i].CreateAt})
+	}
+
+	rsp := &pb_database.GetListFileRespone{
+		Fileinfo: ConvertData(ListFileInfo),
+	}
+
+	return rsp, nil
 }

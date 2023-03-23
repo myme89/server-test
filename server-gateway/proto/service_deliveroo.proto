@@ -63,4 +63,11 @@ service Deliveroo {
             body: "*"
         };
     }
+
+    rpc GetFileUploadInfo(FileUploadInfoResquest) returns (FileUploadInfoRespone) {
+        option (google.api.http) = {
+            get: "/v1/getlistfile"
+            // body: "*"
+        };
+    }
 } 

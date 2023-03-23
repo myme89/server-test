@@ -317,3 +317,23 @@ func AddInfoUploadFile(config *config.Config, fileName, idUser, typeFile, link s
 
 	return nil
 }
+
+func GetListFile(config *config.Config, idUser string) ([]model.FileInfoUpload, error) {
+
+	// collectionDB := config.Sever.ServerMongoDB.DBcollection
+	collectionDB := "FileUpload"
+	dbName := config.Sever.ServerMongoDB.DBName
+	collection := clientMongo.Database(dbName).Collection(collectionDB)
+	var arr []model.FileInfoUpload
+	queryString := bson.D{{Key: "id_user", Value: idUser}}
+	option := options.Find()
+	var err error
+
+	cursor, err := collection.Find(context.TODO(), queryString, option)
+	if err = cursor.All(context.TODO(), &arr); err != nil {
+		log.Error("Get List File error err: ", err)
+		return arr, err
+	}
+
+	return arr, err
+}

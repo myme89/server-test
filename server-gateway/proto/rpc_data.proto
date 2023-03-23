@@ -76,3 +76,12 @@ message SignInRespone{
     UserAccInfo useraccinfo = 1;
     string token = 2;
 }
+
+
+message FileUploadInfoResquest{
+   
+}
+
+message FileUploadInfoRespone{
+    repeated FileUploadInfo fileinfo = 1;
+}

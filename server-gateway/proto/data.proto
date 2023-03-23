@@ -14,3 +14,12 @@ message UserAccInfo{
     string username = 1;
     string fullname = 2;
 }
+
+
+message FileUploadInfo {
+    string filename = 1;
+    string filetype = 2;
+    string link = 3;
+    int64 sizefile = 4;
+    string timecreateat = 5;
+}

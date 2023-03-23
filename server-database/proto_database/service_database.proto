@@ -17,4 +17,7 @@ service Database {
 
     rpc UploadFile(UploadFileResquest) returns (UploadFileRespone) {
     }
+
+    rpc GetListUploadFile(GetListFileResquest) returns (GetListFileRespone) {
+    }
 } 

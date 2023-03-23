@@ -27,7 +27,7 @@ type UserInfo struct {
 }
 
 type FileInfoUpload struct {
-	FileName string  `bson:"user_name,omitempty" json:"user_name"`
+	FileName string  `bson:"file_name,omitempty" json:"file_name"`
 	Size     float64 `bson:"size," json:"size"`
 	TypeFile string  `bson:"type_file,omitempty" json:"type_file"`
 	CreateAt string  `bson:"create_at,omitempty" json:"create_at"`

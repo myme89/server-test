@@ -33,4 +33,13 @@ message UploadFileRespone{
     string noti = 1;
 }
 
+message GetListFileResquest{
+    string idUser = 1;
+}
+
+message GetListFileRespone{
+    repeated FileUploadInfo fileinfo = 1;
+}
+
+
 

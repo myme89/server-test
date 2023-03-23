@@ -30,6 +30,7 @@ type DeliverooClient interface {
 	TestData1(ctx context.Context, in *TestResquest, opts ...grpc.CallOption) (*TestRespone, error)
 	SignUp(ctx context.Context, in *SignUpResquest, opts ...grpc.CallOption) (*SignUpRespone, error)
 	LogInAcc(ctx context.Context, in *SignInResquest, opts ...grpc.CallOption) (*SignInRespone, error)
+	GetFileUploadInfo(ctx context.Context, in *FileUploadInfoResquest, opts ...grpc.CallOption) (*FileUploadInfoRespone, error)
 }
 
 type deliverooClient struct {
@@ -112,6 +113,15 @@ func (c *deliverooClient) LogInAcc(ctx context.Context, in *SignInResquest, opts
 	return out, nil
 }
 
+func (c *deliverooClient) GetFileUploadInfo(ctx context.Context, in *FileUploadInfoResquest, opts ...grpc.CallOption) (*FileUploadInfoRespone, error) {
+	out := new(FileUploadInfoRespone)
+	err := c.cc.Invoke(ctx, "/pb.Deliveroo/GetFileUploadInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DeliverooServer is the server API for Deliveroo service.
 // All implementations must embed UnimplementedDeliverooServer
 // for forward compatibility
@@ -124,6 +134,7 @@ type DeliverooServer interface {
 	TestData1(context.Context, *TestResquest) (*TestRespone, error)
 	SignUp(context.Context, *SignUpResquest) (*SignUpRespone, error)
 	LogInAcc(context.Context, *SignInResquest) (*SignInRespone, error)
+	GetFileUploadInfo(context.Context, *FileUploadInfoResquest) (*FileUploadInfoRespone, error)
 	mustEmbedUnimplementedDeliverooServer()
 }
 
@@ -154,6 +165,9 @@ func (UnimplementedDeliverooServer) SignUp(context.Context, *SignUpResquest) (*S
 }
 func (UnimplementedDeliverooServer) LogInAcc(context.Context, *SignInResquest) (*SignInRespone, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LogInAcc not implemented")
+}
+func (UnimplementedDeliverooServer) GetFileUploadInfo(context.Context, *FileUploadInfoResquest) (*FileUploadInfoRespone, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFileUploadInfo not implemented")
 }
 func (UnimplementedDeliverooServer) mustEmbedUnimplementedDeliverooServer() {}
 
@@ -312,6 +326,24 @@ func _Deliveroo_LogInAcc_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Deliveroo_GetFileUploadInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FileUploadInfoResquest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeliverooServer).GetFileUploadInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Deliveroo/GetFileUploadInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeliverooServer).GetFileUploadInfo(ctx, req.(*FileUploadInfoResquest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Deliveroo_ServiceDesc is the grpc.ServiceDesc for Deliveroo service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -350,6 +382,10 @@ var Deliveroo_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LogInAcc",
 			Handler:    _Deliveroo_LogInAcc_Handler,
+		},
+		{
+			MethodName: "GetFileUploadInfo",
+			Handler:    _Deliveroo_GetFileUploadInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
