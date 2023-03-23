@@ -65,3 +65,19 @@ func (databaseClient *DatabaseClient) UploadDataFileExcelClient(ctx context.Cont
 	// noti := res.Noti
 	return "noti", nil
 }
+
+func (databaseClient *DatabaseClient) UpdateStatusProcessingClient(ctx context.Context, status, idFile string) (string, error) {
+	if err := prepareDatabaseGrpcClient(ctx); err != nil {
+		return "prepareStorageGrpcClient failed", err
+	}
+
+	res, err := databaseGrpcServiceClient.UpdateStatusProcessingFileExcel(ctx, &pb_database.StatusProcessingFileResquest{Status: status, IdFile: idFile})
+
+	if err != nil {
+		return "failed", err
+	}
+	fmt.Println("UpdateStatusProcessingClient ", res)
+
+	noti := res.Noti
+	return noti, nil
+}

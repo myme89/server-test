@@ -60,3 +60,13 @@ message ImportFileExcelRespone{
 }
 
 
+message StatusProcessingFileResquest{
+    string status = 1;
+    string idFile = 2;
+}
+
+message StatusProcessingFileRespone{
+    string noti = 1;
+}
+
+

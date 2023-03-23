@@ -9,6 +9,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -336,6 +337,7 @@ func AddInfoUploadFile(config *config.Config, fileName, idUser, typeFile, link s
 		{Key: "create_at", Value: now.Format("2006-01-02 15:04:05")},
 		{Key: "status", Value: "Complete Upload"},
 		{Key: "link", Value: link},
+		{Key: "status_processing", Value: "Non-performing"},
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -367,4 +369,32 @@ func GetListFile(config *config.Config, idUser string) ([]model.FileInfoUpload, 
 	}
 
 	return arr, err
+}
+
+func UpdateStatus(config *config.Config, idFile, status string) error {
+
+	// collectionDB := config.Sever.ServerMongoDB.DBcollection
+	collectionDB := "FileUpload"
+	dbName := config.Sever.ServerMongoDB.DBName
+	collection := clientMongo.Database(dbName).Collection(collectionDB)
+
+	fmt.Println("status ", idFile)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	objectID, _ := primitive.ObjectIDFromHex(idFile)
+	filter := bson.D{{Key: "_id", Value: objectID}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "status_processing", Value: status}}}}
+	// updateOptions := options.Update().SetUpsert(true)
+	_, err := collection.UpdateOne(
+		ctx,
+		filter,
+		update,
+	)
+	if err != nil {
+		log.Info(err)
+	}
+
+	return err
 }

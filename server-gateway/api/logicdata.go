@@ -457,14 +457,15 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 	idFileUpLoad, err := server.clientStogare.UploadFile(context.Background(), a.Filename, a.Header.Get("Content-Type"), resp.Iduser, a.Size, content)
 
 	// fmt.Println("check id File: ", idFile)
+	if r.Header.Get("run") == "run" {
+		go func(idFile, fileName string, fileContent []byte) {
+			_, err := server.clientProcessing.ProcessingDataClient(context.Background(), idFile, fileName, fileContent)
 
-	go func(idFile, fileName string, fileContent []byte) {
-		_, err := server.clientProcessing.ProcessingDataClient(context.Background(), idFile, fileName, fileContent)
-
-		if err != nil {
-			http.Error(w, "ProcessingDataClient Failed ", http.StatusBadRequest)
-		}
-	}(idFileUpLoad, a.Filename, content)
+			if err != nil {
+				http.Error(w, "ProcessingDataClient Failed ", http.StatusBadRequest)
+			}
+		}(idFileUpLoad, a.Filename, content)
+	}
 
 	// if a.Size > 1024*1024 {
 	// 	logs.Logger.Error("ImportDataWithHttp: File too lagre")

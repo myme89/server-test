@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
-	"server-test/logs"
 	"server-test/server-database/database/mongodb"
 	"server-test/server-database/model"
 	"server-test/server-database/pb_database"
@@ -173,7 +172,7 @@ func (serverDatabase *ServerDatabase) ImportFileExcel(ctx context.Context, res *
 		err := json.Unmarshal([]byte(infoFileEx[i].Content), &person)
 		if err != nil {
 			fmt.Println(err)
-			return &pb_database.ImportFileExcelRespone{Noti: "Proccesing Failed"}, nil
+			return nil, status.Errorf(codes.Unimplemented, "Unmarshal failed")
 		}
 
 		infos := make([]interface{}, len(person))
@@ -185,10 +184,24 @@ func (serverDatabase *ServerDatabase) ImportFileExcel(ctx context.Context, res *
 
 		err = mongodb.AddManyInfoNotModel(serverDatabase.config, infos, infoFileEx[i].Filename)
 		if err != nil {
-			logs.Logger.Error(" Post Data to Mongo Database failed:", err)
-			return &pb_database.ImportFileExcelRespone{Noti: "Proccesing Failed"}, nil
+			log.Error(" Post Data to Mongo Database failed:", err)
+			return nil, status.Errorf(codes.Unimplemented, "AddManyInfoNotModel failed")
 		}
 
 	}
 	return &pb_database.ImportFileExcelRespone{Noti: "Proccesing Done"}, nil
+}
+
+func (serverDatabase *ServerDatabase) UpdateStatusProcessingFileExcel(ctx context.Context, res *pb_database.StatusProcessingFileResquest) (*pb_database.StatusProcessingFileRespone, error) {
+
+	status := res.GetStatus()
+	idFile := res.GetIdFile()
+
+	err := mongodb.UpdateStatus(serverDatabase.config, idFile, status)
+
+	if err != nil {
+		log.Error(" UpdateStatus failed:", err)
+	}
+
+	return &pb_database.StatusProcessingFileRespone{Noti: "Done"}, nil
 }

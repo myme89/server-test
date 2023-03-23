@@ -9,9 +9,10 @@ import (
 	"server-test/server-proccess-data/pb_processing"
 	"time"
 
-	"github.com/xuri/excelize/v2"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"github.com/xuri/excelize/v2"
 )
 
 func (serverProcessing *ServerProcessing) TestData2(ctx context.Context, res *pb_processing.DataInfoTestResquest1) (*pb_processing.DataInfoTestRespone1, error) {
@@ -73,5 +74,7 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 		return nil, status.Errorf(codes.Unimplemented, "UploadDataFileExcelClient failed")
 	}
 
-	return &pb_processing.ProcessingFileRespone{Noti: resp}, nil
+	noti, err := serverProcessing.clientDatabase.UpdateStatusProcessingClient(ctx, "Done", infoFileProcess.Idfile)
+	fmt.Println("noti ", resp)
+	return &pb_processing.ProcessingFileRespone{Noti: noti}, nil
 }

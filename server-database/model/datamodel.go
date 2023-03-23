@@ -27,14 +27,15 @@ type UserInfo struct {
 }
 
 type FileInfoUpload struct {
-	Id       string  `bson:"_id,omitempty" json:"_id"`
-	FileName string  `bson:"file_name,omitempty" json:"file_name"`
-	Size     float64 `bson:"size," json:"size"`
-	TypeFile string  `bson:"type_file,omitempty" json:"type_file"`
-	CreateAt string  `bson:"create_at,omitempty" json:"create_at"`
-	Status   string  `bson:"status,omitempty" json:"status"`
-	IdUser   string  `bson:"id_user,omitempty" json:"id_user"`
-	Link     string  `bson:"link,omitempty" json:"link"`
+	Id              string  `bson:"_id,omitempty" json:"_id"`
+	FileName        string  `bson:"file_name,omitempty" json:"file_name"`
+	Size            float64 `bson:"size," json:"size"`
+	TypeFile        string  `bson:"type_file,omitempty" json:"type_file"`
+	CreateAt        string  `bson:"create_at,omitempty" json:"create_at"`
+	Status          string  `bson:"status,omitempty" json:"status"`
+	IdUser          string  `bson:"id_user,omitempty" json:"id_user"`
+	Link            string  `bson:"link,omitempty" json:"link"`
+	StatusProcesing string  `bson:"status_processing,omitempty" json:"status_processing"`
 }
 
 type TemplateInfoPerson struct {

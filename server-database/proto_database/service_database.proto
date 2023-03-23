@@ -26,4 +26,7 @@ service Database {
 
     rpc ImportFileExcel(ImportFileExcelResquest) returns (ImportFileExcelRespone) {
     }
+
+    rpc UpdateStatusProcessingFileExcel(StatusProcessingFileResquest) returns (StatusProcessingFileRespone) {
+    }
 } 
