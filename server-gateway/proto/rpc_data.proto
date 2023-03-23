@@ -34,6 +34,7 @@ message DataUpdateRespone{
 }
 
 message ExportDataResquest{
+    string nametemplate = 1;
 }
 
 message ExportDataRespone{

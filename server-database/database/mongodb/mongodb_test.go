@@ -30,7 +30,7 @@ func TestGetAllData(t *testing.T) {
 	clientMongo := InitMongoDB(config)
 	fmt.Println(clientMongo)
 
-	temp, err := GetAllInfo(config)
+	temp, err := GetAllInfo(config, "")
 	if err != nil {
 		log.Fatal("Get data  failed ", err)
 	}

@@ -86,6 +86,11 @@ func InitMongoDB(config *config.Config) *mongo.Client {
 		log.Fatal("Cannot create collection User DB", err)
 	}
 
+	err = createCollection(dbName, "TemplateInfoPerson")
+	if err != nil {
+		log.Fatal("Cannot create collection Template Info Person", err)
+	}
+
 	err = clientMongo.Ping(ctx, readpref.Primary())
 	if err != nil {
 		log.Fatal("Cannot ping to mongo server :", err)
@@ -94,12 +99,12 @@ func InitMongoDB(config *config.Config) *mongo.Client {
 	return clientMongo
 }
 
-func GetAllInfo(config *config.Config) ([]model.DataInfo, error) {
+func GetAllInfo(config *config.Config, collectionDB string) ([]model.TemplateInfoPerson, error) {
 
-	collectionDB := config.Sever.ServerMongoDB.DBcollection
+	// collectionDB := config.Sever.ServerMongoDB.DBcollection
 	dbName := config.Sever.ServerMongoDB.DBName
 	collection := clientMongo.Database(dbName).Collection(collectionDB)
-	var arr []model.DataInfo
+	var arr []model.TemplateInfoPerson
 	queryString := bson.D{}
 	option := options.Find()
 	var err error

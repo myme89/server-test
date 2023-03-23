@@ -26,6 +26,7 @@ type DatabaseClient interface {
 	LoginAcc(ctx context.Context, in *LoginAccResquest, opts ...grpc.CallOption) (*LoginAccRespone, error)
 	UploadFile(ctx context.Context, in *UploadFileResquest, opts ...grpc.CallOption) (*UploadFileRespone, error)
 	GetListUploadFile(ctx context.Context, in *GetListFileResquest, opts ...grpc.CallOption) (*GetListFileRespone, error)
+	ExportTemplateFile(ctx context.Context, in *ExportTemplateFileResquest, opts ...grpc.CallOption) (*ExportTemplateFileRespone, error)
 }
 
 type databaseClient struct {
@@ -72,6 +73,15 @@ func (c *databaseClient) GetListUploadFile(ctx context.Context, in *GetListFileR
 	return out, nil
 }
 
+func (c *databaseClient) ExportTemplateFile(ctx context.Context, in *ExportTemplateFileResquest, opts ...grpc.CallOption) (*ExportTemplateFileRespone, error) {
+	out := new(ExportTemplateFileRespone)
+	err := c.cc.Invoke(ctx, "/pb_database.Database/ExportTemplateFile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DatabaseServer is the server API for Database service.
 // All implementations must embed UnimplementedDatabaseServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type DatabaseServer interface {
 	LoginAcc(context.Context, *LoginAccResquest) (*LoginAccRespone, error)
 	UploadFile(context.Context, *UploadFileResquest) (*UploadFileRespone, error)
 	GetListUploadFile(context.Context, *GetListFileResquest) (*GetListFileRespone, error)
+	ExportTemplateFile(context.Context, *ExportTemplateFileResquest) (*ExportTemplateFileRespone, error)
 	mustEmbedUnimplementedDatabaseServer()
 }
 
@@ -98,6 +109,9 @@ func (UnimplementedDatabaseServer) UploadFile(context.Context, *UploadFileResque
 }
 func (UnimplementedDatabaseServer) GetListUploadFile(context.Context, *GetListFileResquest) (*GetListFileRespone, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetListUploadFile not implemented")
+}
+func (UnimplementedDatabaseServer) ExportTemplateFile(context.Context, *ExportTemplateFileResquest) (*ExportTemplateFileRespone, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExportTemplateFile not implemented")
 }
 func (UnimplementedDatabaseServer) mustEmbedUnimplementedDatabaseServer() {}
 
@@ -184,6 +198,24 @@ func _Database_GetListUploadFile_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Database_ExportTemplateFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExportTemplateFileResquest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServer).ExportTemplateFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb_database.Database/ExportTemplateFile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServer).ExportTemplateFile(ctx, req.(*ExportTemplateFileResquest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Database_ServiceDesc is the grpc.ServiceDesc for Database service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +238,10 @@ var Database_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetListUploadFile",
 			Handler:    _Database_GetListUploadFile_Handler,
+		},
+		{
+			MethodName: "ExportTemplateFile",
+			Handler:    _Database_ExportTemplateFile_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -236,101 +236,101 @@ import (
 // // 	return rsp, nil
 // // }
 
-// // func (server *Server) ExportData(ctx context.Context, res *pb.ExportDataResquest) (*pb.ExportDataRespone, error) {
+// func (server *Server) ExportData(ctx context.Context, res *pb.ExportDataResquest) (*pb.ExportDataRespone, error) {
 
-// // 	logs.Logger.Info("ExportData - API call ExportData ")
+// 	logs.Logger.Info("ExportData - API call ExportData ")
 
-// // 	var dataInfo []model.DataInfo
-// // 	var err error
+// 	var dataInfo []model.DataInfo
+// 	var err error
 
-// // 	switch server.config.Sever.TypeServer.Name {
+// 	switch server.config.Sever.TypeServer.Name {
 
-// // 	case "server_levedb":
+// 	case "server_levedb":
 
-// // 		temp := levedb.GetData(server.config)
-// // 		dataInfo = append(dataInfo, temp)
+// 		temp := levedb.GetData(server.config)
+// 		dataInfo = append(dataInfo, temp)
 
-// // 	case "server_mysql":
-// // 		var data []model.DataPost
-// // 		err := mysqldb.GetData(&data)
-// // 		if err != nil {
-// // 			logs.Logger.Error("ExportData: server_mysql get Data failed error:", err)
-// // 			return nil, status.Errorf(codes.Unimplemented, "get Data failed")
-// // 		}
-// // 		for i := 0; i < len(data); i++ {
-// // 			dataInfo = append(dataInfo, model.DataInfo{Name: data[i].Name, FullName: data[i].FullName})
-// // 		}
-// // 	case "server_postgressql":
-// // 		dataInfo, err = db.GetData()
-// // 		if err != nil {
-// // 			logs.Logger.Error("ExportData: server_postgressql get Data failed error:", err)
-// // 			return nil, status.Errorf(codes.Unimplemented, "get Data failed")
-// // 		}
-// // 	case "server_mongodb":
-// // 		dataInfo, err = mongodb.GetAllInfo(server.config)
-// // 		if err != nil {
-// // 			logs.Logger.Error("ExportData: server_mongodb get Data failed error:", err)
-// // 			return nil, status.Errorf(codes.Unimplemented, "get Data failed")
-// // 		}
-// // 	default:
-// // 		logs.Logger.Error("ExportData: Don't have database")
-// // 		return nil, status.Errorf(codes.Unimplemented, "Don't have database")
-// // 	}
+// 	case "server_mysql":
+// 		var data []model.DataPost
+// 		err := mysqldb.GetData(&data)
+// 		if err != nil {
+// 			logs.Logger.Error("ExportData: server_mysql get Data failed error:", err)
+// 			return nil, status.Errorf(codes.Unimplemented, "get Data failed")
+// 		}
+// 		for i := 0; i < len(data); i++ {
+// 			dataInfo = append(dataInfo, model.DataInfo{Name: data[i].Name, FullName: data[i].FullName})
+// 		}
+// 	case "server_postgressql":
+// 		dataInfo, err = db.GetData()
+// 		if err != nil {
+// 			logs.Logger.Error("ExportData: server_postgressql get Data failed error:", err)
+// 			return nil, status.Errorf(codes.Unimplemented, "get Data failed")
+// 		}
+// 	case "server_mongodb":
+// 		dataInfo, err = mongodb.GetAllInfo(server.config)
+// 		if err != nil {
+// 			logs.Logger.Error("ExportData: server_mongodb get Data failed error:", err)
+// 			return nil, status.Errorf(codes.Unimplemented, "get Data failed")
+// 		}
+// 	default:
+// 		logs.Logger.Error("ExportData: Don't have database")
+// 		return nil, status.Errorf(codes.Unimplemented, "Don't have database")
+// 	}
 
-// // 	var DataInfo []model.DataInfo
-// // 	var expenseData = [][]interface{}{}
+// 	var DataInfo []model.DataInfo
+// 	var expenseData = [][]interface{}{}
 
-// // 	for i := 0; i < len(dataInfo); i++ {
-// // 		DataInfo = append(DataInfo, model.DataInfo{Name: dataInfo[i].Name, FullName: dataInfo[i].FullName})
-// // 		temp := []interface{}{dataInfo[i].Name, dataInfo[i].FullName}
-// // 		expenseData = append(expenseData, temp)
-// // 	}
+// 	for i := 0; i < len(dataInfo); i++ {
+// 		DataInfo = append(DataInfo, model.DataInfo{Name: dataInfo[i].Name, FullName: dataInfo[i].FullName})
+// 		temp := []interface{}{dataInfo[i].Name, dataInfo[i].FullName}
+// 		expenseData = append(expenseData, temp)
+// 	}
 
-// // 	f := excelize.NewFile()
-// // 	index, _ := f.NewSheet("Sheet1")
-// // 	f.SetActiveSheet(index)
+// 	f := excelize.NewFile()
+// 	index, _ := f.NewSheet("Sheet1")
+// 	f.SetActiveSheet(index)
 
-// // 	err = f.SetSheetRow("Sheet1", "A1", &[]interface{}{"Name", "FullName"})
-// // 	if err != nil {
+// 	err = f.SetSheetRow("Sheet1", "A1", &[]interface{}{"Name", "FullName"})
+// 	if err != nil {
 
-// // 		logs.Logger.Error("ExportData: Error SetSheetRow: ", err)
-// // 	}
-// // 	err = f.SetColWidth("Sheet1", "A", "G", 30)
+// 		logs.Logger.Error("ExportData: Error SetSheetRow: ", err)
+// 	}
+// 	err = f.SetColWidth("Sheet1", "A", "G", 30)
 
-// // 	if err != nil {
+// 	if err != nil {
 
-// // 		logs.Logger.Error("ExportData: Error SetColWidth: ", err)
-// // 	}
+// 		logs.Logger.Error("ExportData: Error SetColWidth: ", err)
+// 	}
 
-// // 	startRow := 2
-// // 	for i := startRow; i < (len(expenseData) + startRow); i++ {
-// // 		err = f.SetSheetRow("Sheet1", fmt.Sprintf("A%d", i), &expenseData[i-2])
-// // 		if err != nil {
-// // 			logs.Logger.Error("ExportData: Error SetSheetRow: ", err)
-// // 		}
-// // 	}
+// 	startRow := 2
+// 	for i := startRow; i < (len(expenseData) + startRow); i++ {
+// 		err = f.SetSheetRow("Sheet1", fmt.Sprintf("A%d", i), &expenseData[i-2])
+// 		if err != nil {
+// 			logs.Logger.Error("ExportData: Error SetSheetRow: ", err)
+// 		}
+// 	}
 
-// // 	// Save spreadsheet by the given path.
-// // 	if err := f.SaveAs("./export/DataExportFromDB.xlsx"); err != nil {
-// // 		fmt.Println(err)
-// // 	}
+// 	// Save spreadsheet by the given path.
+// 	if err := f.SaveAs("./export/DataExportFromDB.xlsx"); err != nil {
+// 		fmt.Println(err)
+// 	}
 
-// // 	if err != nil {
-// // 		logs.Logger.Error("ExportData: Error SaveAs: ", err)
-// // 	}
+// 	if err != nil {
+// 		logs.Logger.Error("ExportData: Error SaveAs: ", err)
+// 	}
 
-// // 	dir, err := filepath.Abs(filepath.Dir("DataExportFromDB.xlsx"))
-// // 	if err != nil {
-// // 		log.Fatal(err)
-// // 	}
-// // 	pathExport := dir + "/export/DataExportFromDB.xlsx"
+// 	dir, err := filepath.Abs(filepath.Dir("DataExportFromDB.xlsx"))
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	pathExport := dir + "/export/DataExportFromDB.xlsx"
 
-// // 	rsp := &pb.ExportDataRespone{
-// // 		PathExport: pathExport,
-// // 	}
+// 	rsp := &pb.ExportDataRespone{
+// 		PathExport: pathExport,
+// 	}
 
-// // 	return rsp, nil
-// // }
+// 	return rsp, nil
+// }
 
 // //Version using GRPC-Gateway body using JSON
 
@@ -659,4 +659,25 @@ func (server *Server) GetFileUploadInfo(ctx context.Context, res *pb.FileUploadI
 	}
 
 	return &pb.FileUploadInfoRespone{Fileinfo: temp}, nil
+}
+
+func (server *Server) ExportData(ctx context.Context, res *pb.ExportDataResquest) (*pb.ExportDataRespone, error) {
+
+	fmt.Println("ExportData - API call ExportData ")
+	md, _ := metadata.FromIncomingContext(ctx)
+	log.Info("nhatnt md: ", md)
+
+	_, err := server.clientAuthen.AuthenTokenClient(context.Background(), md["token"][0])
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Authen token failed")
+	}
+
+	resp, err := server.clientDatabase.ExportFileTemplateExcelClient(ctx, md["template"][0])
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unimplemented, "ExportData failed")
+	}
+
+	return &pb.ExportDataRespone{PathExport: resp}, nil
 }

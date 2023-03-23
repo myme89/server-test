@@ -27,6 +27,7 @@ type UserInfo struct {
 }
 
 type FileInfoUpload struct {
+	Id       string  `bson:"_id,omitempty" json:"_id"`
 	FileName string  `bson:"file_name,omitempty" json:"file_name"`
 	Size     float64 `bson:"size," json:"size"`
 	TypeFile string  `bson:"type_file,omitempty" json:"type_file"`
@@ -34,4 +35,13 @@ type FileInfoUpload struct {
 	Status   string  `bson:"status,omitempty" json:"status"`
 	IdUser   string  `bson:"id_user,omitempty" json:"id_user"`
 	Link     string  `bson:"link,omitempty" json:"link"`
+}
+
+type TemplateInfoPerson struct {
+	Id          string `bson:"_id,omitempty" json:"_id"`
+	FistName    string `bson:"first_name,omitempty" json:"first_name"`
+	LastName    string `bson:"last_name,omitempty" json:"last_name"`
+	FullName    string `bson:"full_name,omitempty" json:"full_name"`
+	PhoneNumber string `bson:"phone_number,omitempty" json:"phone_number"`
+	Address     string `bson:"address,omitempty" json:"address"`
 }

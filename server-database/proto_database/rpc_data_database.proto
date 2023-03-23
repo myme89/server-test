@@ -42,4 +42,12 @@ message GetListFileRespone{
 }
 
 
+message ExportTemplateFileResquest{
+    string templateName = 1;
+}
+
+message ExportTemplateFileRespone{
+    string pathExport = 1;
+}
+
 
