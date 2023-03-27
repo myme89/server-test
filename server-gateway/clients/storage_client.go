@@ -86,3 +86,21 @@ func (stogareClient *StorageClient) GetUploadFileInfoClient(ctx context.Context,
 
 	return resp, nil
 }
+
+func (stogareClient *StorageClient) ExportFileTemplateExcelClient(ctx context.Context, templateName string) (*pb_storage.ExportFileRespone, error) {
+
+	if err := prepareStorageGrpcClient(ctx); err != nil {
+		return nil, err
+	}
+
+	resp, err := stogareGrpcServiceClient.ExportTemplateFileUpload(ctx, &pb_storage.ExportFileResquest{TemplateExport: templateName})
+
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "method ExportFileTemplateExcelClient in client stogare failed")
+	}
+	fmt.Println("UploadFileClient Storage")
+
+	return resp, nil
+	// return nil, status.Errorf(codes.InvalidArgument, "method ExportFileTemplateExcelClient in client stogare failed")
+
+}

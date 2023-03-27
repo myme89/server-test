@@ -17,4 +17,7 @@ service Stogare {
 
     rpc GetListFileUpload(GetListFileUploadResquest) returns (GetListFileUploadRespone) {
     }
+
+    rpc ExportTemplateFileUpload(ExportFileResquest) returns (ExportFileRespone) {
+    }
 } 

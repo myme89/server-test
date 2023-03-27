@@ -68,3 +68,18 @@ func (databaseClient *DatabaseClient) GetUploadFileInfoClient(ctx context.Contex
 
 	return resp, nil
 }
+
+func (databaseClient *DatabaseClient) ExportFileTemplateExcelClient(ctx context.Context, templateName string) (string, error) {
+	if err := prepareDatabaseGrpcClient(ctx); err != nil {
+		return "prepareDatabaseGrpcClient faild", err
+	}
+
+	resp, err := databaseGrpcServiceClient.ExportTemplateFile(ctx, &pb_database.ExportTemplateFileResquest{TemplateName: templateName})
+
+	if err != nil {
+		return "failed", errors.New(status.Convert(err).Message())
+	}
+	fmt.Println("UploadFileClient Storage")
+
+	return resp.PathExport, nil
+}

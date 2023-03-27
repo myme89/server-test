@@ -3,11 +3,9 @@ package clients
 import (
 	"context"
 	"errors"
-	"fmt"
 	"server-test/server-database/pb_database"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/status"
 )
 
 type DatabaseClient struct {
@@ -52,17 +50,17 @@ func prepareDatabaseGrpcClient(ctx context.Context) error {
 // 	return resp, nil
 // }
 
-func (databaseClient *DatabaseClient) ExportFileTemplateExcelClient(ctx context.Context, templateName string) (string, error) {
-	if err := prepareDatabaseGrpcClient(ctx); err != nil {
-		return "prepareDatabaseGrpcClient faild", err
-	}
+// func (databaseClient *DatabaseClient) ExportFileTemplateExcelClient(ctx context.Context, templateName string) (string, error) {
+// 	if err := prepareDatabaseGrpcClient(ctx); err != nil {
+// 		return "prepareDatabaseGrpcClient faild", err
+// 	}
 
-	resp, err := databaseGrpcServiceClient.ExportTemplateFile(ctx, &pb_database.ExportTemplateFileResquest{TemplateName: templateName})
+// 	resp, err := databaseGrpcServiceClient.ExportTemplateFile(ctx, &pb_database.ExportTemplateFileResquest{TemplateName: templateName})
 
-	if err != nil {
-		return "failed", errors.New(status.Convert(err).Message())
-	}
-	fmt.Println("UploadFileClient Storage")
+// 	if err != nil {
+// 		return "failed", errors.New(status.Convert(err).Message())
+// 	}
+// 	fmt.Println("UploadFileClient Storage")
 
-	return resp.PathExport, nil
-}
+// 	return resp.PathExport, nil
+// }

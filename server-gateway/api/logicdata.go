@@ -685,13 +685,13 @@ func (server *Server) ExportData(ctx context.Context, res *pb.ExportDataResquest
 		return nil, status.Errorf(codes.Unauthenticated, "Authen token failed")
 	}
 
-	resp, err := server.clientDatabase.ExportFileTemplateExcelClient(ctx, md["template"][0])
+	resp, err := server.clientStogare.ExportFileTemplateExcelClient(ctx, md["template"][0])
 
 	if err != nil {
 		return nil, status.Errorf(codes.Unimplemented, "ExportData failed")
 	}
 
-	return &pb.ExportDataRespone{PathExport: resp}, nil
+	return &pb.ExportDataRespone{PathExport: resp.PathExport}, nil
 }
 
 func (server *Server) DowloadLinkWithHttp(w http.ResponseWriter, r *http.Request) {

@@ -115,3 +115,15 @@ func (serverStorage *ServerStorage) GetListFileUpload(ctx context.Context, res *
 	return &pb_storage.GetListFileUploadRespone{Fileinfo: temp}, nil
 	// return nil, status.Errorf(codes.Unimplemented, "method GetListFileUpload not implemented")
 }
+
+func (serverStorage *ServerStorage) ExportTemplateFileUpload(ctx context.Context, res *pb_storage.ExportFileResquest) (*pb_storage.ExportFileRespone, error) {
+
+	nameTemplate := res.GetTemplateExport()
+	resp, err := serverStorage.clientDatabase.ExportFileTemplateExcelClient(ctx, nameTemplate)
+
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "ExportTemplateFileUpload  failed")
+	}
+
+	return &pb_storage.ExportFileRespone{PathExport: resp}, nil
+}
