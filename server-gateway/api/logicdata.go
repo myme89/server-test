@@ -6,9 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"server-test/server-gateway/pb"
-	"time"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
@@ -696,16 +695,23 @@ func (server *Server) ExportData(ctx context.Context, res *pb.ExportDataResquest
 
 func (server *Server) DowloadLinkWithHttp(w http.ResponseWriter, r *http.Request) {
 
-	file, err := os.Open("DataImportToDB.xlsx")
+	values := r.URL.Query()
+	dir := values.Get("dir")
+
+	resp, err := server.clientStogare.DownloadFileClient(context.Background(), dir)
+
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Println(err)
+		http.Error(w, "DownloadFileClient failded", http.StatusBadRequest)
 		return
 	}
-	defer file.Close()
-	currentTime := time.Now().Local()
-	// Set the response headers
-	w.Header().Set("Content-Disposition", "attachment; filename=DataImportToDB.xlsx")
-	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
-	http.ServeContent(w, r, "DataImportToDB.xlsx", currentTime, file)
+	name := strings.Split(resp.Name, "/")
+	fmt.Println(name)
+
+	w.Header().Set("Content-Disposition", "attachment; filename="+name[len(name)-1])
+	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	w.Write(resp.Content)
+
+	// http.ServeContent(w, r, "DataImportToDB.xlsx", currentTime, file)
 }

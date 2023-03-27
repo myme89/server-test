@@ -42,5 +42,12 @@ message ExportFileRespone{
     string pathExport = 1;
 }
 
+message DownloadFileResquest{
+    string dir = 1;
+}
 
+message DownloadFileRespone{
+    string name = 1;
+    bytes content = 2;
+}
 

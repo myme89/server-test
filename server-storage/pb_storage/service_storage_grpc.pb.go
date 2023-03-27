@@ -26,6 +26,7 @@ type StogareClient interface {
 	UploadFile(ctx context.Context, in *FileInfoResquest, opts ...grpc.CallOption) (*FileInfoRespone, error)
 	GetListFileUpload(ctx context.Context, in *GetListFileUploadResquest, opts ...grpc.CallOption) (*GetListFileUploadRespone, error)
 	ExportTemplateFileUpload(ctx context.Context, in *ExportFileResquest, opts ...grpc.CallOption) (*ExportFileRespone, error)
+	DownloafFile(ctx context.Context, in *DownloadFileResquest, opts ...grpc.CallOption) (*DownloadFileRespone, error)
 }
 
 type stogareClient struct {
@@ -72,6 +73,15 @@ func (c *stogareClient) ExportTemplateFileUpload(ctx context.Context, in *Export
 	return out, nil
 }
 
+func (c *stogareClient) DownloafFile(ctx context.Context, in *DownloadFileResquest, opts ...grpc.CallOption) (*DownloadFileRespone, error) {
+	out := new(DownloadFileRespone)
+	err := c.cc.Invoke(ctx, "/pb_storage.Stogare/DownloafFile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StogareServer is the server API for Stogare service.
 // All implementations must embed UnimplementedStogareServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type StogareServer interface {
 	UploadFile(context.Context, *FileInfoResquest) (*FileInfoRespone, error)
 	GetListFileUpload(context.Context, *GetListFileUploadResquest) (*GetListFileUploadRespone, error)
 	ExportTemplateFileUpload(context.Context, *ExportFileResquest) (*ExportFileRespone, error)
+	DownloafFile(context.Context, *DownloadFileResquest) (*DownloadFileRespone, error)
 	mustEmbedUnimplementedStogareServer()
 }
 
@@ -98,6 +109,9 @@ func (UnimplementedStogareServer) GetListFileUpload(context.Context, *GetListFil
 }
 func (UnimplementedStogareServer) ExportTemplateFileUpload(context.Context, *ExportFileResquest) (*ExportFileRespone, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExportTemplateFileUpload not implemented")
+}
+func (UnimplementedStogareServer) DownloafFile(context.Context, *DownloadFileResquest) (*DownloadFileRespone, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DownloafFile not implemented")
 }
 func (UnimplementedStogareServer) mustEmbedUnimplementedStogareServer() {}
 
@@ -184,6 +198,24 @@ func _Stogare_ExportTemplateFileUpload_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Stogare_DownloafFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DownloadFileResquest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StogareServer).DownloafFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb_storage.Stogare/DownloafFile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StogareServer).DownloafFile(ctx, req.(*DownloadFileResquest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Stogare_ServiceDesc is the grpc.ServiceDesc for Stogare service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +238,10 @@ var Stogare_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExportTemplateFileUpload",
 			Handler:    _Stogare_ExportTemplateFileUpload_Handler,
+		},
+		{
+			MethodName: "DownloafFile",
+			Handler:    _Stogare_DownloafFile_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

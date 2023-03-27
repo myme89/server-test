@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"server-test/server-storage/pb_storage"
 	"strings"
@@ -179,11 +180,31 @@ func (serverStorage *ServerStorage) ExportTemplateFileUpload(ctx context.Context
 		log.Error("ExportData: Error SaveAs: ", err)
 	}
 
-	dir, err := filepath.Abs(filepath.Dir("TemplateInfoPerson.xlsx"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	pathExport := dir + "/stogare-export/DataExportFromDB.xlsx"
-
+	// dir, err := filepath.Abs(filepath.Dir("TemplateInfoPerson.xlsx"))
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// pathExport := dir + "/stogare-export/DataExportFromDB.xlsx"
+	pathExport := "localhost:3000/v1/downloadlink?dir=" + "storage-export/TemplateInfoPerson.xlsx"
 	return &pb_storage.ExportFileRespone{PathExport: pathExport}, nil
+}
+
+func (serverStorage *ServerStorage) DownloafFile(ctx context.Context, res *pb_storage.DownloadFileResquest) (*pb_storage.DownloadFileRespone, error) {
+
+	dir := res.GetDir()
+
+	file, err := os.Open(dir)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "method DownloafFile failded")
+	}
+
+	content, err := ioutil.ReadAll(file)
+
+	name := file.Name()
+
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "method DownloafFile ReadAll failded")
+	}
+
+	return &pb_storage.DownloadFileRespone{Name: name, Content: content}, nil
 }
