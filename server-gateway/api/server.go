@@ -75,9 +75,9 @@ func GatewaySever(serverAddr string) {
 		srv.ImportDataWithHttp(w, req)
 	})
 
-	// grpcMux.HandlePath("GET", "/v1/downloadlink", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-	// 	srv.DowloadLinkWithHttp(w, req)
-	// })
+	grpcMux.HandlePath("GET", "/v1/downloadlink", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		srv.DowloadLinkWithHttp(w, req)
+	})
 
 	// grpcMux.HandlePath("GET", "/v1/preview", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 	// 	srv.PreviewWithHttp(w, req)

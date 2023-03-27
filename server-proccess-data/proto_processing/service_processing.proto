@@ -14,4 +14,10 @@ service Processing {
 
     rpc ProcessingFileExcel(ProcessingFileResquest) returns (ProcessingFileRespone) {
     }
+
+    rpc ExportTemplateFileUpload(ExportFileResquest) returns (ExportFileRespone) {
+    }
+
+    rpc DownloafFileProcess(DownloadFileProcessResquest) returns (DownloadFileProcessRespone) {
+    }
 } 

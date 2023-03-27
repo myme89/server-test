@@ -208,6 +208,202 @@ func (x *ProcessingFileRespone) GetNoti() string {
 	return ""
 }
 
+type ExportFileResquest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	TemplateExport string `protobuf:"bytes,1,opt,name=templateExport,proto3" json:"templateExport,omitempty"`
+}
+
+func (x *ExportFileResquest) Reset() {
+	*x = ExportFileResquest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rpc_data_processing_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ExportFileResquest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExportFileResquest) ProtoMessage() {}
+
+func (x *ExportFileResquest) ProtoReflect() protoreflect.Message {
+	mi := &file_rpc_data_processing_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExportFileResquest.ProtoReflect.Descriptor instead.
+func (*ExportFileResquest) Descriptor() ([]byte, []int) {
+	return file_rpc_data_processing_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *ExportFileResquest) GetTemplateExport() string {
+	if x != nil {
+		return x.TemplateExport
+	}
+	return ""
+}
+
+type ExportFileRespone struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	PathExport string `protobuf:"bytes,1,opt,name=pathExport,proto3" json:"pathExport,omitempty"`
+}
+
+func (x *ExportFileRespone) Reset() {
+	*x = ExportFileRespone{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rpc_data_processing_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ExportFileRespone) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExportFileRespone) ProtoMessage() {}
+
+func (x *ExportFileRespone) ProtoReflect() protoreflect.Message {
+	mi := &file_rpc_data_processing_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExportFileRespone.ProtoReflect.Descriptor instead.
+func (*ExportFileRespone) Descriptor() ([]byte, []int) {
+	return file_rpc_data_processing_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ExportFileRespone) GetPathExport() string {
+	if x != nil {
+		return x.PathExport
+	}
+	return ""
+}
+
+type DownloadFileProcessResquest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Dir string `protobuf:"bytes,1,opt,name=dir,proto3" json:"dir,omitempty"`
+}
+
+func (x *DownloadFileProcessResquest) Reset() {
+	*x = DownloadFileProcessResquest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rpc_data_processing_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DownloadFileProcessResquest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DownloadFileProcessResquest) ProtoMessage() {}
+
+func (x *DownloadFileProcessResquest) ProtoReflect() protoreflect.Message {
+	mi := &file_rpc_data_processing_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DownloadFileProcessResquest.ProtoReflect.Descriptor instead.
+func (*DownloadFileProcessResquest) Descriptor() ([]byte, []int) {
+	return file_rpc_data_processing_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *DownloadFileProcessResquest) GetDir() string {
+	if x != nil {
+		return x.Dir
+	}
+	return ""
+}
+
+type DownloadFileProcessRespone struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	NameFile    string `protobuf:"bytes,1,opt,name=nameFile,proto3" json:"nameFile,omitempty"`
+	ContentFile []byte `protobuf:"bytes,2,opt,name=contentFile,proto3" json:"contentFile,omitempty"`
+}
+
+func (x *DownloadFileProcessRespone) Reset() {
+	*x = DownloadFileProcessRespone{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rpc_data_processing_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DownloadFileProcessRespone) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DownloadFileProcessRespone) ProtoMessage() {}
+
+func (x *DownloadFileProcessRespone) ProtoReflect() protoreflect.Message {
+	mi := &file_rpc_data_processing_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DownloadFileProcessRespone.ProtoReflect.Descriptor instead.
+func (*DownloadFileProcessRespone) Descriptor() ([]byte, []int) {
+	return file_rpc_data_processing_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *DownloadFileProcessRespone) GetNameFile() string {
+	if x != nil {
+		return x.NameFile
+	}
+	return ""
+}
+
+func (x *DownloadFileProcessRespone) GetContentFile() []byte {
+	if x != nil {
+		return x.ContentFile
+	}
+	return nil
+}
+
 var File_rpc_data_processing_proto protoreflect.FileDescriptor
 
 var file_rpc_data_processing_proto_rawDesc = []byte{
@@ -230,7 +426,23 @@ var file_rpc_data_processing_proto_rawDesc = []byte{
 	0x6f, 0x70, 0x72, 0x6f, 0x63, 0x65, 0x73, 0x73, 0x22, 0x2b, 0x0a, 0x15, 0x50, 0x72, 0x6f, 0x63,
 	0x65, 0x73, 0x73, 0x69, 0x6e, 0x67, 0x46, 0x69, 0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
 	0x65, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x6f, 0x74, 0x69, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x04, 0x6e, 0x6f, 0x74, 0x69, 0x42, 0x2f, 0x5a, 0x2d, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2d,
+	0x04, 0x6e, 0x6f, 0x74, 0x69, 0x22, 0x3c, 0x0a, 0x12, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x46,
+	0x69, 0x6c, 0x65, 0x52, 0x65, 0x73, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x26, 0x0a, 0x0e, 0x74,
+	0x65, 0x6d, 0x70, 0x6c, 0x61, 0x74, 0x65, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x0e, 0x74, 0x65, 0x6d, 0x70, 0x6c, 0x61, 0x74, 0x65, 0x45, 0x78, 0x70,
+	0x6f, 0x72, 0x74, 0x22, 0x33, 0x0a, 0x11, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x46, 0x69, 0x6c,
+	0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x65, 0x12, 0x1e, 0x0a, 0x0a, 0x70, 0x61, 0x74, 0x68,
+	0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x70, 0x61,
+	0x74, 0x68, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x22, 0x2f, 0x0a, 0x1b, 0x44, 0x6f, 0x77, 0x6e,
+	0x6c, 0x6f, 0x61, 0x64, 0x46, 0x69, 0x6c, 0x65, 0x50, 0x72, 0x6f, 0x63, 0x65, 0x73, 0x73, 0x52,
+	0x65, 0x73, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x10, 0x0a, 0x03, 0x64, 0x69, 0x72, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x64, 0x69, 0x72, 0x22, 0x5a, 0x0a, 0x1a, 0x44, 0x6f, 0x77,
+	0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x46, 0x69, 0x6c, 0x65, 0x50, 0x72, 0x6f, 0x63, 0x65, 0x73, 0x73,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x6e, 0x61, 0x6d, 0x65, 0x46,
+	0x69, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6e, 0x61, 0x6d, 0x65, 0x46,
+	0x69, 0x6c, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x46, 0x69,
+	0x6c, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x0b, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e,
+	0x74, 0x46, 0x69, 0x6c, 0x65, 0x42, 0x2f, 0x5a, 0x2d, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2d,
 	0x74, 0x65, 0x73, 0x74, 0x2f, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2d, 0x70, 0x72, 0x6f, 0x63,
 	0x65, 0x73, 0x73, 0x2d, 0x64, 0x61, 0x74, 0x61, 0x2f, 0x70, 0x62, 0x5f, 0x70, 0x72, 0x6f, 0x63,
 	0x65, 0x73, 0x73, 0x69, 0x6e, 0x67, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
@@ -248,16 +460,20 @@ func file_rpc_data_processing_proto_rawDescGZIP() []byte {
 	return file_rpc_data_processing_proto_rawDescData
 }
 
-var file_rpc_data_processing_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_rpc_data_processing_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_rpc_data_processing_proto_goTypes = []interface{}{
-	(*DataInfoTestResquest1)(nil),  // 0: pb_storage.DataInfoTestResquest1
-	(*DataInfoTestRespone1)(nil),   // 1: pb_storage.DataInfoTestRespone1
-	(*ProcessingFileResquest)(nil), // 2: pb_storage.ProcessingFileResquest
-	(*ProcessingFileRespone)(nil),  // 3: pb_storage.ProcessingFileRespone
-	(*FileInfoProcess)(nil),        // 4: pb_storage.FileInfoProcess
+	(*DataInfoTestResquest1)(nil),       // 0: pb_storage.DataInfoTestResquest1
+	(*DataInfoTestRespone1)(nil),        // 1: pb_storage.DataInfoTestRespone1
+	(*ProcessingFileResquest)(nil),      // 2: pb_storage.ProcessingFileResquest
+	(*ProcessingFileRespone)(nil),       // 3: pb_storage.ProcessingFileRespone
+	(*ExportFileResquest)(nil),          // 4: pb_storage.ExportFileResquest
+	(*ExportFileRespone)(nil),           // 5: pb_storage.ExportFileRespone
+	(*DownloadFileProcessResquest)(nil), // 6: pb_storage.DownloadFileProcessResquest
+	(*DownloadFileProcessRespone)(nil),  // 7: pb_storage.DownloadFileProcessRespone
+	(*FileInfoProcess)(nil),             // 8: pb_storage.FileInfoProcess
 }
 var file_rpc_data_processing_proto_depIdxs = []int32{
-	4, // 0: pb_storage.ProcessingFileResquest.fileinfoprocess:type_name -> pb_storage.FileInfoProcess
+	8, // 0: pb_storage.ProcessingFileResquest.fileinfoprocess:type_name -> pb_storage.FileInfoProcess
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
@@ -320,6 +536,54 @@ func file_rpc_data_processing_proto_init() {
 				return nil
 			}
 		}
+		file_rpc_data_processing_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ExportFileResquest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_rpc_data_processing_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ExportFileRespone); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_rpc_data_processing_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DownloadFileProcessResquest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_rpc_data_processing_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DownloadFileProcessRespone); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -327,7 +591,7 @@ func file_rpc_data_processing_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_rpc_data_processing_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

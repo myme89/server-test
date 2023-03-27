@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"server-test/server-gateway/pb"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
@@ -670,7 +671,7 @@ func (server *Server) GetFileUploadInfo(ctx context.Context, res *pb.FileUploadI
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "Authen token failed")
 	}
-	respDatabase, err := server.clientStogare.GetUploadFileInfoClient(ctx, resp.Iduser)
+	respDatabase, err := server.clientStogare.GetUploadFileInfoClient(context.Background(), resp.Iduser)
 
 	if err != nil {
 		return nil, status.Errorf(codes.Unimplemented, "Get list file failed")
@@ -693,46 +694,64 @@ func (server *Server) GetFileUploadInfo(ctx context.Context, res *pb.FileUploadI
 	return &pb.FileUploadInfoRespone{Fileinfo: temp}, nil
 }
 
-// func (server *Server) ExportData(ctx context.Context, res *pb.ExportDataResquest) (*pb.ExportDataRespone, error) {
+func (server *Server) ExportData(ctx context.Context, res *pb.ExportDataResquest) (*pb.ExportDataRespone, error) {
 
-// 	fmt.Println("ExportData - API call ExportData ")
-// 	md, _ := metadata.FromIncomingContext(ctx)
-// 	log.Info("nhatnt md: ", md)
+	fmt.Println("ExportData - API call ExportData ")
+	md, _ := metadata.FromIncomingContext(ctx)
+	log.Info("nhatnt md: ", md)
 
-// 	_, err := server.clientAuthen.AuthenTokenClient(context.Background(), md["token"][0])
+	_, err := server.clientAuthen.AuthenTokenClient(context.Background(), md["token"][0])
 
-// 	if err != nil {
-// 		return nil, status.Errorf(codes.Unauthenticated, "Authen token failed")
-// 	}
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Authen token failed")
+	}
+	fmt.Println("trongnhat test", server.clientProcessing)
+	resp, err := server.clientProcessing.ExportFileTemplateExcelClient(ctx, md["template"][0])
 
-// 	resp, err := server.clientStogare.ExportFileTemplateExcelClient(ctx, md["template"][0])
+	if err != nil {
+		return nil, status.Errorf(codes.Unimplemented, "ExportData failed")
+	}
 
-// 	if err != nil {
-// 		return nil, status.Errorf(codes.Unimplemented, "ExportData failed")
-// 	}
+	return &pb.ExportDataRespone{PathExport: resp.PathExport}, nil
+}
 
-// 	return &pb.ExportDataRespone{PathExport: resp.PathExport}, nil
-// }
+func (server *Server) DowloadLinkWithHttp(w http.ResponseWriter, r *http.Request) {
 
-// func (server *Server) DowloadLinkWithHttp(w http.ResponseWriter, r *http.Request) {
+	values := r.URL.Query()
 
-// 	values := r.URL.Query()
-// 	dir := values.Get("dir")
+	dir := values.Get("dir")
+	idFile := values.Get("idfile")
 
-// 	resp, err := server.clientStogare.DownloadFileClient(context.Background(), dir)
+	if len(dir) != 0 {
 
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		http.Error(w, "DownloadFileClient failded", http.StatusBadRequest)
-// 		return
-// 	}
+		resp, err := server.clientProcessing.DownloadFileClient(context.Background(), dir)
 
-// 	name := strings.Split(resp.Name, "/")
-// 	fmt.Println(name)
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, "DownloadFileClient failded", http.StatusBadRequest)
+			return
+		}
+		name := strings.Split(resp.NameFile, "/")
+		fmt.Println(name)
 
-// 	w.Header().Set("Content-Disposition", "attachment; filename="+name[len(name)-1])
-// 	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-// 	w.Write(resp.Content)
+		w.Header().Set("Content-Disposition", "attachment; filename="+name[len(name)-1])
+		w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+		w.Write(resp.ContentFile)
+	} else {
+		resp, err := server.clientStogare.DownloadFileClient(context.Background(), idFile)
 
-// 	// http.ServeContent(w, r, "DataImportToDB.xlsx", currentTime, file)
-// }
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, "DownloadFileClient failded", http.StatusBadRequest)
+			return
+		}
+		name := strings.Split(resp.Name, "/")
+		fmt.Println(name)
+
+		w.Header().Set("Content-Disposition", "attachment; filename="+name[len(name)-1])
+		w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+		w.Write(resp.Content)
+	}
+
+	// http.ServeContent(w, r, "DataImportToDB.xlsx", currentTime, file)
+}

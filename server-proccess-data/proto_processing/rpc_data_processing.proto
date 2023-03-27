@@ -23,3 +23,20 @@ message ProcessingFileResquest{
 message ProcessingFileRespone{
     string noti = 1;
 }
+
+message ExportFileResquest{
+    string templateExport = 1;
+}
+
+message ExportFileRespone{
+    string pathExport = 1;
+}
+
+message DownloadFileProcessResquest{
+    string dir = 1;
+}
+
+message DownloadFileProcessRespone{
+    string nameFile = 1;
+    bytes contentFile = 2;
+}

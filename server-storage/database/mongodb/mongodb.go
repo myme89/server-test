@@ -398,3 +398,45 @@ func UpdateStatus(config *config.Config, idFile, status string) error {
 
 	return err
 }
+
+func GetDirFile(config *config.Config, idFile string) (string, error) {
+
+	// collectionDB := config.Sever.ServerMongoDB.DBcollection
+	collectionDB := "FileUpload"
+	dbName := config.Sever.ServerMongoDB.DBName
+	collection := clientMongo.Database(dbName).Collection(collectionDB)
+
+	fmt.Println("status ", idFile)
+
+	objectID, _ := primitive.ObjectIDFromHex(idFile)
+	filter := bson.D{{Key: "_id", Value: objectID}}
+
+	option := options.Find()
+	var err error
+	var arr []model.FileInfoUpload
+
+	cursor, err := collection.Find(context.TODO(), filter, option)
+
+	if err = cursor.All(context.Background(), &arr); err != nil {
+		if len(arr) > 0 {
+			return arr[0].Link, err
+		} else {
+			arr[0].Link = ""
+			return arr[0].Link, err
+		}
+
+	}
+	return arr[0].Link, err
+	// update := bson.D{{Key: "$set", Value: bson.D{{Key: "status_processing", Value: status}}}}
+	// // updateOptions := options.Update().SetUpsert(true)
+	// _, err := collection.UpdateOne(
+	// 	ctx,
+	// 	filter,
+	// 	update,
+	// )
+	// if err != nil {
+	// 	log.Info(err)
+	// }
+
+	// return err
+}

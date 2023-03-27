@@ -33,17 +33,8 @@ message GetListFileUploadRespone{
     repeated FileInfo fileinfo = 1;
 }
 
-
-message ExportFileResquest{
-    string templateExport = 1;
-}
-
-message ExportFileRespone{
-    string pathExport = 1;
-}
-
 message DownloadFileResquest{
-    string dir = 1;
+    string idFile = 1;
 }
 
 message DownloadFileRespone{

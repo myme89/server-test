@@ -5,6 +5,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"server-test/server-proccess-data/database/mongodb"
 	"server-test/server-proccess-data/model"
 	"server-test/server-proccess-data/pb_processing"
@@ -125,4 +127,84 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 	// }
 	// fmt.Println("noti ", resp)
 	return &pb_processing.ProcessingFileRespone{Noti: "Processing Done"}, nil
+}
+
+func (serverProcessing *ServerProcessing) ExportTemplateFileUpload(ctx context.Context, res *pb_processing.ExportFileResquest) (*pb_processing.ExportFileRespone, error) {
+
+	nameTemplate := res.GetTemplateExport()
+
+	dataInfo, err := mongodb.GetAllInfo(serverProcessing.config, nameTemplate)
+	// resp, err := serverStorage.clientDatabase.ExportFileTemplateExcelClient(ctx, nameTemplate)
+
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "ExportTemplateFileUpload  failed")
+	}
+
+	var expenseData = [][]interface{}{}
+
+	for i := 0; i < len(dataInfo); i++ {
+		temp := []interface{}{dataInfo[i].LastName, dataInfo[i].FistName, dataInfo[i].FullName, dataInfo[i].PhoneNumber, dataInfo[i].Address}
+		expenseData = append(expenseData, temp)
+	}
+
+	f := excelize.NewFile()
+	index, _ := f.NewSheet("Sheet1")
+	f.SetActiveSheet(index)
+
+	err = f.SetSheetRow("Sheet1", "A1", &[]interface{}{"Last Name", "First Name", "Full Name", "Phone Number", "Address"})
+	if err != nil {
+
+		log.Error("ExportData: Error SetSheetRow: ", err)
+	}
+	err = f.SetColWidth("Sheet1", "A", "G", 30)
+
+	if err != nil {
+
+		log.Error("ExportData: Error SetColWidth: ", err)
+	}
+
+	startRow := 2
+	for i := startRow; i < (len(expenseData) + startRow); i++ {
+		err = f.SetSheetRow("Sheet1", fmt.Sprintf("A%d", i), &expenseData[i-2])
+		if err != nil {
+			log.Error("ExportData: Error SetSheetRow: ", err)
+		}
+	}
+
+	// Save spreadsheet by the given path.
+	if err := f.SaveAs("./storage-export/TemplateInfoPerson.xlsx"); err != nil {
+		fmt.Println(err)
+	}
+
+	if err != nil {
+		log.Error("ExportData: Error SaveAs: ", err)
+	}
+
+	// dir, err := filepath.Abs(filepath.Dir("TemplateInfoPerson.xlsx"))
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// pathExport := dir + "/stogare-export/DataExportFromDB.xlsx"
+	pathExport := "localhost:3000/v1/downloadlink?dir=" + "storage-export/TemplateInfoPerson.xlsx"
+	return &pb_processing.ExportFileRespone{PathExport: pathExport}, nil
+}
+
+func (serverProcessing *ServerProcessing) DownloafFileProcess(ctx context.Context, res *pb_processing.DownloadFileProcessResquest) (*pb_processing.DownloadFileProcessRespone, error) {
+
+	dir := res.GetDir()
+
+	file, err := os.Open(dir)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "method DownloafFile failded")
+	}
+
+	content, err := ioutil.ReadAll(file)
+
+	name := file.Name()
+
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "method DownloafFile ReadAll failded")
+	}
+
+	return &pb_processing.DownloadFileProcessRespone{NameFile: name, ContentFile: content}, nil
 }

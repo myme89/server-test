@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"server-test/server-storage/database/mongodb"
 	"server-test/server-storage/pb_storage"
@@ -147,91 +148,30 @@ func (serverStorage *ServerStorage) GetListFileUpload(ctx context.Context, res *
 	return &pb_storage.GetListFileUploadRespone{Fileinfo: temp}, nil
 }
 
-// func (serverStorage *ServerStorage) ExportTemplateFileUpload(ctx context.Context, res *pb_storage.ExportFileResquest) (*pb_storage.ExportFileRespone, error) {
+func (serverStorage *ServerStorage) DownloafFile(ctx context.Context, res *pb_storage.DownloadFileResquest) (*pb_storage.DownloadFileRespone, error) {
 
-// 	nameTemplate := res.GetTemplateExport()
-// 	resp, err := serverStorage.clientDatabase.ExportFileTemplateExcelClient(ctx, nameTemplate)
+	idFile := res.GetIdFile()
 
-// 	if err != nil {
-// 		return nil, status.Errorf(codes.InvalidArgument, "ExportTemplateFileUpload  failed")
-// 	}
+	dir, err := mongodb.GetDirFile(serverStorage.config, idFile)
 
-// 	// var DataInfo []model.TemplateInfoPerson
-// 	var expenseData = [][]interface{}{}
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "method GetDirFile failded")
+	}
 
-// 	// var DataInfo []*pb_database.TemplateFilePersonInfo
+	fmt.Println(dir)
 
-// 	for i := 0; i < len(resp.TemplateFilePersonInfo); i++ {
-// 		// DataInfo = append(DataInfo,
-// 		// 	&pb_database.TemplateFilePersonInfo{
-// 		// 		Lastname:    dataInfo[i].LastName,
-// 		// 		Fullname:    dataInfo[i].FullName,
-// 		// 		Firstname:   dataInfo[i].FistName,
-// 		// 		Phonenumber: dataInfo[i].PhoneNumber,
-// 		// 		Address:     dataInfo[i].Address,
-// 		// 	})
-// 		temp := []interface{}{resp.TemplateFilePersonInfo[i].Lastname, resp.TemplateFilePersonInfo[i].Firstname, resp.TemplateFilePersonInfo[i].Fullname, resp.TemplateFilePersonInfo[i].Phonenumber, resp.TemplateFilePersonInfo[i].Address}
-// 		expenseData = append(expenseData, temp)
-// 	}
+	file, err := os.Open(dir)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "method DownloafFile failded")
+	}
 
-// 	f := excelize.NewFile()
-// 	index, _ := f.NewSheet("Sheet1")
-// 	f.SetActiveSheet(index)
+	content, err := ioutil.ReadAll(file)
 
-// 	err = f.SetSheetRow("Sheet1", "A1", &[]interface{}{"Last Name", "First Name", "Full Name", "Phone Number", "Address"})
-// 	if err != nil {
+	name := file.Name()
 
-// 		log.Error("ExportData: Error SetSheetRow: ", err)
-// 	}
-// 	err = f.SetColWidth("Sheet1", "A", "G", 30)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "method DownloafFile ReadAll failded")
+	}
 
-// 	if err != nil {
-
-// 		log.Error("ExportData: Error SetColWidth: ", err)
-// 	}
-
-// 	startRow := 2
-// 	for i := startRow; i < (len(expenseData) + startRow); i++ {
-// 		err = f.SetSheetRow("Sheet1", fmt.Sprintf("A%d", i), &expenseData[i-2])
-// 		if err != nil {
-// 			log.Error("ExportData: Error SetSheetRow: ", err)
-// 		}
-// 	}
-
-// 	// Save spreadsheet by the given path.
-// 	if err := f.SaveAs("./storage-export/TemplateInfoPerson.xlsx"); err != nil {
-// 		fmt.Println(err)
-// 	}
-
-// 	if err != nil {
-// 		log.Error("ExportData: Error SaveAs: ", err)
-// 	}
-
-// 	// dir, err := filepath.Abs(filepath.Dir("TemplateInfoPerson.xlsx"))
-// 	// if err != nil {
-// 	// 	log.Fatal(err)
-// 	// }
-// 	// pathExport := dir + "/stogare-export/DataExportFromDB.xlsx"
-// 	pathExport := "localhost:3000/v1/downloadlink?dir=" + "storage-export/TemplateInfoPerson.xlsx"
-// 	return &pb_storage.ExportFileRespone{PathExport: pathExport}, nil
-// }
-
-// func (serverStorage *ServerStorage) DownloafFile(ctx context.Context, res *pb_storage.DownloadFileResquest) (*pb_storage.DownloadFileRespone, error) {
-
-// 	dir := res.GetDir()
-
-// 	file, err := os.Open(dir)
-// 	if err != nil {
-// 		return nil, status.Errorf(codes.InvalidArgument, "method DownloafFile failded")
-// 	}
-
-// 	content, err := ioutil.ReadAll(file)
-
-// 	name := file.Name()
-
-// 	if err != nil {
-// 		return nil, status.Errorf(codes.InvalidArgument, "method DownloafFile ReadAll failded")
-// 	}
-
-// 	return &pb_storage.DownloadFileRespone{Name: name, Content: content}, nil
-// }
+	return &pb_storage.DownloadFileRespone{Name: name, Content: content}, nil
+}

@@ -25,7 +25,6 @@ type StogareClient interface {
 	TestData(ctx context.Context, in *DataInfoTestResquest, opts ...grpc.CallOption) (*DataInfoTestRespone, error)
 	UploadFile(ctx context.Context, in *FileInfoResquest, opts ...grpc.CallOption) (*FileInfoRespone, error)
 	GetListFileUpload(ctx context.Context, in *GetListFileUploadResquest, opts ...grpc.CallOption) (*GetListFileUploadRespone, error)
-	ExportTemplateFileUpload(ctx context.Context, in *ExportFileResquest, opts ...grpc.CallOption) (*ExportFileRespone, error)
 	DownloafFile(ctx context.Context, in *DownloadFileResquest, opts ...grpc.CallOption) (*DownloadFileRespone, error)
 }
 
@@ -64,15 +63,6 @@ func (c *stogareClient) GetListFileUpload(ctx context.Context, in *GetListFileUp
 	return out, nil
 }
 
-func (c *stogareClient) ExportTemplateFileUpload(ctx context.Context, in *ExportFileResquest, opts ...grpc.CallOption) (*ExportFileRespone, error) {
-	out := new(ExportFileRespone)
-	err := c.cc.Invoke(ctx, "/pb_storage.Stogare/ExportTemplateFileUpload", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *stogareClient) DownloafFile(ctx context.Context, in *DownloadFileResquest, opts ...grpc.CallOption) (*DownloadFileRespone, error) {
 	out := new(DownloadFileRespone)
 	err := c.cc.Invoke(ctx, "/pb_storage.Stogare/DownloafFile", in, out, opts...)
@@ -89,7 +79,6 @@ type StogareServer interface {
 	TestData(context.Context, *DataInfoTestResquest) (*DataInfoTestRespone, error)
 	UploadFile(context.Context, *FileInfoResquest) (*FileInfoRespone, error)
 	GetListFileUpload(context.Context, *GetListFileUploadResquest) (*GetListFileUploadRespone, error)
-	ExportTemplateFileUpload(context.Context, *ExportFileResquest) (*ExportFileRespone, error)
 	DownloafFile(context.Context, *DownloadFileResquest) (*DownloadFileRespone, error)
 	mustEmbedUnimplementedStogareServer()
 }
@@ -106,9 +95,6 @@ func (UnimplementedStogareServer) UploadFile(context.Context, *FileInfoResquest)
 }
 func (UnimplementedStogareServer) GetListFileUpload(context.Context, *GetListFileUploadResquest) (*GetListFileUploadRespone, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetListFileUpload not implemented")
-}
-func (UnimplementedStogareServer) ExportTemplateFileUpload(context.Context, *ExportFileResquest) (*ExportFileRespone, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ExportTemplateFileUpload not implemented")
 }
 func (UnimplementedStogareServer) DownloafFile(context.Context, *DownloadFileResquest) (*DownloadFileRespone, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DownloafFile not implemented")
@@ -180,24 +166,6 @@ func _Stogare_GetListFileUpload_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Stogare_ExportTemplateFileUpload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ExportFileResquest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(StogareServer).ExportTemplateFileUpload(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb_storage.Stogare/ExportTemplateFileUpload",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StogareServer).ExportTemplateFileUpload(ctx, req.(*ExportFileResquest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Stogare_DownloafFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DownloadFileResquest)
 	if err := dec(in); err != nil {
@@ -234,10 +202,6 @@ var Stogare_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetListFileUpload",
 			Handler:    _Stogare_GetListFileUpload_Handler,
-		},
-		{
-			MethodName: "ExportTemplateFileUpload",
-			Handler:    _Stogare_ExportTemplateFileUpload_Handler,
 		},
 		{
 			MethodName: "DownloafFile",
