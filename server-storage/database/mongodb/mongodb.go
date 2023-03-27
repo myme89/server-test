@@ -391,6 +391,7 @@ func UpdateStatus(config *config.Config, idFile, status string) error {
 		ctx,
 		filter,
 		update,
+		// updateOptions,
 	)
 	if err != nil {
 		log.Info(err)

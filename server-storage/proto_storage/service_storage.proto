@@ -20,4 +20,7 @@ service Stogare {
 
     rpc DownloafFile(DownloadFileResquest) returns (DownloadFileRespone) {
     }
+
+    rpc UpdateStatusUploadFile(UpdateStatusResquest) returns (UpdateStatusRespone) {
+    }
 } 

@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net"
 	"net/http"
@@ -89,9 +90,24 @@ func GatewaySever(serverAddr string) {
 	// 	fmt.Fprintf(w, "<html><body><img src=\"/image\" /></body></html>")
 	// })
 
-	grpcMux.HandlePath("GET", "/v1/preview/test", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		fmt.Println("trongnhat")
-		http.ServeFile(w, req, "/home/nhatnt/nhatnt/probationary-project/server-test/server-gateway/DataImportToDB.xlsx")
+	// grpcMux.HandlePath("GET", "/v1/preview/test", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	// 	fmt.Println("trongnhat")
+	// 	http.ServeFile(w, req, "/home/nhatnt/nhatnt/probationary-project/server-test/server-gateway/DataImportToDB.xlsx")
+	// })
+
+	grpcMux.HandlePath("POST", "/v1/status", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		status := req.Header.Get("status")
+		idFile := req.Header.Get("idfile")
+		resp, err := srv.clientStogare.UpdateStatusFileClient(context.Background(), idFile, status)
+		fmt.Println("trongnhat HandlePath")
+		if err != nil {
+			// logs.Logger.Error("ImportDataWithHttp: Failed to retrieve file from form data")
+			http.Error(w, "Failed to retrieve file from form data", http.StatusBadRequest)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(resp)
 	})
 
 	if err != nil {

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"server-test/server-proccess-data/database/mongodb"
 	"server-test/server-proccess-data/model"
@@ -115,6 +116,55 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 
 	}
 
+	url := "http://localhost:3000/v1/status"
+
+	fmt.Println("trongnhat 1")
+
+	// Replace with the data you want to send in the request body
+	// data := map[string]string{"status": "Done", "idfile": infoFileProcess.Idfile}
+	// payload, err := json.Marshal(data)
+	// if err != nil {
+	// 	// Handle error
+	// 	return nil, status.Errorf(codes.InvalidArgument, "Error while encoding data to JSON")
+	// 	// fmt.Println("Error while encoding data to JSON:", err)
+	// 	// return
+	// }
+
+	req, err := http.NewRequest("POST", url, nil)
+	if err != nil {
+		// Handle error
+		return nil, status.Errorf(codes.InvalidArgument, "Error while creating request:")
+
+		// fmt.Println("Error while creating request:", err)
+		// return
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("status", "Done")
+	req.Header.Set("idfile", infoFileProcess.Idfile)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+
+	// fmt.Println("1231212312= ", resp)
+	if err != nil {
+		// Handle error
+		return nil, status.Errorf(codes.InvalidArgument, "Error making request")
+
+	}
+	defer resp.Body.Close()
+
+	// Read the response body
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		// Handle error
+		return nil, status.Errorf(codes.InvalidArgument, "Error reading response body")
+
+		// fmt.Println("Error reading response body:", err)
+		// return
+	}
+
+	// Use the content of the response as needed
+	fmt.Println(string(body))
 	// if err != nil {
 	// 	return nil, status.Errorf(codes.InvalidArgument, "UploadDataFileExcelClient failed")
 	// }

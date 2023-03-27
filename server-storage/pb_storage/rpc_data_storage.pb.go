@@ -412,6 +412,108 @@ func (x *DownloadFileRespone) GetContent() []byte {
 	return nil
 }
 
+type UpdateStatusResquest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Status string `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
+	IdFile string `protobuf:"bytes,2,opt,name=idFile,proto3" json:"idFile,omitempty"`
+}
+
+func (x *UpdateStatusResquest) Reset() {
+	*x = UpdateStatusResquest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rpc_data_storage_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UpdateStatusResquest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateStatusResquest) ProtoMessage() {}
+
+func (x *UpdateStatusResquest) ProtoReflect() protoreflect.Message {
+	mi := &file_rpc_data_storage_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateStatusResquest.ProtoReflect.Descriptor instead.
+func (*UpdateStatusResquest) Descriptor() ([]byte, []int) {
+	return file_rpc_data_storage_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *UpdateStatusResquest) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *UpdateStatusResquest) GetIdFile() string {
+	if x != nil {
+		return x.IdFile
+	}
+	return ""
+}
+
+type UpdateStatusRespone struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Noti string `protobuf:"bytes,1,opt,name=noti,proto3" json:"noti,omitempty"`
+}
+
+func (x *UpdateStatusRespone) Reset() {
+	*x = UpdateStatusRespone{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rpc_data_storage_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UpdateStatusRespone) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateStatusRespone) ProtoMessage() {}
+
+func (x *UpdateStatusRespone) ProtoReflect() protoreflect.Message {
+	mi := &file_rpc_data_storage_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateStatusRespone.ProtoReflect.Descriptor instead.
+func (*UpdateStatusRespone) Descriptor() ([]byte, []int) {
+	return file_rpc_data_storage_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *UpdateStatusRespone) GetNoti() string {
+	if x != nil {
+		return x.Noti
+	}
+	return ""
+}
+
 var File_rpc_data_storage_proto protoreflect.FileDescriptor
 
 var file_rpc_data_storage_proto_rawDesc = []byte{
@@ -448,10 +550,17 @@ var file_rpc_data_storage_proto_rawDesc = []byte{
 	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01,
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f,
 	0x6e, 0x74, 0x65, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x07, 0x63, 0x6f, 0x6e,
-	0x74, 0x65, 0x6e, 0x74, 0x42, 0x27, 0x5a, 0x25, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2d, 0x74,
-	0x65, 0x73, 0x74, 0x2f, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2d, 0x73, 0x74, 0x6f, 0x72, 0x61,
-	0x67, 0x65, 0x2f, 0x70, 0x62, 0x5f, 0x73, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x74, 0x65, 0x6e, 0x74, 0x22, 0x46, 0x0a, 0x14, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x74,
+	0x61, 0x74, 0x75, 0x73, 0x52, 0x65, 0x73, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x16, 0x0a, 0x06,
+	0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x74,
+	0x61, 0x74, 0x75, 0x73, 0x12, 0x16, 0x0a, 0x06, 0x69, 0x64, 0x46, 0x69, 0x6c, 0x65, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x69, 0x64, 0x46, 0x69, 0x6c, 0x65, 0x22, 0x29, 0x0a, 0x13,
+	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x6f, 0x74, 0x69, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x04, 0x6e, 0x6f, 0x74, 0x69, 0x42, 0x27, 0x5a, 0x25, 0x73, 0x65, 0x72, 0x76, 0x65,
+	0x72, 0x2d, 0x74, 0x65, 0x73, 0x74, 0x2f, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2d, 0x73, 0x74,
+	0x6f, 0x72, 0x61, 0x67, 0x65, 0x2f, 0x70, 0x62, 0x5f, 0x73, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -466,7 +575,7 @@ func file_rpc_data_storage_proto_rawDescGZIP() []byte {
 	return file_rpc_data_storage_proto_rawDescData
 }
 
-var file_rpc_data_storage_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_rpc_data_storage_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_rpc_data_storage_proto_goTypes = []interface{}{
 	(*DataInfoTestResquest)(nil),      // 0: pb_storage.DataInfoTestResquest
 	(*DataInfoTestRespone)(nil),       // 1: pb_storage.DataInfoTestRespone
@@ -476,16 +585,18 @@ var file_rpc_data_storage_proto_goTypes = []interface{}{
 	(*GetListFileUploadRespone)(nil),  // 5: pb_storage.GetListFileUploadRespone
 	(*DownloadFileResquest)(nil),      // 6: pb_storage.DownloadFileResquest
 	(*DownloadFileRespone)(nil),       // 7: pb_storage.DownloadFileRespone
-	(*FileInfo)(nil),                  // 8: pb_storage.FileInfo
+	(*UpdateStatusResquest)(nil),      // 8: pb_storage.UpdateStatusResquest
+	(*UpdateStatusRespone)(nil),       // 9: pb_storage.UpdateStatusRespone
+	(*FileInfo)(nil),                  // 10: pb_storage.FileInfo
 }
 var file_rpc_data_storage_proto_depIdxs = []int32{
-	8, // 0: pb_storage.FileInfoResquest.file:type_name -> pb_storage.FileInfo
-	8, // 1: pb_storage.GetListFileUploadRespone.fileinfo:type_name -> pb_storage.FileInfo
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	10, // 0: pb_storage.FileInfoResquest.file:type_name -> pb_storage.FileInfo
+	10, // 1: pb_storage.GetListFileUploadRespone.fileinfo:type_name -> pb_storage.FileInfo
+	2,  // [2:2] is the sub-list for method output_type
+	2,  // [2:2] is the sub-list for method input_type
+	2,  // [2:2] is the sub-list for extension type_name
+	2,  // [2:2] is the sub-list for extension extendee
+	0,  // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_rpc_data_storage_proto_init() }
@@ -591,6 +702,30 @@ func file_rpc_data_storage_proto_init() {
 				return nil
 			}
 		}
+		file_rpc_data_storage_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UpdateStatusResquest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_rpc_data_storage_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UpdateStatusRespone); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -598,7 +733,7 @@ func file_rpc_data_storage_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_rpc_data_storage_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

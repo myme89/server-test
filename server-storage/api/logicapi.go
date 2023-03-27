@@ -175,3 +175,18 @@ func (serverStorage *ServerStorage) DownloafFile(ctx context.Context, res *pb_st
 
 	return &pb_storage.DownloadFileRespone{Name: name, Content: content}, nil
 }
+
+func (serverStorage *ServerStorage) UpdateStatusUploadFile(ctx context.Context, res *pb_storage.UpdateStatusResquest) (*pb_storage.UpdateStatusRespone, error) {
+
+	fmt.Println("trongnhat")
+
+	status := res.GetStatus()
+	idFile := res.GetIdFile()
+
+	err := mongodb.UpdateStatus(serverStorage.config, idFile, status)
+
+	if err != nil {
+		log.Error(" UpdateStatus failed:", err)
+	}
+	return &pb_storage.UpdateStatusRespone{Noti: "Done"}, nil
+}

@@ -42,3 +42,12 @@ message DownloadFileRespone{
     bytes content = 2;
 }
 
+message UpdateStatusResquest{
+    string status = 1;
+    string idFile = 2;
+}
+
+message UpdateStatusRespone{
+    string noti = 1;
+}
+
