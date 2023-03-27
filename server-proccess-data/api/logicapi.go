@@ -33,7 +33,7 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 
 	xlsx, err := excelize.OpenReader(bytes.NewReader(infoFileProcess.Content))
 	if err != nil {
-		return nil, status.Errorf(codes.Unimplemented, "OpenReader file excel failed")
+		return nil, status.Errorf(codes.InvalidArgument, "OpenReader file excel failed")
 	}
 
 	var info_file []model.InfoFile
@@ -42,7 +42,7 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 		// nameSheet = append(nameSheet, name)
 		dataRows, err := xlsx.GetRows(name)
 		if err != nil {
-			return nil, status.Errorf(codes.Unimplemented, "GetRows file excel failed")
+			return nil, status.Errorf(codes.InvalidArgument, "GetRows file excel failed")
 		}
 
 		var data []map[string]string
@@ -60,7 +60,7 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 		jsonData, err := json.Marshal(data)
 
 		if err != nil {
-			return nil, status.Errorf(codes.Unimplemented, "Marshal data failed")
+			return nil, status.Errorf(codes.InvalidArgument, "Marshal data failed")
 
 		}
 
@@ -71,10 +71,15 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 	resp, err := serverProcessing.clientDatabase.UploadDataFileExcelClient(ctx, info_file, nameFileExcel)
 
 	if err != nil {
-		return nil, status.Errorf(codes.Unimplemented, "UploadDataFileExcelClient failed")
+		return nil, status.Errorf(codes.InvalidArgument, "UploadDataFileExcelClient failed")
 	}
 
 	noti, err := serverProcessing.clientDatabase.UpdateStatusProcessingClient(ctx, "Done", infoFileProcess.Idfile)
+
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "UpdateStatusProcessingClient failed")
+
+	}
 	fmt.Println("noti ", resp)
-	return &pb_processing.ProcessingFileRespone{Noti: noti}, nil
+	return &pb_processing.ProcessingFileRespone{Noti: noti.Noti}, nil
 }

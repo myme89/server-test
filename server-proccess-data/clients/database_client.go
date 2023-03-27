@@ -8,7 +8,6 @@ import (
 	"server-test/server-proccess-data/model"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/status"
 )
 
 type DatabaseClient struct {
@@ -39,9 +38,10 @@ func prepareDatabaseGrpcClient(ctx context.Context) error {
 	return nil
 }
 
-func (databaseClient *DatabaseClient) UploadDataFileExcelClient(ctx context.Context, infofile []model.InfoFile, fileName string) (string, error) {
+func (databaseClient *DatabaseClient) UploadDataFileExcelClient(ctx context.Context, infofile []model.InfoFile, fileName string) (*pb_database.ImportFileExcelRespone, error) {
 	if err := prepareDatabaseGrpcClient(ctx); err != nil {
-		return "prepareStorageGrpcClient failed", err
+		return nil, err
+
 	}
 
 	var temp []*pb_database.ImportFileExcel
@@ -58,26 +58,28 @@ func (databaseClient *DatabaseClient) UploadDataFileExcelClient(ctx context.Cont
 	res, err := databaseGrpcServiceClient.ImportFileExcel(ctx, &pb_database.ImportFileExcelResquest{ImportFileExcel: temp})
 
 	if err != nil {
-		return "failed", errors.New(status.Convert(err).Message())
+		return nil, err
+
 	}
 	fmt.Println("UploadFileClient Storage", res)
 
 	// noti := res.Noti
-	return "noti", nil
+	return &pb_database.ImportFileExcelRespone{Noti: "noti"}, nil
 }
 
-func (databaseClient *DatabaseClient) UpdateStatusProcessingClient(ctx context.Context, status, idFile string) (string, error) {
+func (databaseClient *DatabaseClient) UpdateStatusProcessingClient(ctx context.Context, status, idFile string) (*pb_database.StatusProcessingFileRespone, error) {
 	if err := prepareDatabaseGrpcClient(ctx); err != nil {
-		return "prepareStorageGrpcClient failed", err
+		fmt.Println("prepareStorageGrpcClient failed", err)
+		return nil, err
 	}
 
-	res, err := databaseGrpcServiceClient.UpdateStatusProcessingFileExcel(ctx, &pb_database.StatusProcessingFileResquest{Status: status, IdFile: idFile})
+	resp, err := databaseGrpcServiceClient.UpdateStatusProcessingFileExcel(ctx, &pb_database.StatusProcessingFileResquest{Status: status, IdFile: idFile})
 
 	if err != nil {
-		return "failed", err
+		fmt.Println("UpdateStatusProcessingFileExcel failed", err)
+		return nil, err
 	}
-	fmt.Println("UpdateStatusProcessingClient ", res)
+	fmt.Println("UpdateStatusProcessingClient ", resp)
 
-	noti := res.Noti
-	return noti, nil
+	return resp, nil
 }
