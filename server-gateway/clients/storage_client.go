@@ -7,6 +7,7 @@ import (
 	"server-test/server-storage/pb_storage"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
@@ -70,4 +71,18 @@ func (stogareClient *StorageClient) UploadFile(ctx context.Context, fileName, fi
 
 	noti := res.Link
 	return noti, nil
+}
+
+func (stogareClient *StorageClient) GetUploadFileInfoClient(ctx context.Context, idUser string) (*pb_storage.GetListFileUploadRespone, error) {
+	if err := prepareDatabaseGrpcClient(ctx); err != nil {
+		return nil, err
+	}
+
+	resp, err := stogareGrpcServiceClient.GetListFileUpload(ctx, &pb_storage.GetListFileUploadResquest{Iduser: idUser})
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "method GetListFileUpload in client stogare failed")
+	}
+	fmt.Println("UploadFileClient Storage")
+
+	return resp, nil
 }

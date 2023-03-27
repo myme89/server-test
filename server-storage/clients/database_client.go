@@ -54,3 +54,17 @@ func (databaseClient *DatabaseClient) UploadFileClient(ctx context.Context, file
 	noti := res.Noti
 	return noti, nil
 }
+
+func (databaseClient *DatabaseClient) GetUploadFileInfoClient(ctx context.Context, idUser string) (*pb_database.GetListFileRespone, error) {
+	if err := prepareDatabaseGrpcClient(ctx); err != nil {
+		return nil, err
+	}
+
+	resp, err := databaseGrpcServiceClient.GetListUploadFile(ctx, &pb_database.GetListFileResquest{IdUser: idUser})
+	if err != nil {
+		return nil, errors.New(status.Convert(err).Message())
+	}
+	fmt.Println("UploadFileClient Storage")
+
+	return resp, nil
+}

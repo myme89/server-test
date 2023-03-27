@@ -652,7 +652,7 @@ func (server *Server) GetFileUploadInfo(ctx context.Context, res *pb.FileUploadI
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "Authen token failed")
 	}
-	respDatabase, err := server.clientDatabase.GetUploadFileInfoClient(ctx, resp.Iduser)
+	respDatabase, err := server.clientStogare.GetUploadFileInfoClient(ctx, resp.Iduser)
 
 	if err != nil {
 		return nil, status.Errorf(codes.Unimplemented, "Get list file failed")
@@ -666,7 +666,7 @@ func (server *Server) GetFileUploadInfo(ctx context.Context, res *pb.FileUploadI
 			Filetype:     respDatabase.Fileinfo[0].Typefile,
 			Sizefile:     int64(respDatabase.Fileinfo[0].Size),
 			Link:         respDatabase.Fileinfo[0].Link,
-			Timecreateat: respDatabase.Fileinfo[0].Createat,
+			Timecreateat: respDatabase.Fileinfo[0].Timecreateat,
 		})
 	}
 
@@ -709,26 +709,3 @@ func (server *Server) DowloadLinkWithHttp(w http.ResponseWriter, r *http.Request
 
 	http.ServeContent(w, r, "DataImportToDB.xlsx", currentTime, file)
 }
-
-// func (server *Server) PreviewWithHttp(w http.ResponseWriter, r *http.Request) {
-
-// 	filename := "DataImportToDB.xlsx"
-// 	// Create a command to convert the Excel file to a PDF
-// 	cmd := exec.Command("libreoffice", "--headless", "--convert-to", "pdf", "--outdir", "./temp", "./"+filename)
-// 	if err := cmd.Run(); err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	// Create a command to generate a preview image of the first page of the PDF
-// 	cmd = exec.Command("/home/nhatnt/Pictures/Screenshot%20from%202023-03-20%2015-51-49.png")
-
-// 	// Pipe the output of the command to the response writer
-// 	w.Header().Set("Content-Type", "image/png")
-// 	w.WriteHeader(http.StatusOK)
-// 	cmd.Stdout = w
-// 	if err := cmd.Run(); err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// }

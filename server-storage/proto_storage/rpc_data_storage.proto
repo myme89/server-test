@@ -25,3 +25,13 @@ message FileInfoRespone{
 }
 
 
+message GetListFileUploadResquest{
+    string iduser = 1;
+}
+
+message GetListFileUploadRespone{
+    repeated FileInfo fileinfo = 1;
+}
+
+
+

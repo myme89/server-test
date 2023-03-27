@@ -38,19 +38,19 @@ func prepareDatabaseGrpcClient(ctx context.Context) error {
 	return nil
 }
 
-func (databaseClient *DatabaseClient) GetUploadFileInfoClient(ctx context.Context, idUser string) (*pb_database.GetListFileRespone, error) {
-	if err := prepareDatabaseGrpcClient(ctx); err != nil {
-		return nil, err
-	}
+// func (databaseClient *DatabaseClient) GetUploadFileInfoClient(ctx context.Context, idUser string) (*pb_database.GetListFileRespone, error) {
+// 	if err := prepareDatabaseGrpcClient(ctx); err != nil {
+// 		return nil, err
+// 	}
 
-	resp, err := databaseGrpcServiceClient.GetListUploadFile(ctx, &pb_database.GetListFileResquest{IdUser: idUser})
-	if err != nil {
-		return nil, errors.New(status.Convert(err).Message())
-	}
-	fmt.Println("UploadFileClient Storage")
+// 	resp, err := databaseGrpcServiceClient.GetListUploadFile(ctx, &pb_database.GetListFileResquest{IdUser: idUser})
+// 	if err != nil {
+// 		return nil, errors.New(status.Convert(err).Message())
+// 	}
+// 	fmt.Println("UploadFileClient Storage")
 
-	return resp, nil
-}
+// 	return resp, nil
+// }
 
 func (databaseClient *DatabaseClient) ExportFileTemplateExcelClient(ctx context.Context, templateName string) (string, error) {
 	if err := prepareDatabaseGrpcClient(ctx); err != nil {

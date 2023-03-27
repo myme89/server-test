@@ -14,4 +14,7 @@ service Stogare {
 
     rpc UploadFile(FileInfoResquest) returns (FileInfoRespone) {
     }
+
+    rpc GetListFileUpload(GetListFileUploadResquest) returns (GetListFileUploadRespone) {
+    }
 } 

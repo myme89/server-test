@@ -7,6 +7,9 @@ import (
 	"path/filepath"
 	"server-test/server-storage/pb_storage"
 	"strings"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (serverStorage *ServerStorage) TestData(ctx context.Context, res *pb_storage.DataInfoTestResquest) (*pb_storage.DataInfoTestRespone, error) {
@@ -85,4 +88,30 @@ func (serverStorage *ServerStorage) UploadFile(ctx context.Context, res *pb_stor
 		Link: resp,
 	}
 	return rsp, nil
+}
+
+func (serverStorage *ServerStorage) GetListFileUpload(ctx context.Context, res *pb_storage.GetListFileUploadResquest) (*pb_storage.GetListFileUploadRespone, error) {
+
+	idUser := res.GetIduser()
+
+	respDatabase, err := serverStorage.clientDatabase.GetUploadFileInfoClient(ctx, idUser)
+
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Get list file failed")
+	}
+
+	var temp []*pb_storage.FileInfo
+
+	for i := 0; i < len(respDatabase.Fileinfo); i++ {
+		temp = append(temp, &pb_storage.FileInfo{
+			Filename:     respDatabase.Fileinfo[0].Filename,
+			Typefile:     respDatabase.Fileinfo[0].Typefile,
+			Size:         int64(respDatabase.Fileinfo[0].Size),
+			Link:         respDatabase.Fileinfo[0].Link,
+			Timecreateat: respDatabase.Fileinfo[0].Createat,
+		})
+	}
+
+	return &pb_storage.GetListFileUploadRespone{Fileinfo: temp}, nil
+	// return nil, status.Errorf(codes.Unimplemented, "method GetListFileUpload not implemented")
 }
