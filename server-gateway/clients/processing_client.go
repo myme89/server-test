@@ -7,6 +7,7 @@ import (
 	"server-test/server-proccess-data/pb_processing"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
@@ -54,18 +55,18 @@ func prepareProcessingGrpcClient(ctx context.Context) error {
 // 	return noti, nil
 // }
 
-func (processingClient *ProcessingClient) ProcessingDataClient(ctx context.Context, idFile, fileName string, content []byte) (string, error) {
+func (processingClient *ProcessingClient) ProcessingDataClient(ctx context.Context, idFile, fileName string, content []byte) (*pb_processing.ProcessingFileRespone, error) {
 	fmt.Println(ctx)
 	if err := prepareProcessingGrpcClient(ctx); err != nil {
-		return "ProcessingDataClient failed", err
+		return nil, status.Errorf(codes.InvalidArgument, "method prepareProcessingGrpcClient in ProcessingDataClient failed")
 	}
 
 	infoFile := &pb_processing.FileInfoProcess{Filename: fileName, Content: content, Idfile: idFile}
 	resp, err := processingGrpcServiceClient.ProcessingFileExcel(ctx, &pb_processing.ProcessingFileResquest{Fileinfoprocess: infoFile})
 	if err != nil {
-		return "processingGrpcServiceClient ProcessingFileExcel failed", errors.New(status.Convert(err).Message())
+		return nil, status.Errorf(codes.InvalidArgument, "method ProcessingFileExcel in ProcessingDataClient failed")
 	}
-	fmt.Println("TestData server Storage")
+	fmt.Println("ProcessingDataClient server Storage")
 
-	return resp.Noti, nil
+	return resp, nil
 }

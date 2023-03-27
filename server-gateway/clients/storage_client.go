@@ -55,22 +55,22 @@ func (stogareClient *StorageClient) TestData(ctx context.Context, data string) (
 	return noti, nil
 }
 
-func (stogareClient *StorageClient) UploadFile(ctx context.Context, fileName, fileType, idUser string, size int64, content []byte) (string, error) {
+func (stogareClient *StorageClient) UploadFile(ctx context.Context, fileName, fileType, idUser string, size int64, content []byte) (*pb_storage.FileInfoRespone, error) {
 
 	fmt.Println("stogareClient Upload file")
 	if err := prepareStorageGrpcClient(ctx); err != nil {
-		return "prepareStorageGrpcClient failed", err
+		return nil, status.Errorf(codes.InvalidArgument, "method prepareStorageGrpcClient in UploadFile failed")
 	}
 
 	file := &pb_storage.FileInfo{Filename: fileName, Typefile: fileType, Content: content, Size: size}
 
 	res, err := stogareGrpcServiceClient.UploadFile(ctx, &pb_storage.FileInfoResquest{File: file, Iduser: idUser})
 	if err != nil {
-		return "failed", errors.New(status.Convert(err).Message())
+		return nil, status.Errorf(codes.InvalidArgument, "method UploadFile failed")
 	}
 
-	noti := res.Link
-	return noti, nil
+	// noti := res.Link
+	return res, nil
 }
 
 func (stogareClient *StorageClient) GetUploadFileInfoClient(ctx context.Context, idUser string) (*pb_storage.GetListFileUploadRespone, error) {

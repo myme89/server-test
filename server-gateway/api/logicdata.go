@@ -465,7 +465,7 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 			if err != nil {
 				http.Error(w, "ProcessingDataClient Failed ", http.StatusBadRequest)
 			}
-		}(idFileUpLoad, a.Filename, content)
+		}(idFileUpLoad.Link, a.Filename, content)
 	}
 
 	// if a.Size > 1024*1024 {
@@ -540,7 +540,12 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 
 	// }
 
-	noticeDb := "Upload Done"
+	type Respone struct {
+		Notice string
+	}
+
+	noticeDb := Respone{Notice: "Upload Done"}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(noticeDb)
 }
