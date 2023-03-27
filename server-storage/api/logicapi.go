@@ -8,8 +8,11 @@ import (
 	"server-test/server-storage/pb_storage"
 	"strings"
 
+	"github.com/xuri/excelize/v2"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func (serverStorage *ServerStorage) TestData(ctx context.Context, res *pb_storage.DataInfoTestResquest) (*pb_storage.DataInfoTestRespone, error) {
@@ -125,5 +128,62 @@ func (serverStorage *ServerStorage) ExportTemplateFileUpload(ctx context.Context
 		return nil, status.Errorf(codes.InvalidArgument, "ExportTemplateFileUpload  failed")
 	}
 
-	return &pb_storage.ExportFileRespone{PathExport: resp}, nil
+	// var DataInfo []model.TemplateInfoPerson
+	var expenseData = [][]interface{}{}
+
+	// var DataInfo []*pb_database.TemplateFilePersonInfo
+
+	for i := 0; i < len(resp.TemplateFilePersonInfo); i++ {
+		// DataInfo = append(DataInfo,
+		// 	&pb_database.TemplateFilePersonInfo{
+		// 		Lastname:    dataInfo[i].LastName,
+		// 		Fullname:    dataInfo[i].FullName,
+		// 		Firstname:   dataInfo[i].FistName,
+		// 		Phonenumber: dataInfo[i].PhoneNumber,
+		// 		Address:     dataInfo[i].Address,
+		// 	})
+		temp := []interface{}{resp.TemplateFilePersonInfo[i].Lastname, resp.TemplateFilePersonInfo[i].Firstname, resp.TemplateFilePersonInfo[i].Fullname, resp.TemplateFilePersonInfo[i].Phonenumber, resp.TemplateFilePersonInfo[i].Address}
+		expenseData = append(expenseData, temp)
+	}
+
+	f := excelize.NewFile()
+	index, _ := f.NewSheet("Sheet1")
+	f.SetActiveSheet(index)
+
+	err = f.SetSheetRow("Sheet1", "A1", &[]interface{}{"Last Name", "First Name", "Full Name", "Phone Number", "Address"})
+	if err != nil {
+
+		log.Error("ExportData: Error SetSheetRow: ", err)
+	}
+	err = f.SetColWidth("Sheet1", "A", "G", 30)
+
+	if err != nil {
+
+		log.Error("ExportData: Error SetColWidth: ", err)
+	}
+
+	startRow := 2
+	for i := startRow; i < (len(expenseData) + startRow); i++ {
+		err = f.SetSheetRow("Sheet1", fmt.Sprintf("A%d", i), &expenseData[i-2])
+		if err != nil {
+			log.Error("ExportData: Error SetSheetRow: ", err)
+		}
+	}
+
+	// Save spreadsheet by the given path.
+	if err := f.SaveAs("./storage-export/TemplateInfoPerson.xlsx"); err != nil {
+		fmt.Println(err)
+	}
+
+	if err != nil {
+		log.Error("ExportData: Error SaveAs: ", err)
+	}
+
+	dir, err := filepath.Abs(filepath.Dir("TemplateInfoPerson.xlsx"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	pathExport := dir + "/stogare-export/DataExportFromDB.xlsx"
+
+	return &pb_storage.ExportFileRespone{PathExport: pathExport}, nil
 }

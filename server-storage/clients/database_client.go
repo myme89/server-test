@@ -7,6 +7,7 @@ import (
 	"server-test/server-database/pb_database"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
@@ -69,17 +70,17 @@ func (databaseClient *DatabaseClient) GetUploadFileInfoClient(ctx context.Contex
 	return resp, nil
 }
 
-func (databaseClient *DatabaseClient) ExportFileTemplateExcelClient(ctx context.Context, templateName string) (string, error) {
+func (databaseClient *DatabaseClient) ExportFileTemplateExcelClient(ctx context.Context, templateName string) (*pb_database.ExportTemplateFileRespone, error) {
 	if err := prepareDatabaseGrpcClient(ctx); err != nil {
-		return "prepareDatabaseGrpcClient faild", err
+		return nil, err
 	}
 
 	resp, err := databaseGrpcServiceClient.ExportTemplateFile(ctx, &pb_database.ExportTemplateFileResquest{TemplateName: templateName})
 
 	if err != nil {
-		return "failed", errors.New(status.Convert(err).Message())
+		return nil, status.Errorf(codes.InvalidArgument, "ExportFileTemplateExcelClient in stogare failed")
 	}
 	fmt.Println("UploadFileClient Storage")
 
-	return resp.PathExport, nil
+	return resp, nil
 }

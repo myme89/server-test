@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"path/filepath"
 	"server-test/server-database/database/mongodb"
 	"server-test/server-database/model"
 	"server-test/server-database/pb_database"
@@ -13,7 +12,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/xuri/excelize/v2"
 )
 
 func (serverDatabase *ServerDatabase) SignUpAcc(ctx context.Context, res *pb_database.SignUpAccResquest) (*pb_database.SignUpAccRespone, error) {
@@ -98,65 +96,71 @@ func (serverDatabase *ServerDatabase) ExportTemplateFile(ctx context.Context, re
 
 	dataInfo, err := mongodb.GetAllInfo(serverDatabase.config, templateName)
 
-	var DataInfo []model.TemplateInfoPerson
-	var expenseData = [][]interface{}{}
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "ExportTemplateFile in database failed")
+	}
+
+	// var DataInfo []model.TemplateInfoPerson
+	// var expenseData = [][]interface{}{}
+
+	var DataInfo []*pb_database.TemplateFilePersonInfo
 
 	for i := 0; i < len(dataInfo); i++ {
 		DataInfo = append(DataInfo,
-			model.TemplateInfoPerson{
-				LastName:    dataInfo[i].LastName,
-				FullName:    dataInfo[i].FullName,
-				FistName:    dataInfo[i].FistName,
-				PhoneNumber: dataInfo[i].PhoneNumber,
+			&pb_database.TemplateFilePersonInfo{
+				Lastname:    dataInfo[i].LastName,
+				Fullname:    dataInfo[i].FullName,
+				Firstname:   dataInfo[i].FistName,
+				Phonenumber: dataInfo[i].PhoneNumber,
 				Address:     dataInfo[i].Address,
 			})
-		temp := []interface{}{dataInfo[i].LastName, dataInfo[i].FistName, dataInfo[i].FullName, dataInfo[i].PhoneNumber, dataInfo[i].Address}
-		expenseData = append(expenseData, temp)
+		// temp := []interface{}{dataInfo[i].LastName, dataInfo[i].FistName, dataInfo[i].FullName, dataInfo[i].PhoneNumber, dataInfo[i].Address}
+		// expenseData = append(expenseData, temp)
 	}
 
-	f := excelize.NewFile()
-	index, _ := f.NewSheet("Sheet1")
-	f.SetActiveSheet(index)
+	// f := excelize.NewFile()
+	// index, _ := f.NewSheet("Sheet1")
+	// f.SetActiveSheet(index)
 
-	err = f.SetSheetRow("Sheet1", "A1", &[]interface{}{"Last Name", "First Name", "Full Name", "Phone Number", "Address"})
-	if err != nil {
+	// err = f.SetSheetRow("Sheet1", "A1", &[]interface{}{"Last Name", "First Name", "Full Name", "Phone Number", "Address"})
+	// if err != nil {
 
-		log.Error("ExportData: Error SetSheetRow: ", err)
-	}
-	err = f.SetColWidth("Sheet1", "A", "G", 30)
+	// 	log.Error("ExportData: Error SetSheetRow: ", err)
+	// }
+	// err = f.SetColWidth("Sheet1", "A", "G", 30)
 
-	if err != nil {
+	// if err != nil {
 
-		log.Error("ExportData: Error SetColWidth: ", err)
-	}
+	// 	log.Error("ExportData: Error SetColWidth: ", err)
+	// }
 
-	startRow := 2
-	for i := startRow; i < (len(expenseData) + startRow); i++ {
-		err = f.SetSheetRow("Sheet1", fmt.Sprintf("A%d", i), &expenseData[i-2])
-		if err != nil {
-			log.Error("ExportData: Error SetSheetRow: ", err)
-		}
-	}
+	// startRow := 2
+	// for i := startRow; i < (len(expenseData) + startRow); i++ {
+	// 	err = f.SetSheetRow("Sheet1", fmt.Sprintf("A%d", i), &expenseData[i-2])
+	// 	if err != nil {
+	// 		log.Error("ExportData: Error SetSheetRow: ", err)
+	// 	}
+	// }
 
-	// Save spreadsheet by the given path.
-	if err := f.SaveAs("./export/TemplateInfoPerson.xlsx"); err != nil {
-		fmt.Println(err)
-	}
+	// // Save spreadsheet by the given path.
+	// if err := f.SaveAs("./export/TemplateInfoPerson.xlsx"); err != nil {
+	// 	fmt.Println(err)
+	// }
 
-	if err != nil {
-		log.Error("ExportData: Error SaveAs: ", err)
-	}
+	// if err != nil {
+	// 	log.Error("ExportData: Error SaveAs: ", err)
+	// }
 
-	dir, err := filepath.Abs(filepath.Dir("TemplateInfoPerson.xlsx"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	pathExport := dir + "/export/DataExportFromDB.xlsx"
+	// dir, err := filepath.Abs(filepath.Dir("TemplateInfoPerson.xlsx"))
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// pathExport := dir + "/export/DataExportFromDB.xlsx"
 
-	rsp := &pb_database.ExportTemplateFileRespone{
-		PathExport: pathExport,
-	}
-	return rsp, nil
+	// rsp := &pb_database.ExportTemplateFileRespone{
+	// 	PathExport: pathExport,
+	// }
+	return &pb_database.ExportTemplateFileRespone{TemplateFilePersonInfo: DataInfo}, nil
 	// return nil, status.Errorf(codes.Unimplemented, "get list file failed")
 }
 

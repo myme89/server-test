@@ -20,3 +20,12 @@ message ImportFileExcel {
     string filename = 1;
     bytes content = 2 ;
 }
+
+message TemplateFilePersonInfo {
+    string lastname         = 1;
+    string firstname         = 2;
+	string fullname         = 3;
+	string phonenumber      = 4;
+    string address          = 5;
+}
+

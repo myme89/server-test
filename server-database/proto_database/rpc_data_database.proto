@@ -47,7 +47,7 @@ message ExportTemplateFileResquest{
 }
 
 message ExportTemplateFileRespone{
-    string pathExport = 1;
+    repeated TemplateFilePersonInfo templateFilePersonInfo = 1;
 }
 
 
