@@ -3,7 +3,7 @@ package api
 import (
 	"fmt"
 	"net"
-	"server-test/server-storage/clients"
+	"server-test/server-storage/config"
 	"server-test/server-storage/pb_storage"
 
 	"google.golang.org/grpc"
@@ -16,16 +16,16 @@ type ServerStorage struct {
 	pb_storage.UnimplementedStogareServer
 	Addr string
 	// Handler http.Handler
-	// config *config.Config
-	clientTest     clients.StorageClient
-	clientDatabase clients.DatabaseClient
+	config *config.Config
+	// clientTest     clients.StorageClient
+	// clientDatabase clients.DatabaseClient
 }
 
 // func GRPCSever(serverAddr string, config *config.Config) {
-func GRPCSeverStorage(serverAddr string) {
+func GRPCSeverStorage(serverAddr string, config *config.Config) {
 	srv := &ServerStorage{
-		Addr: serverAddr,
-		// config: config,
+		Addr:   serverAddr,
+		config: config,
 	}
 
 	grpcServer := grpc.NewServer()

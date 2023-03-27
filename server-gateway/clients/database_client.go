@@ -1,40 +1,40 @@
 package clients
 
-import (
-	"context"
-	"errors"
-	"server-test/server-database/pb_database"
+// import (
+// 	"context"
+// 	"errors"
+// 	"server-test/server-database/pb_database"
 
-	"google.golang.org/grpc"
-)
+// 	"google.golang.org/grpc"
+// )
 
-type DatabaseClient struct {
-}
+// type DatabaseClient struct {
+// }
 
-var (
-	databaseGrpcServiceAddr   = "0.0.0.0:3004"
-	databaseGrpcServiceClient pb_database.DatabaseClient
-)
+// var (
+// 	databaseGrpcServiceAddr   = "0.0.0.0:3004"
+// 	databaseGrpcServiceClient pb_database.DatabaseClient
+// )
 
-func prepareDatabaseGrpcClient(ctx context.Context) error {
+// func prepareDatabaseGrpcClient(ctx context.Context) error {
 
-	conn, err := grpc.DialContext(ctx, databaseGrpcServiceAddr, []grpc.DialOption{
-		grpc.WithInsecure(),
-		grpc.WithBlock()}...)
+// 	conn, err := grpc.DialContext(ctx, databaseGrpcServiceAddr, []grpc.DialOption{
+// 		grpc.WithInsecure(),
+// 		grpc.WithBlock()}...)
 
-	if err != nil {
-		databaseGrpcServiceClient = nil
-		return errors.New("connection to advice gRPC service failed")
-	}
+// 	if err != nil {
+// 		databaseGrpcServiceClient = nil
+// 		return errors.New("connection to advice gRPC service failed")
+// 	}
 
-	if databaseGrpcServiceClient != nil {
-		conn.Close()
-		return nil
-	}
+// 	if databaseGrpcServiceClient != nil {
+// 		conn.Close()
+// 		return nil
+// 	}
 
-	databaseGrpcServiceClient = pb_database.NewDatabaseClient(conn)
-	return nil
-}
+// 	databaseGrpcServiceClient = pb_database.NewDatabaseClient(conn)
+// 	return nil
+// }
 
 // func (databaseClient *DatabaseClient) GetUploadFileInfoClient(ctx context.Context, idUser string) (*pb_database.GetListFileRespone, error) {
 // 	if err := prepareDatabaseGrpcClient(ctx); err != nil {

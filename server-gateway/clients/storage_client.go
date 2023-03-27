@@ -74,7 +74,7 @@ func (stogareClient *StorageClient) UploadFile(ctx context.Context, fileName, fi
 }
 
 func (stogareClient *StorageClient) GetUploadFileInfoClient(ctx context.Context, idUser string) (*pb_storage.GetListFileUploadRespone, error) {
-	if err := prepareDatabaseGrpcClient(ctx); err != nil {
+	if err := prepareStorageGrpcClient(ctx); err != nil {
 		return nil, err
 	}
 

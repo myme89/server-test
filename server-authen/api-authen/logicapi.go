@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"server-test/server-authen/database/mongodb"
 	"server-test/server-authen/pb_authen"
 	"time"
 
@@ -40,16 +41,23 @@ func (serverAuthen *ServerAuthen) SignUp(ctx context.Context, res *pb_authen.Use
 
 	fmt.Println("username: ", infoSignUp.Username)
 	fmt.Println("password: ", infoSignUp.Password)
-	// fmt.Println("lastname: ", infoSignUp.Lastname)
-	// fmt.Println("firstname: ", infoSignUp.Firstname)
+	fmt.Println("lastname: ", infoSignUp.Lastname)
+	fmt.Println("firstname: ", infoSignUp.Firstname)
+	fmt.Println("firstname: ", serverAuthen.config)
+	// resp, err := serverAuthen.clientDatabase.SignUpAcc(ctx, infoSignUp.Username, infoSignUp.Password, infoSignUp.Firstname, infoSignUp.Lastname)
 
-	resp, err := serverAuthen.clientDatabase.SignUpAcc(ctx, infoSignUp.Username, infoSignUp.Password, infoSignUp.Firstname, infoSignUp.Lastname)
+	err := mongodb.AddUserInfoSignUp(serverAuthen.config, infoSignUp.Username, infoSignUp.Password, infoSignUp.Lastname, infoSignUp.Firstname)
+
+	if err != nil {
+		log.Error("Create user sign up acc faied ", err)
+		return nil, status.Errorf(codes.Unimplemented, "get Data failed")
+	}
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	noti := &pb_authen.UserRespone{Noti: resp}
+	noti := &pb_authen.UserRespone{Noti: "Done"}
 
 	return noti, nil
 }
@@ -58,22 +66,24 @@ func (serverAuthen *ServerAuthen) SignIn(ctx context.Context, res *pb_authen.Sig
 
 	infoSignUp := res.GetUserinfo()
 
-	resp, err := serverAuthen.clientDatabase.LoginAccClient(ctx, infoSignUp.Username, infoSignUp.Password)
+	// resp, err := serverAuthen.clientDatabase.LoginAccClient(ctx, infoSignUp.Username, infoSignUp.Password)
 
-	if err != nil {
+	infoAcc := mongodb.GetHashPassword(serverAuthen.config, infoSignUp.Username)
+
+	if infoAcc.Password != infoSignUp.Password || len(infoAcc.LastName) == 0 || len(infoAcc.FistName) == 0 {
 		return nil, status.Errorf(codes.Unauthenticated, "User or password is incorrect")
 	}
 
-	token, err := GetLoginToken(resp.Userinfo.Id)
+	token, err := GetLoginToken(infoAcc.Id)
 	if err != nil {
 		fmt.Println(err)
 		return nil, status.Errorf(codes.Internal, "Create Token Failed")
 	}
 
 	userInfo := &pb_authen.UserInfo{
-		Username:  resp.Userinfo.Username,
-		Lastname:  resp.Userinfo.Lastname,
-		Firstname: resp.Userinfo.Firstname,
+		Username:  infoAcc.UserName,
+		Lastname:  infoAcc.LastName,
+		Firstname: infoAcc.FistName,
 	}
 
 	noti := &pb_authen.SignInRespone{
@@ -112,6 +122,12 @@ func (serverAuthen *ServerAuthen) AuthenToken(ctx context.Context, res *pb_authe
 
 		}
 		log.Info(" Get request from user :", idUserName)
+	} else {
+		log.Info("Token invalid ")
+		if err != nil {
+			log.Error(err)
+		}
+		return nil, status.Errorf(codes.Unauthenticated, "Token invalid")
 	}
 
 	return &pb_authen.AuthenTokenRespone{Iduser: idUserName}, nil
