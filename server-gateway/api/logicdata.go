@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"server-test/server-gateway/pb"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
@@ -691,3 +693,42 @@ func (server *Server) ExportData(ctx context.Context, res *pb.ExportDataResquest
 
 	return &pb.ExportDataRespone{PathExport: resp}, nil
 }
+
+func (server *Server) DowloadLinkWithHttp(w http.ResponseWriter, r *http.Request) {
+
+	file, err := os.Open("DataImportToDB.xlsx")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer file.Close()
+	currentTime := time.Now().Local()
+	// Set the response headers
+	w.Header().Set("Content-Disposition", "attachment; filename=DataImportToDB.xlsx")
+	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
+	http.ServeContent(w, r, "DataImportToDB.xlsx", currentTime, file)
+}
+
+// func (server *Server) PreviewWithHttp(w http.ResponseWriter, r *http.Request) {
+
+// 	filename := "DataImportToDB.xlsx"
+// 	// Create a command to convert the Excel file to a PDF
+// 	cmd := exec.Command("libreoffice", "--headless", "--convert-to", "pdf", "--outdir", "./temp", "./"+filename)
+// 	if err := cmd.Run(); err != nil {
+// 		http.Error(w, err.Error(), http.StatusInternalServerError)
+// 		return
+// 	}
+
+// 	// Create a command to generate a preview image of the first page of the PDF
+// 	cmd = exec.Command("/home/nhatnt/Pictures/Screenshot%20from%202023-03-20%2015-51-49.png")
+
+// 	// Pipe the output of the command to the response writer
+// 	w.Header().Set("Content-Type", "image/png")
+// 	w.WriteHeader(http.StatusOK)
+// 	cmd.Stdout = w
+// 	if err := cmd.Run(); err != nil {
+// 		http.Error(w, err.Error(), http.StatusInternalServerError)
+// 		return
+// 	}
+// }

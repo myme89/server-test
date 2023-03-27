@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"net/http"
 	"server-test/server-gateway/clients"
@@ -72,6 +73,25 @@ func GatewaySever(serverAddr string) {
 
 	grpcMux.HandlePath("POST", "/v1/uploadfile", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		srv.ImportDataWithHttp(w, req)
+	})
+
+	grpcMux.HandlePath("GET", "/v1/downloadlink", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		srv.DowloadLinkWithHttp(w, req)
+	})
+
+	// grpcMux.HandlePath("GET", "/v1/preview", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	// 	srv.PreviewWithHttp(w, req)
+	// })
+
+	// grpcMux.HandlePath("GET", "/v1/preview1", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	// 	fmt.Println("trongnhat1")
+
+	// 	fmt.Fprintf(w, "<html><body><img src=\"/image\" /></body></html>")
+	// })
+
+	grpcMux.HandlePath("GET", "/v1/preview/test", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		fmt.Println("trongnhat")
+		http.ServeFile(w, req, "/home/nhatnt/nhatnt/probationary-project/server-test/server-gateway/DataImportToDB.xlsx")
 	})
 
 	if err != nil {
