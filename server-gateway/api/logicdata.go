@@ -627,7 +627,7 @@ func (server *Server) SignUp(ctx context.Context, res *pb.SignUpResquest) (*pb.S
 
 	log.Info("nhatnt: ", err)
 	log.Info("nhatntq: ", ok)
-	return &pb.SignUpRespone{Token: resp}, nil
+	return &pb.SignUpRespone{Notice: resp}, nil
 }
 
 func (server *Server) LogInAcc(ctx context.Context, res *pb.SignInResquest) (*pb.SignInRespone, error) {

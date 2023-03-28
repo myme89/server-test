@@ -61,6 +61,7 @@ func InitMongoDB(config *config.Config) *mongo.Client {
 	// }
 
 	connStr := fmt.Sprintf("mongodb://%s:%s", host, port)
+
 	// clientOpts := options.Client().ApplyURI(connStr).SetAuth(credential)
 	clientOpts := options.Client().ApplyURI(connStr)
 
@@ -82,15 +83,15 @@ func InitMongoDB(config *config.Config) *mongo.Client {
 		log.Fatal("Cannot create collection User DB", err)
 	}
 
-	err = createCollection(dbName, "FileUpload")
-	if err != nil {
-		log.Fatal("Cannot create collection User DB", err)
-	}
+	// err = createCollection(dbName, "FileUpload")
+	// if err != nil {
+	// 	log.Fatal("Cannot create collection User DB", err)
+	// }
 
-	err = createCollection(dbName, "TemplateInfoPerson")
-	if err != nil {
-		log.Fatal("Cannot create collection Template Info Person", err)
-	}
+	// err = createCollection(dbName, "TemplateInfoPerson")
+	// if err != nil {
+	// 	log.Fatal("Cannot create collection Template Info Person", err)
+	// }
 
 	err = clientMongo.Ping(ctx, readpref.Primary())
 	if err != nil {

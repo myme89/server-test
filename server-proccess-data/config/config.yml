@@ -21,7 +21,7 @@ server:
     dbpassword: 1
     dbname: data
     dbhost: localhost
-    dbport: 27017
+    dbport: 27019
     dbcollection: data_test
   
   servertype:

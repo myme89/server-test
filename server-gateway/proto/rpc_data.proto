@@ -64,7 +64,7 @@ message SignUpResquest{
 }
 
 message SignUpRespone{
-    string token = 1;
+    string notice = 1;
 }
 
 
