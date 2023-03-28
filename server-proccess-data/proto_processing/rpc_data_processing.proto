@@ -29,7 +29,7 @@ message ExportFileResquest{
 }
 
 message ExportFileRespone{
-    string pathExport = 1;
+    bytes pathExport = 1;
 }
 
 message DownloadFileProcessResquest{

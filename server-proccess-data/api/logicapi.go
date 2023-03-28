@@ -3,7 +3,6 @@ package api
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -11,6 +10,7 @@ import (
 	"server-test/server-proccess-data/database/mongodb"
 	"server-test/server-proccess-data/model"
 	"server-test/server-proccess-data/pb_processing"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 
@@ -54,8 +54,8 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "OpenReader file excel failed")
 	}
-
-	var info_file []model.InfoFile
+	var infoTrans []model.TemplateInfoTransaction
+	// var info_file []model.InfoFile
 	for _, name := range xlsx.GetSheetMap() {
 		// fmt.Println(index, name)
 		// nameSheet = append(nameSheet, name)
@@ -64,57 +64,111 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 			return nil, status.Errorf(codes.InvalidArgument, "GetRows file excel failed")
 		}
 
-		var data []map[string]string
+		// var data []map[string]string
+
 		for _, row := range dataRows {
-			item := make(map[string]string)
-			for i, colCell := range row {
-				temp, _ := excelize.ColumnNumberToName(i + 1)
 
-				temp1, _ := xlsx.GetCellValue(name, temp+"1")
+			fmt.Println("trongnhat test", row[0])
 
-				item[temp1] = colCell
-			}
-			data = append(data, item)
+			// item := make(map[string]string)
+			// for i, colCell := range row {
+			// 	temp, _ := excelize.ColumnNumberToName(i + 1)
+
+			// 	temp1, _ := xlsx.GetCellValue(name, temp+"1")
+			// 	// infoTran := model.TemplateInfoTransaction{
+			// 	// 	IdTran: colCell,
+			// 	// }
+			// 	item[temp1] = colCell
+			// 	fmt.Println("trongnhat test", item[temp1])
+			// }
+			// // fmt.Println("trongnhat test", item)
+			// data = append(data, item)
+
+			infoTrans = append(infoTrans, model.TemplateInfoTransaction{
+				IdTran:    row[0],
+				AccRec:    row[1],
+				AccSend:   row[2],
+				AccFee:    row[3],
+				Deposits:  row[4],
+				MoneyRec:  row[5],
+				Fee:       row[6],
+				TimeTrans: row[7],
+			})
+
 		}
-		jsonData, err := json.Marshal(data)
+		// jsonData, err := json.Marshal(data)
 
-		if err != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "Marshal data failed")
+		// if err != nil {
+		// 	return nil, status.Errorf(codes.InvalidArgument, "Marshal data failed")
 
-		}
+		// }
 
-		info_file = append(info_file, model.InfoFile{Name: name, Content: jsonData})
+		// info_file = append(info_file, model.InfoFile{Name: name, Content: jsonData})
 	}
 
-	nameFileExcel := infoFileProcess.Filename + " " + infoFileProcess.Idfile
+	date := "23"
+	var result []model.TemplateInfoTransaction
+
+	infoTran := infoTrans[1:]
+	// fmt.Println("data test=", t)
+
+	for i := 0; i < len(infoTran); i++ {
+		t := strings.Split(infoTran[i].TimeTrans, " ")
+		k := strings.Split(t[0], "-")
+		fmt.Println("data test=", k)
+		if infoTran[i].AccRec == "1234" && k[2] == date {
+			result = append(result, model.TemplateInfoTransaction{
+				IdTran:    infoTran[i].IdTran,
+				AccRec:    infoTran[i].AccRec,
+				AccSend:   infoTran[i].AccSend,
+				AccFee:    infoTran[i].AccFee,
+				Deposits:  infoTran[i].Deposits,
+				MoneyRec:  infoTran[i].MoneyRec,
+				Fee:       infoTran[i].Fee,
+				TimeTrans: infoTran[i].TimeTrans,
+			})
+		}
+	}
+
+	// fmt.Println("data test=", count)
+
+	err = mongodb.AddManyInfoTrans(serverProcessing.config, result)
+
+	// nameFileExcel := infoFileProcess.Filename + " " + infoFileProcess.Idfile
 	// resp, err := serverProcessing.clientDatabase.UploadDataFileExcelClient(ctx, info_file, nameFileExcel)
 
-	for i := 0; i < len(info_file); i++ {
-		// Create an empty map to unmarshal JSON into
-		var person []map[string]interface{}
+	// for i := 0; i < len(info_file); i++ {
+	// 	// Create an empty map to unmarshal JSON into
+	// 	var person []map[string]interface{}
 
-		// Unmarshal the JSON data into the map
-		err := json.Unmarshal([]byte(info_file[i].Content), &person)
-		if err != nil {
-			fmt.Println(err)
-			return nil, status.Errorf(codes.Unimplemented, "Unmarshal failed")
-		}
+	// 	// Unmarshal the JSON data into the map
+	// 	err := json.Unmarshal([]byte(info_file[i].Content), &person)
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 		return nil, status.Errorf(codes.Unimplemented, "Unmarshal failed")
+	// 	}
 
-		infos := make([]interface{}, len(person))
-		for i, s := range person {
-			infos[i] = s
-		}
+	// 	infos := make([]interface{}, len(person))
+	// 	for i, s := range person {
+	// 		infos[i] = s
+	// 	}
 
-		infos = infos[1:]
+	// 	infos = infos[1:]
+	// 	fmt.Println("trongnhat test1= ", infos)
+	// 	// var datasAdd []model.TemplateInfoTransaction
+	// 	// for i := 0; i < len(infos); i++ {
+	// 	// 	datasAdd = append(datasAdd, model.TemplateInfoTransaction{AccRec: , Name: data[i][1], FullName: data[i][2]})
 
-		fmt.Println("nhatnt test", serverProcessing.config)
-		err = mongodb.AddManyInfoNotModel(serverProcessing.config, infos, nameFileExcel)
-		if err != nil {
-			log.Error(" Post Data to Mongo Database failed:", err)
-			return nil, status.Errorf(codes.Unimplemented, "AddManyInfoNotModel failed")
-		}
+	// 	// }
 
-	}
+	// 	fmt.Println("nhatnt test", serverProcessing.config)
+	// 	err = mongodb.AddManyInfoNotModel(serverProcessing.config, infos, nameFileExcel)
+	// 	if err != nil {
+	// 		log.Error(" Post Data to Mongo Database failed:", err)
+	// 		return nil, status.Errorf(codes.Unimplemented, "AddManyInfoNotModel failed")
+	// 	}
+
+	// }
 
 	url := "http://localhost:3000/v1/status"
 
@@ -183,30 +237,54 @@ func (serverProcessing *ServerProcessing) ExportTemplateFileUpload(ctx context.C
 
 	nameTemplate := res.GetTemplateExport()
 
-	dataInfo, err := mongodb.GetAllInfo(serverProcessing.config, nameTemplate)
-	// resp, err := serverStorage.clientDatabase.ExportFileTemplateExcelClient(ctx, nameTemplate)
-
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "ExportTemplateFileUpload  failed")
-	}
-
 	var expenseData = [][]interface{}{}
-
-	for i := 0; i < len(dataInfo); i++ {
-		temp := []interface{}{dataInfo[i].LastName, dataInfo[i].FistName, dataInfo[i].FullName, dataInfo[i].PhoneNumber, dataInfo[i].Address}
-		expenseData = append(expenseData, temp)
-	}
 
 	f := excelize.NewFile()
 	index, _ := f.NewSheet("Sheet1")
 	f.SetActiveSheet(index)
 
-	err = f.SetSheetRow("Sheet1", "A1", &[]interface{}{"Last Name", "First Name", "Full Name", "Phone Number", "Address"})
-	if err != nil {
+	if nameTemplate == "TemplateInfoPerson" {
 
-		log.Error("ExportData: Error SetSheetRow: ", err)
+		dataInfo, err := mongodb.GetAllInfo(serverProcessing.config, nameTemplate)
+		// resp, err := serverStorage.clientDatabase.ExportFileTemplateExcelClient(ctx, nameTemplate)
+
+		if err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "ExportTemplateFileUpload  failed")
+		}
+
+		for i := 0; i < len(dataInfo); i++ {
+			temp := []interface{}{dataInfo[i].LastName, dataInfo[i].FistName, dataInfo[i].FullName, dataInfo[i].PhoneNumber, dataInfo[i].Address}
+			expenseData = append(expenseData, temp)
+		}
+
+		err = f.SetSheetRow("Sheet1", "A1", &[]interface{}{"Last Name", "First Name", "Full Name", "Phone Number", "Address"})
+		if err != nil {
+
+			log.Error("ExportData: Error SetSheetRow: ", err)
+		}
+	} else {
+
+		dataInfo, err := mongodb.GetAllInfoTrans(serverProcessing.config, nameTemplate)
+
+		// resp, err := serverStorage.clientDatabase.ExportFileTemplateExcelClient(ctx, nameTemplate)
+
+		if err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "ExportTemplateFileUpload  failed")
+		}
+
+		for i := 0; i < len(dataInfo); i++ {
+			temp := []interface{}{dataInfo[i].IdTran, dataInfo[i].AccRec, dataInfo[i].AccSend, dataInfo[i].AccFee, dataInfo[i].Deposits, dataInfo[i].MoneyRec, dataInfo[i].Fee, dataInfo[i].TimeTrans}
+			expenseData = append(expenseData, temp)
+		}
+
+		err = f.SetSheetRow("Sheet1", "A1", &[]interface{}{"ID Trans", "Account Receive", "Account Send", "Account Fee", "Deposits", "Money Received", "Fee", "Time"})
+		if err != nil {
+
+			log.Error("ExportData: Error SetSheetRow: ", err)
+		}
 	}
-	err = f.SetColWidth("Sheet1", "A", "G", 30)
+
+	err := f.SetColWidth("Sheet1", "A", "G", 30)
 
 	if err != nil {
 
@@ -222,12 +300,17 @@ func (serverProcessing *ServerProcessing) ExportTemplateFileUpload(ctx context.C
 	}
 
 	// Save spreadsheet by the given path.
-	if err := f.SaveAs("./storage-export/TemplateInfoPerson.xlsx"); err != nil {
-		fmt.Println(err)
-	}
+	// if err := f.SaveAs("./storage-export/Test.xlsx"); err != nil {
+	// 	fmt.Println(err)
+	// }
 
+	// if err != nil {
+	// 	log.Error("ExportData: Error SaveAs: ", err)
+	// }
+
+	fileBytes, err := f.WriteToBuffer()
 	if err != nil {
-		log.Error("ExportData: Error SaveAs: ", err)
+		log.Fatal(err)
 	}
 
 	// dir, err := filepath.Abs(filepath.Dir("TemplateInfoPerson.xlsx"))
@@ -235,8 +318,10 @@ func (serverProcessing *ServerProcessing) ExportTemplateFileUpload(ctx context.C
 	// 	log.Fatal(err)
 	// }
 	// pathExport := dir + "/stogare-export/DataExportFromDB.xlsx"
-	pathExport := "localhost:3000/v1/downloadlink?dir=" + "storage-export/TemplateInfoPerson.xlsx"
-	return &pb_processing.ExportFileRespone{PathExport: pathExport}, nil
+	// pathExport := "localhost:3000/v1/downloadlink?dir=" + "storage-export/Test.xlsx"
+
+	temp := fileBytes.Bytes()
+	return &pb_processing.ExportFileRespone{PathExport: temp}, nil
 }
 
 func (serverProcessing *ServerProcessing) DownloafFileProcess(ctx context.Context, res *pb_processing.DownloadFileProcessResquest) (*pb_processing.DownloadFileProcessRespone, error) {

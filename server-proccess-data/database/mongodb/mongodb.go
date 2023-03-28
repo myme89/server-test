@@ -92,6 +92,11 @@ func InitMongoDB(config *config.Config) *mongo.Client {
 		log.Fatal("Cannot create collection Template Info Person", err)
 	}
 
+	err = createCollection(dbName, "TemplateInfoTransaction")
+	if err != nil {
+		log.Fatal("Cannot create collection Template Info Transaction", err)
+	}
+
 	err = clientMongo.Ping(ctx, readpref.Primary())
 	if err != nil {
 		log.Fatal("Cannot ping to mongo server :", err)
@@ -106,6 +111,25 @@ func GetAllInfo(config *config.Config, collectionDB string) ([]model.TemplateInf
 	dbName := config.Sever.ServerMongoDB.DBName
 	collection := clientMongo.Database(dbName).Collection(collectionDB)
 	var arr []model.TemplateInfoPerson
+	queryString := bson.D{}
+	option := options.Find()
+	var err error
+
+	cursor, err := collection.Find(context.TODO(), queryString, option)
+	if err = cursor.All(context.TODO(), &arr); err != nil {
+		log.Error("GetAllInfo error err: ", err)
+		return arr, err
+	}
+
+	return arr, err
+}
+
+func GetAllInfoTrans(config *config.Config, collectionDB string) ([]model.TemplateInfoTransaction, error) {
+
+	// collectionDB := config.Sever.ServerMongoDB.DBcollection
+	dbName := config.Sever.ServerMongoDB.DBName
+	collection := clientMongo.Database(dbName).Collection(collectionDB)
+	var arr []model.TemplateInfoTransaction
 	queryString := bson.D{}
 	option := options.Find()
 	var err error
@@ -397,4 +421,32 @@ func UpdateStatus(config *config.Config, idFile, status string) error {
 	}
 
 	return err
+}
+
+func AddManyInfoTrans(config *config.Config, info []model.TemplateInfoTransaction) error {
+
+	// collectionDB := config.Sever.ServerMongoDB.DBcollection
+	collectionDB := "Test"
+	dbName := config.Sever.ServerMongoDB.DBName
+	collection := clientMongo.Database(dbName).Collection(collectionDB)
+
+	err := createCollection(dbName, collectionDB)
+	if err != nil {
+		log.Fatal("Cannot create collection DB", err)
+	}
+
+	infos := make([]interface{}, len(info))
+	for i, s := range info {
+		infos[i] = s
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	_, err = collection.InsertMany(ctx, infos)
+	if err != nil {
+		log.Error("AddManyInfo error : ", err)
+		return err
+	}
+
+	return nil
 }

@@ -51,3 +51,14 @@ type TemplateInfoPerson struct {
 	PhoneNumber string `bson:"phone_number,omitempty" json:"phone_number"`
 	Address     string `bson:"address,omitempty" json:"address"`
 }
+
+type TemplateInfoTransaction struct {
+	IdTran    string `bson:"id_trans,omitempty" json:"id_trans"`
+	AccRec    string `bson:"acc_rec,omitempty" json:"acc_rec"`
+	AccSend   string `bson:"acc_send,omitempty" json:"acc_send"`
+	AccFee    string `bson:"acc_fee,omitempty" json:"acc_fee"`
+	Deposits  string `bson:"deposits,omitempty" json:"deposits"`
+	MoneyRec  string `bson:"money_rec,omitempty" json:"money_rec"`
+	Fee       string `bson:"fee,omitempty" json:"fee"`
+	TimeTrans string `bson:"time_trans,omitempty" json:"time_trans"`
+}

@@ -694,25 +694,53 @@ func (server *Server) GetFileUploadInfo(ctx context.Context, res *pb.FileUploadI
 	return &pb.FileUploadInfoRespone{Fileinfo: temp}, nil
 }
 
-func (server *Server) ExportData(ctx context.Context, res *pb.ExportDataResquest) (*pb.ExportDataRespone, error) {
+// func (server *Server) ExportData(ctx context.Context, res *pb.ExportDataResquest) (*pb.ExportDataRespone, error) {
 
-	fmt.Println("ExportData - API call ExportData ")
-	md, _ := metadata.FromIncomingContext(ctx)
-	log.Info("nhatnt md: ", md)
+// 	fmt.Println("ExportData - API call ExportData ")
+// 	md, _ := metadata.FromIncomingContext(ctx)
+// 	log.Info("nhatnt md: ", md)
 
-	_, err := server.clientAuthen.AuthenTokenClient(context.Background(), md["token"][0])
+// 	_, err := server.clientAuthen.AuthenTokenClient(context.Background(), md["token"][0])
 
-	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "Authen token failed")
-	}
+// 	if err != nil {
+// 		return nil, status.Errorf(codes.Unauthenticated, "Authen token failed")
+// 	}
+// 	fmt.Println("trongnhat test", server.clientProcessing)
+// 	resp, err := server.clientProcessing.ExportFileTemplateExcelClient(ctx, md["template"][0])
+
+// 	if err != nil {
+// 		return nil, status.Errorf(codes.Unimplemented, "ExportData failed")
+// 	}
+
+// 	return &pb.ExportDataRespone{PathExport: byte.PathExport}, nil
+// }
+
+func (server *Server) ExportDataHttp(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("ExportData - API call ExportData1 ")
+	// md, _ := metadata.FromIncomingContext(ctx)
+	// log.Info("nhatnt md: ", md)
+	// template := r.Header.Get("template")
+
+	values := r.URL.Query()
+
+	template := values.Get("template")
+	// _, err := server.clientAuthen.AuthenTokenClient(context.Background(), md["token"][0])
+
+	// if err != nil {
+	// 	return nil, status.Errorf(codes.Unauthenticated, "Authen token failed")
+	// }
 	fmt.Println("trongnhat test", server.clientProcessing)
-	resp, err := server.clientProcessing.ExportFileTemplateExcelClient(ctx, md["template"][0])
+	resp, err := server.clientProcessing.ExportFileTemplateExcelClient(context.Background(), template)
 
 	if err != nil {
-		return nil, status.Errorf(codes.Unimplemented, "ExportData failed")
+		http.Error(w, "DownloadFileClient failded", http.StatusBadRequest)
+		return
 	}
 
-	return &pb.ExportDataRespone{PathExport: resp.PathExport}, nil
+	w.Header().Set("Content-Disposition", "attachment; filename=test.xlsx")
+	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	w.Write([]byte(resp.PathExport))
 }
 
 func (server *Server) DowloadLinkWithHttp(w http.ResponseWriter, r *http.Request) {
