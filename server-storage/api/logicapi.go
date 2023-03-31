@@ -137,11 +137,11 @@ func (serverStorage *ServerStorage) GetListFileUpload(ctx context.Context, res *
 
 	for i := 0; i < len(listFile); i++ {
 		temp = append(temp, &pb_storage.FileInfo{
-			Filename:     listFile[0].FileName,
-			Typefile:     listFile[0].TypeFile,
-			Size:         int64(listFile[0].Size),
-			Link:         listFile[0].Link,
-			Timecreateat: listFile[0].CreateAt,
+			Filename:     listFile[i].FileName,
+			Typefile:     listFile[i].TypeFile,
+			Size:         int64(listFile[i].Size),
+			Link:         listFile[i].Link,
+			Timecreateat: listFile[i].CreateAt,
 		})
 	}
 

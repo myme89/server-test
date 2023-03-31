@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"server-test/server-gateway/database/mongodb"
 	"server-test/server-gateway/pb"
 	"server-test/server-storage/pb_storage"
 	"strings"
@@ -606,11 +607,11 @@ func (server *Server) GetFileUploadInfo(ctx context.Context, res *pb.FileUploadI
 
 	for i := 0; i < len(respDatabase.Fileinfo); i++ {
 		temp = append(temp, &pb.FileUploadInfo{
-			Filename:     respDatabase.Fileinfo[0].Filename,
-			Filetype:     respDatabase.Fileinfo[0].Typefile,
-			Sizefile:     int64(respDatabase.Fileinfo[0].Size),
-			Link:         respDatabase.Fileinfo[0].Link,
-			Timecreateat: respDatabase.Fileinfo[0].Timecreateat,
+			Filename:     respDatabase.Fileinfo[i].Filename,
+			Filetype:     respDatabase.Fileinfo[i].Typefile,
+			Sizefile:     int64(respDatabase.Fileinfo[i].Size),
+			Link:         respDatabase.Fileinfo[i].Link,
+			Timecreateat: respDatabase.Fileinfo[i].Timecreateat,
 		})
 	}
 
@@ -746,4 +747,62 @@ func (server *Server) GetFileUploadShortInfo(ctx context.Context, res *pb.FileUp
 	}
 
 	return &pb.FileUploadShortInfoRespone{FileShortInfo: temp}, nil
+}
+
+func (server *Server) GetListServiceUpload(ctx context.Context, res *pb.GetListServiceUploadResquest) (*pb.GetListServiceUploadRespone, error) {
+
+	resp, err := mongodb.GetListServiceUpload(server.config)
+	fmt.Println(resp)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "GetListServiceUpload failed")
+	}
+	var temp []*pb.ServiceInfo
+
+	for i := 0; i < len(resp); i++ {
+		temp = append(temp, &pb.ServiceInfo{
+			Id:   resp[i].Id,
+			Name: resp[i].Name,
+		})
+	}
+
+	return &pb.GetListServiceUploadRespone{ServiceInfo: temp}, nil
+}
+
+func (server *Server) GetListServiceProcess(ctx context.Context, res *pb.GetListServiceProcessResquest) (*pb.GetListServiceProcessRespone, error) {
+
+	IdServiceUpload := res.GetIdServiceUpload()
+	resp, err := mongodb.GetListServiceProcess(server.config, IdServiceUpload)
+	fmt.Println(resp)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "GetListServiceUpload failed")
+	}
+	var temp []*pb.ServiceInfo
+
+	for i := 0; i < len(resp); i++ {
+		temp = append(temp, &pb.ServiceInfo{
+			Id:   resp[i].Id,
+			Name: resp[i].Name,
+		})
+	}
+
+	return &pb.GetListServiceProcessRespone{ServiceInfoProcess: temp}, nil
+}
+func (server *Server) GetListFunctionProcess(ctx context.Context, res *pb.GetListFunctionProcessResquest) (*pb.GetListFunctionProcessRespone, error) {
+
+	IdServiceProcess := res.GetIdServiceProcess()
+	resp, err := mongodb.GetListFunctionProcess(server.config, IdServiceProcess)
+	fmt.Println(resp)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "GetListServiceUpload failed")
+	}
+	var temp []*pb.ServiceInfo
+
+	for i := 0; i < len(resp); i++ {
+		temp = append(temp, &pb.ServiceInfo{
+			Id:   resp[i].Id,
+			Name: resp[i].Name,
+		})
+	}
+
+	return &pb.GetListFunctionProcessRespone{FunctionInfoProcess: temp}, nil
 }

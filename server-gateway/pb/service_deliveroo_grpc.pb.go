@@ -32,6 +32,9 @@ type DeliverooClient interface {
 	LogInAcc(ctx context.Context, in *SignInResquest, opts ...grpc.CallOption) (*SignInRespone, error)
 	GetFileUploadInfo(ctx context.Context, in *FileUploadInfoResquest, opts ...grpc.CallOption) (*FileUploadInfoRespone, error)
 	GetFileUploadShortInfo(ctx context.Context, in *FileUploadShortInfoResquest, opts ...grpc.CallOption) (*FileUploadShortInfoRespone, error)
+	GetListServiceUpload(ctx context.Context, in *GetListServiceUploadResquest, opts ...grpc.CallOption) (*GetListServiceUploadRespone, error)
+	GetListServiceProcess(ctx context.Context, in *GetListServiceProcessResquest, opts ...grpc.CallOption) (*GetListServiceProcessRespone, error)
+	GetListFunctionProcess(ctx context.Context, in *GetListFunctionProcessResquest, opts ...grpc.CallOption) (*GetListFunctionProcessRespone, error)
 }
 
 type deliverooClient struct {
@@ -132,6 +135,33 @@ func (c *deliverooClient) GetFileUploadShortInfo(ctx context.Context, in *FileUp
 	return out, nil
 }
 
+func (c *deliverooClient) GetListServiceUpload(ctx context.Context, in *GetListServiceUploadResquest, opts ...grpc.CallOption) (*GetListServiceUploadRespone, error) {
+	out := new(GetListServiceUploadRespone)
+	err := c.cc.Invoke(ctx, "/pb.Deliveroo/GetListServiceUpload", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *deliverooClient) GetListServiceProcess(ctx context.Context, in *GetListServiceProcessResquest, opts ...grpc.CallOption) (*GetListServiceProcessRespone, error) {
+	out := new(GetListServiceProcessRespone)
+	err := c.cc.Invoke(ctx, "/pb.Deliveroo/GetListServiceProcess", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *deliverooClient) GetListFunctionProcess(ctx context.Context, in *GetListFunctionProcessResquest, opts ...grpc.CallOption) (*GetListFunctionProcessRespone, error) {
+	out := new(GetListFunctionProcessRespone)
+	err := c.cc.Invoke(ctx, "/pb.Deliveroo/GetListFunctionProcess", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DeliverooServer is the server API for Deliveroo service.
 // All implementations must embed UnimplementedDeliverooServer
 // for forward compatibility
@@ -146,6 +176,9 @@ type DeliverooServer interface {
 	LogInAcc(context.Context, *SignInResquest) (*SignInRespone, error)
 	GetFileUploadInfo(context.Context, *FileUploadInfoResquest) (*FileUploadInfoRespone, error)
 	GetFileUploadShortInfo(context.Context, *FileUploadShortInfoResquest) (*FileUploadShortInfoRespone, error)
+	GetListServiceUpload(context.Context, *GetListServiceUploadResquest) (*GetListServiceUploadRespone, error)
+	GetListServiceProcess(context.Context, *GetListServiceProcessResquest) (*GetListServiceProcessRespone, error)
+	GetListFunctionProcess(context.Context, *GetListFunctionProcessResquest) (*GetListFunctionProcessRespone, error)
 	mustEmbedUnimplementedDeliverooServer()
 }
 
@@ -182,6 +215,15 @@ func (UnimplementedDeliverooServer) GetFileUploadInfo(context.Context, *FileUplo
 }
 func (UnimplementedDeliverooServer) GetFileUploadShortInfo(context.Context, *FileUploadShortInfoResquest) (*FileUploadShortInfoRespone, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFileUploadShortInfo not implemented")
+}
+func (UnimplementedDeliverooServer) GetListServiceUpload(context.Context, *GetListServiceUploadResquest) (*GetListServiceUploadRespone, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetListServiceUpload not implemented")
+}
+func (UnimplementedDeliverooServer) GetListServiceProcess(context.Context, *GetListServiceProcessResquest) (*GetListServiceProcessRespone, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetListServiceProcess not implemented")
+}
+func (UnimplementedDeliverooServer) GetListFunctionProcess(context.Context, *GetListFunctionProcessResquest) (*GetListFunctionProcessRespone, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetListFunctionProcess not implemented")
 }
 func (UnimplementedDeliverooServer) mustEmbedUnimplementedDeliverooServer() {}
 
@@ -376,6 +418,60 @@ func _Deliveroo_GetFileUploadShortInfo_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Deliveroo_GetListServiceUpload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetListServiceUploadResquest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeliverooServer).GetListServiceUpload(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Deliveroo/GetListServiceUpload",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeliverooServer).GetListServiceUpload(ctx, req.(*GetListServiceUploadResquest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Deliveroo_GetListServiceProcess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetListServiceProcessResquest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeliverooServer).GetListServiceProcess(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Deliveroo/GetListServiceProcess",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeliverooServer).GetListServiceProcess(ctx, req.(*GetListServiceProcessResquest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Deliveroo_GetListFunctionProcess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetListFunctionProcessResquest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeliverooServer).GetListFunctionProcess(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Deliveroo/GetListFunctionProcess",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeliverooServer).GetListFunctionProcess(ctx, req.(*GetListFunctionProcessResquest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Deliveroo_ServiceDesc is the grpc.ServiceDesc for Deliveroo service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -422,6 +518,18 @@ var Deliveroo_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetFileUploadShortInfo",
 			Handler:    _Deliveroo_GetFileUploadShortInfo_Handler,
+		},
+		{
+			MethodName: "GetListServiceUpload",
+			Handler:    _Deliveroo_GetListServiceUpload_Handler,
+		},
+		{
+			MethodName: "GetListServiceProcess",
+			Handler:    _Deliveroo_GetListServiceProcess_Handler,
+		},
+		{
+			MethodName: "GetListFunctionProcess",
+			Handler:    _Deliveroo_GetListFunctionProcess_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

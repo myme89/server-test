@@ -23,3 +23,9 @@ message FileUploadInfo {
     int64 sizefile = 4;
     string timecreateat = 5;
 }
+
+
+message ServiceInfo {
+  string id = 1;
+  string name = 2; 
+}

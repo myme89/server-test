@@ -78,4 +78,25 @@ service Deliveroo {
             // body: "*"
         };
     }
+
+    rpc GetListServiceUpload(GetListServiceUploadResquest) returns (GetListServiceUploadRespone) {
+        option (google.api.http) = {
+            get: "/v1/getlistserviceupload"
+            // body: "*"
+        };
+    }
+
+    rpc GetListServiceProcess(GetListServiceProcessResquest) returns (GetListServiceProcessRespone) {
+        option (google.api.http) = {
+            get: "/v1/getlistserviceprocess/{idServiceUpload}"
+            // body: "*"
+        };
+    }
+
+    rpc GetListFunctionProcess(GetListFunctionProcessResquest) returns (GetListFunctionProcessRespone) {
+        option (google.api.http) = {
+            get: "/v1/getlistfunctionprocess/{idServiceProcess}"
+            // body: "*"
+        };
+    }
 } 

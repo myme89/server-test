@@ -95,3 +95,32 @@ message FileUploadShortInfoResquest{
 message FileUploadShortInfoRespone{
     FileUploadInfo fileShortInfo = 1;
 }
+
+
+message GetListServiceUploadResquest{
+
+}
+ 
+message GetListServiceUploadRespone{
+    repeated ServiceInfo serviceInfo = 1;
+}
+
+
+message GetListServiceProcessResquest{
+    string idServiceUpload = 1;
+}
+ 
+message GetListServiceProcessRespone{
+    repeated ServiceInfo serviceInfoProcess = 1;
+}
+
+
+message GetListFunctionProcessResquest{
+    string idServiceProcess = 1;
+}
+ 
+message GetListFunctionProcessRespone{
+    repeated ServiceInfo functionInfoProcess = 1;
+}
+
+
