@@ -751,6 +751,15 @@ func (server *Server) GetFileUploadShortInfo(ctx context.Context, res *pb.FileUp
 
 func (server *Server) GetListServiceUpload(ctx context.Context, res *pb.GetListServiceUploadResquest) (*pb.GetListServiceUploadRespone, error) {
 
+	md, _ := metadata.FromIncomingContext(ctx)
+	// log.Info("nhatnt md: ", md)
+
+	_, err := server.clientAuthen.AuthenTokenClient(context.Background(), md["token"][0])
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Authen token failed")
+	}
+
 	resp, err := mongodb.GetListServiceUpload(server.config)
 	fmt.Println(resp)
 	if err != nil {
@@ -771,6 +780,16 @@ func (server *Server) GetListServiceUpload(ctx context.Context, res *pb.GetListS
 func (server *Server) GetListServiceProcess(ctx context.Context, res *pb.GetListServiceProcessResquest) (*pb.GetListServiceProcessRespone, error) {
 
 	IdServiceUpload := res.GetIdServiceUpload()
+
+	md, _ := metadata.FromIncomingContext(ctx)
+	// log.Info("nhatnt md: ", md)
+
+	_, err := server.clientAuthen.AuthenTokenClient(context.Background(), md["token"][0])
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Authen token failed")
+	}
+
 	resp, err := mongodb.GetListServiceProcess(server.config, IdServiceUpload)
 	fmt.Println(resp)
 	if err != nil {
@@ -790,6 +809,16 @@ func (server *Server) GetListServiceProcess(ctx context.Context, res *pb.GetList
 func (server *Server) GetListFunctionProcess(ctx context.Context, res *pb.GetListFunctionProcessResquest) (*pb.GetListFunctionProcessRespone, error) {
 
 	IdServiceProcess := res.GetIdServiceProcess()
+
+	md, _ := metadata.FromIncomingContext(ctx)
+	// log.Info("nhatnt md: ", md)
+
+	_, err := server.clientAuthen.AuthenTokenClient(context.Background(), md["token"][0])
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Authen token failed")
+	}
+
 	resp, err := mongodb.GetListFunctionProcess(server.config, IdServiceProcess)
 	fmt.Println(resp)
 	if err != nil {
