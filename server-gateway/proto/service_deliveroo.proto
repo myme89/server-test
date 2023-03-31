@@ -70,4 +70,12 @@ service Deliveroo {
             // body: "*"
         };
     }
+
+
+    rpc GetFileUploadShortInfo(FileUploadShortInfoResquest) returns (FileUploadShortInfoRespone) {
+        option (google.api.http) = {
+            get: "/v1/getshortinfofile/{idfile}"
+            // body: "*"
+        };
+    }
 } 

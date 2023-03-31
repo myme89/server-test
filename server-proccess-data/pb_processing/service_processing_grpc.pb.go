@@ -25,7 +25,6 @@ type ProcessingClient interface {
 	TestData2(ctx context.Context, in *DataInfoTestResquest1, opts ...grpc.CallOption) (*DataInfoTestRespone1, error)
 	ProcessingFileExcel(ctx context.Context, in *ProcessingFileResquest, opts ...grpc.CallOption) (*ProcessingFileRespone, error)
 	ExportTemplateFileUpload(ctx context.Context, in *ExportFileResquest, opts ...grpc.CallOption) (*ExportFileRespone, error)
-	DownloafFileProcess(ctx context.Context, in *DownloadFileProcessResquest, opts ...grpc.CallOption) (*DownloadFileProcessRespone, error)
 	GetTransactionByAccount(ctx context.Context, in *GetTransactionByAccountResquest, opts ...grpc.CallOption) (*GetTransactionByAccountRespone, error)
 }
 
@@ -64,15 +63,6 @@ func (c *processingClient) ExportTemplateFileUpload(ctx context.Context, in *Exp
 	return out, nil
 }
 
-func (c *processingClient) DownloafFileProcess(ctx context.Context, in *DownloadFileProcessResquest, opts ...grpc.CallOption) (*DownloadFileProcessRespone, error) {
-	out := new(DownloadFileProcessRespone)
-	err := c.cc.Invoke(ctx, "/pb_storage.Processing/DownloafFileProcess", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *processingClient) GetTransactionByAccount(ctx context.Context, in *GetTransactionByAccountResquest, opts ...grpc.CallOption) (*GetTransactionByAccountRespone, error) {
 	out := new(GetTransactionByAccountRespone)
 	err := c.cc.Invoke(ctx, "/pb_storage.Processing/GetTransactionByAccount", in, out, opts...)
@@ -89,7 +79,6 @@ type ProcessingServer interface {
 	TestData2(context.Context, *DataInfoTestResquest1) (*DataInfoTestRespone1, error)
 	ProcessingFileExcel(context.Context, *ProcessingFileResquest) (*ProcessingFileRespone, error)
 	ExportTemplateFileUpload(context.Context, *ExportFileResquest) (*ExportFileRespone, error)
-	DownloafFileProcess(context.Context, *DownloadFileProcessResquest) (*DownloadFileProcessRespone, error)
 	GetTransactionByAccount(context.Context, *GetTransactionByAccountResquest) (*GetTransactionByAccountRespone, error)
 	mustEmbedUnimplementedProcessingServer()
 }
@@ -106,9 +95,6 @@ func (UnimplementedProcessingServer) ProcessingFileExcel(context.Context, *Proce
 }
 func (UnimplementedProcessingServer) ExportTemplateFileUpload(context.Context, *ExportFileResquest) (*ExportFileRespone, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExportTemplateFileUpload not implemented")
-}
-func (UnimplementedProcessingServer) DownloafFileProcess(context.Context, *DownloadFileProcessResquest) (*DownloadFileProcessRespone, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DownloafFileProcess not implemented")
 }
 func (UnimplementedProcessingServer) GetTransactionByAccount(context.Context, *GetTransactionByAccountResquest) (*GetTransactionByAccountRespone, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTransactionByAccount not implemented")
@@ -180,24 +166,6 @@ func _Processing_ExportTemplateFileUpload_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Processing_DownloafFileProcess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DownloadFileProcessResquest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProcessingServer).DownloafFileProcess(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb_storage.Processing/DownloafFileProcess",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProcessingServer).DownloafFileProcess(ctx, req.(*DownloadFileProcessResquest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Processing_GetTransactionByAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTransactionByAccountResquest)
 	if err := dec(in); err != nil {
@@ -234,10 +202,6 @@ var Processing_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExportTemplateFileUpload",
 			Handler:    _Processing_ExportTemplateFileUpload_Handler,
-		},
-		{
-			MethodName: "DownloafFileProcess",
-			Handler:    _Processing_DownloafFileProcess_Handler,
 		},
 		{
 			MethodName: "GetTransactionByAccount",

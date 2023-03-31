@@ -86,3 +86,12 @@ message FileUploadInfoResquest{
 message FileUploadInfoRespone{
     repeated FileUploadInfo fileinfo = 1;
 }
+
+
+message FileUploadShortInfoResquest{
+   string idfile = 1;
+}
+
+message FileUploadShortInfoRespone{
+    FileUploadInfo fileShortInfo = 1;
+}

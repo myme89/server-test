@@ -4,9 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
 	"net/http"
-	"os"
 	"server-test/server-proccess-data/database/mongodb"
 	"server-test/server-proccess-data/model"
 	"server-test/server-proccess-data/pb_processing"
@@ -287,26 +285,6 @@ func (serverProcessing *ServerProcessing) ExportTemplateFileUpload(ctx context.C
 
 	temp := fileBytes.Bytes()
 	return &pb_processing.ExportFileRespone{PathExport: temp}, nil
-}
-
-func (serverProcessing *ServerProcessing) DownloafFileProcess(ctx context.Context, res *pb_processing.DownloadFileProcessResquest) (*pb_processing.DownloadFileProcessRespone, error) {
-
-	dir := res.GetDir()
-
-	file, err := os.Open(dir)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "method DownloafFile failded")
-	}
-
-	content, err := ioutil.ReadAll(file)
-
-	name := file.Name()
-
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "method DownloafFile ReadAll failded")
-	}
-
-	return &pb_processing.DownloadFileProcessRespone{NameFile: name, ContentFile: content}, nil
 }
 
 func (serverProcessing *ServerProcessing) GetTransactionByAccount(ctx context.Context, res *pb_processing.GetTransactionByAccountResquest) (*pb_processing.GetTransactionByAccountRespone, error) {

@@ -32,14 +32,6 @@ message ExportFileRespone{
     bytes pathExport = 1;
 }
 
-message DownloadFileProcessResquest{
-    string dir = 1;
-}
-
-message DownloadFileProcessRespone{
-    string nameFile = 1;
-    bytes contentFile = 2;
-}
 
 message GetTransactionByAccountResquest {
     string account = 1;

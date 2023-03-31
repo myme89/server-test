@@ -23,4 +23,7 @@ service Stogare {
 
     rpc UpdateStatusUploadFile(UpdateStatusResquest) returns (UpdateStatusRespone) {
     }
+
+    rpc GetShortInfoFileUpload(GetShortInfoFileUploadResquest) returns (GetShortInfoFileUploadRespone) {
+    }
 } 

@@ -121,3 +121,17 @@ func (stogareClient *StorageClient) UpdateStatusFileClient(ctx context.Context, 
 	return resp, nil
 
 }
+
+func (stogareClient *StorageClient) GetUploadFileShortInfoClient(ctx context.Context, idFile string) (*pb_storage.GetShortInfoFileUploadRespone, error) {
+	if err := prepareStorageGrpcClient(ctx); err != nil {
+		return nil, err
+	}
+
+	resp, err := stogareGrpcServiceClient.GetShortInfoFileUpload(ctx, &pb_storage.GetShortInfoFileUploadResquest{IdFile: idFile})
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "method GetUploadFileShortInfoClient in client stogare failed")
+	}
+	fmt.Println("GetUploadFileShortInfoClient Storage")
+
+	return resp, nil
+}

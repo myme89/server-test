@@ -18,8 +18,6 @@ service Processing {
     rpc ExportTemplateFileUpload(ExportFileResquest) returns (ExportFileRespone) {
     }
 
-    rpc DownloafFileProcess(DownloadFileProcessResquest) returns (DownloadFileProcessRespone) {
-    }
 
     rpc GetTransactionByAccount(GetTransactionByAccountResquest) returns (GetTransactionByAccountRespone) {
     }

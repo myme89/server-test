@@ -441,3 +441,26 @@ func GetDirFile(config *config.Config, idFile string) (string, error) {
 
 	// return err
 }
+
+func GetShortInfoFile(config *config.Config, idFile string) ([]model.FileInfoUpload, error) {
+
+	// collectionDB := config.Sever.ServerMongoDB.DBcollection
+	collectionDB := "FileUpload"
+	dbName := config.Sever.ServerMongoDB.DBName
+	collection := clientMongo.Database(dbName).Collection(collectionDB)
+	var arr []model.FileInfoUpload
+
+	objectID, _ := primitive.ObjectIDFromHex(idFile)
+	queryString := bson.D{{Key: "_id", Value: objectID}}
+	option := options.Find()
+	var err error
+
+	cursor, err := collection.Find(context.TODO(), queryString, option)
+
+	if err = cursor.All(context.TODO(), &arr); err != nil {
+		log.Error("Get List File error err: ", err)
+		return arr, err
+	}
+	fmt.Println(arr)
+	return arr, err
+}

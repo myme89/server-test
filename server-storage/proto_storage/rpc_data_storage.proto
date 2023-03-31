@@ -33,6 +33,15 @@ message GetListFileUploadRespone{
     repeated FileInfo fileinfo = 1;
 }
 
+
+message GetShortInfoFileUploadResquest{
+    string idFile = 1;
+}
+
+message GetShortInfoFileUploadRespone{
+   FileInfo fileinfo = 1;
+}
+
 message DownloadFileResquest{
     string idFile = 1;
 }

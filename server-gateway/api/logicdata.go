@@ -475,14 +475,14 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 			temp = "localhost:3000/v1/exportfunction?account=" + account
 		}
 	} else {
-		temp = "Upload Done"
+		temp = "Upload Done and Not Processing"
 	}
 
 	type Respone struct {
-		Notice string
+		LinkExport string
 	}
 
-	noticeDb := Respone{Notice: temp}
+	noticeDb := Respone{LinkExport: temp}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(noticeDb)
@@ -670,39 +670,21 @@ func (server *Server) DowloadLinkWithHttp(w http.ResponseWriter, r *http.Request
 
 	values := r.URL.Query()
 
-	dir := values.Get("dir")
 	idFile := values.Get("idfile")
 
-	if len(dir) != 0 {
+	resp, err := server.clientStogare.DownloadFileClient(context.Background(), idFile)
 
-		resp, err := server.clientProcessing.DownloadFileClient(context.Background(), dir)
-
-		if err != nil {
-			fmt.Println(err)
-			http.Error(w, "DownloadFileClient failded", http.StatusBadRequest)
-			return
-		}
-		name := strings.Split(resp.NameFile, "/")
-		fmt.Println(name)
-
-		w.Header().Set("Content-Disposition", "attachment; filename="+name[len(name)-1])
-		w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-		w.Write(resp.ContentFile)
-	} else {
-		resp, err := server.clientStogare.DownloadFileClient(context.Background(), idFile)
-
-		if err != nil {
-			fmt.Println(err)
-			http.Error(w, "DownloadFileClient failded", http.StatusBadRequest)
-			return
-		}
-		name := strings.Split(resp.Name, "/")
-		fmt.Println(name)
-
-		w.Header().Set("Content-Disposition", "attachment; filename="+name[len(name)-1])
-		w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-		w.Write(resp.Content)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "DownloadFileClient failded", http.StatusBadRequest)
+		return
 	}
+	name := strings.Split(resp.Name, "/")
+	fmt.Println(name)
+
+	w.Header().Set("Content-Disposition", "attachment; filename="+name[len(name)-1])
+	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	w.Write(resp.Content)
 
 	// http.ServeContent(w, r, "DataImportToDB.xlsx", currentTime, file)
 }
@@ -728,4 +710,40 @@ func (server *Server) ExportFuntionWithHttp(w http.ResponseWriter, r *http.Reque
 	w.Write(resp.Content)
 
 	// http.ServeContent(w, r, "DataImportToDB.xlsx", currentTime, file)
+}
+
+func (server *Server) GetFileUploadShortInfo(ctx context.Context, res *pb.FileUploadShortInfoResquest) (*pb.FileUploadShortInfoRespone, error) {
+
+	idFile := res.GetIdfile()
+
+	md, _ := metadata.FromIncomingContext(ctx)
+	log.Info("nhatnt md: ", md)
+
+	_, err := server.clientAuthen.AuthenTokenClient(context.Background(), md["token"][0])
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "Authen token failed")
+	}
+
+	respDatabase, err := server.clientStogare.GetUploadFileShortInfoClient(ctx, idFile)
+
+	if err != nil {
+		return nil, status.Errorf(codes.Unimplemented, "Get list file failed")
+	}
+
+	// fmt.Println(respDatabase)
+
+	linkSplit := strings.Split(respDatabase.Fileinfo.Link, "/")
+
+	linkStogare := strings.Join(linkSplit[:len(linkSplit)-1], "/")
+
+	temp := &pb.FileUploadInfo{
+		Filename:     respDatabase.Fileinfo.Filename,
+		Filetype:     respDatabase.Fileinfo.Typefile,
+		Sizefile:     int64(respDatabase.Fileinfo.Size),
+		Link:         linkStogare,
+		Timecreateat: respDatabase.Fileinfo.Timecreateat,
+	}
+
+	return &pb.FileUploadShortInfoRespone{FileShortInfo: temp}, nil
 }

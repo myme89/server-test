@@ -190,3 +190,28 @@ func (serverStorage *ServerStorage) UpdateStatusUploadFile(ctx context.Context, 
 	}
 	return &pb_storage.UpdateStatusRespone{Noti: "Done"}, nil
 }
+
+func (serverStorage *ServerStorage) GetShortInfoFileUpload(ctx context.Context, res *pb_storage.GetShortInfoFileUploadResquest) (*pb_storage.GetShortInfoFileUploadRespone, error) {
+
+	idFile := res.GetIdFile()
+
+	shortInfo, err := mongodb.GetShortInfoFile(serverStorage.config, idFile)
+	fmt.Println("test= ", shortInfo)
+
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "get short info file failed")
+	}
+
+	// var temp *pb_storage.FileInfo
+
+	temp := &pb_storage.FileInfo{
+		Filename:     shortInfo[0].FileName,
+		Typefile:     shortInfo[0].TypeFile,
+		Size:         int64(shortInfo[0].Size),
+		Link:         shortInfo[0].Link,
+		Timecreateat: shortInfo[0].CreateAt,
+	}
+	// return nil, status.Errorf(codes.InvalidArgument, "get short info file failed")
+
+	return &pb_storage.GetShortInfoFileUploadRespone{Fileinfo: temp}, nil
+}

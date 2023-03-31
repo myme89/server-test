@@ -91,24 +91,6 @@ func (processingClient *ProcessingClient) ExportFileTemplateExcelClient(ctx cont
 
 }
 
-func (processingClient *ProcessingClient) DownloadFileClient(ctx context.Context, dir string) (*pb_processing.DownloadFileProcessRespone, error) {
-
-	if err := prepareProcessingGrpcClient(ctx); err != nil {
-		return nil, err
-	}
-
-	resp, err := processingGrpcServiceClient.DownloafFileProcess(ctx, &pb_processing.DownloadFileProcessResquest{Dir: dir})
-
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "method ExportFileTemplateExcelClient in client process failed")
-	}
-	fmt.Println("UploadFileClient Process")
-
-	return resp, nil
-	// return nil, status.Errorf(codes.InvalidArgument, "method ExportFileTemplateExcelClient in client process failed")
-
-}
-
 func (processingClient *ProcessingClient) ExportFuntionClient(ctx context.Context, accountRec string) (*pb_processing.GetTransactionByAccountRespone, error) {
 
 	if err := prepareProcessingGrpcClient(ctx); err != nil {
