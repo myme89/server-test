@@ -426,7 +426,7 @@ func UpdateStatus(config *config.Config, idFile, status string) error {
 func AddManyInfoTrans(config *config.Config, info []model.TemplateInfoTransaction) error {
 
 	// collectionDB := config.Sever.ServerMongoDB.DBcollection
-	collectionDB := "Test"
+	collectionDB := "InfoTransaction"
 	dbName := config.Sever.ServerMongoDB.DBName
 	collection := clientMongo.Database(dbName).Collection(collectionDB)
 
@@ -449,4 +449,24 @@ func AddManyInfoTrans(config *config.Config, info []model.TemplateInfoTransactio
 	}
 
 	return nil
+}
+
+func GetTransactionByAccountRec(config *config.Config, accountRec string) ([]model.TemplateInfoTransaction, error) {
+
+	// collectionDB := config.Sever.ServerMongoDB.DBcollection
+	collectionDB := "InfoTransaction"
+	dbName := config.Sever.ServerMongoDB.DBName
+	collection := clientMongo.Database(dbName).Collection(collectionDB)
+	var arr []model.TemplateInfoTransaction
+	queryString := bson.D{{Key: "acc_rec", Value: accountRec}}
+	option := options.Find()
+	var err error
+
+	cursor, err := collection.Find(context.TODO(), queryString, option)
+	if err = cursor.All(context.TODO(), &arr); err != nil {
+		log.Error("Get List File error err: ", err)
+		return arr, err
+	}
+
+	return arr, err
 }

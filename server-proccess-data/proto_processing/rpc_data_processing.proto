@@ -40,3 +40,11 @@ message DownloadFileProcessRespone{
     string nameFile = 1;
     bytes contentFile = 2;
 }
+
+message GetTransactionByAccountResquest {
+    string account = 1;
+}
+
+message GetTransactionByAccountRespone {
+    bytes content = 1;
+}

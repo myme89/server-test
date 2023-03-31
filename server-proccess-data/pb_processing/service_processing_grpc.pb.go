@@ -26,6 +26,7 @@ type ProcessingClient interface {
 	ProcessingFileExcel(ctx context.Context, in *ProcessingFileResquest, opts ...grpc.CallOption) (*ProcessingFileRespone, error)
 	ExportTemplateFileUpload(ctx context.Context, in *ExportFileResquest, opts ...grpc.CallOption) (*ExportFileRespone, error)
 	DownloafFileProcess(ctx context.Context, in *DownloadFileProcessResquest, opts ...grpc.CallOption) (*DownloadFileProcessRespone, error)
+	GetTransactionByAccount(ctx context.Context, in *GetTransactionByAccountResquest, opts ...grpc.CallOption) (*GetTransactionByAccountRespone, error)
 }
 
 type processingClient struct {
@@ -72,6 +73,15 @@ func (c *processingClient) DownloafFileProcess(ctx context.Context, in *Download
 	return out, nil
 }
 
+func (c *processingClient) GetTransactionByAccount(ctx context.Context, in *GetTransactionByAccountResquest, opts ...grpc.CallOption) (*GetTransactionByAccountRespone, error) {
+	out := new(GetTransactionByAccountRespone)
+	err := c.cc.Invoke(ctx, "/pb_storage.Processing/GetTransactionByAccount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProcessingServer is the server API for Processing service.
 // All implementations must embed UnimplementedProcessingServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type ProcessingServer interface {
 	ProcessingFileExcel(context.Context, *ProcessingFileResquest) (*ProcessingFileRespone, error)
 	ExportTemplateFileUpload(context.Context, *ExportFileResquest) (*ExportFileRespone, error)
 	DownloafFileProcess(context.Context, *DownloadFileProcessResquest) (*DownloadFileProcessRespone, error)
+	GetTransactionByAccount(context.Context, *GetTransactionByAccountResquest) (*GetTransactionByAccountRespone, error)
 	mustEmbedUnimplementedProcessingServer()
 }
 
@@ -98,6 +109,9 @@ func (UnimplementedProcessingServer) ExportTemplateFileUpload(context.Context, *
 }
 func (UnimplementedProcessingServer) DownloafFileProcess(context.Context, *DownloadFileProcessResquest) (*DownloadFileProcessRespone, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DownloafFileProcess not implemented")
+}
+func (UnimplementedProcessingServer) GetTransactionByAccount(context.Context, *GetTransactionByAccountResquest) (*GetTransactionByAccountRespone, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTransactionByAccount not implemented")
 }
 func (UnimplementedProcessingServer) mustEmbedUnimplementedProcessingServer() {}
 
@@ -184,6 +198,24 @@ func _Processing_DownloafFileProcess_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Processing_GetTransactionByAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTransactionByAccountResquest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProcessingServer).GetTransactionByAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb_storage.Processing/GetTransactionByAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProcessingServer).GetTransactionByAccount(ctx, req.(*GetTransactionByAccountResquest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Processing_ServiceDesc is the grpc.ServiceDesc for Processing service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +238,10 @@ var Processing_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DownloafFileProcess",
 			Handler:    _Processing_DownloafFileProcess_Handler,
+		},
+		{
+			MethodName: "GetTransactionByAccount",
+			Handler:    _Processing_GetTransactionByAccount_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

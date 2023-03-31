@@ -108,3 +108,21 @@ func (processingClient *ProcessingClient) DownloadFileClient(ctx context.Context
 	// return nil, status.Errorf(codes.InvalidArgument, "method ExportFileTemplateExcelClient in client process failed")
 
 }
+
+func (processingClient *ProcessingClient) ExportFuntionClient(ctx context.Context, accountRec string) (*pb_processing.GetTransactionByAccountRespone, error) {
+
+	if err := prepareProcessingGrpcClient(ctx); err != nil {
+		return nil, err
+	}
+
+	resp, err := processingGrpcServiceClient.GetTransactionByAccount(ctx, &pb_processing.GetTransactionByAccountResquest{Account: accountRec})
+
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "method GetTransactionByAccount in client process failed")
+	}
+	fmt.Println("GetTransactionByAccount Process")
+
+	return resp, nil
+	// return nil, status.Errorf(codes.InvalidArgument, "method ExportFileTemplateExcelClient in client process failed")
+
+}

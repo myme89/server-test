@@ -84,6 +84,14 @@ func GatewaySever(serverAddr string) {
 		srv.ExportDataHttp(w, req)
 	})
 
+	grpcMux.HandlePath("GET", "/v1/exportfunction", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		srv.ExportFuntionWithHttp(w, req)
+	})
+
+	// grpcMux.HandlePath("GET", "/v1/export", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	// 	srv.ExportDataHttp(w, req)
+	// })
+
 	// grpcMux.HandlePath("GET", "/v1/preview", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 	// 	srv.PreviewWithHttp(w, req)
 	// })

@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"server-test/server-gateway/pb"
+	"server-test/server-storage/pb_storage"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -14,37 +15,6 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
-
-// import (
-// 	"context"
-// 	"encoding/json"
-// 	"fmt"
-// 	"io/ioutil"
-// 	"net/http"
-// 	"server-test/server-gateway/pb"
-// 	"strings"
-
-// 	log "github.com/sirupsen/logrus"
-// 	"google.golang.org/grpc/codes"
-// 	"google.golang.org/grpc/metadata"
-// 	"google.golang.org/grpc/status"
-// )
-
-// // import (
-// // 	"context"
-// // 	"encoding/json"
-// // 	"fmt"
-// // 	"io/ioutil"
-// // 	"net/http"
-// // 	"server-test/database/mongodb"
-// // 	"server-test/logs"
-// // 	"server-test/pb"
-
-// // 	log "github.com/sirupsen/logrus"
-// // 	"google.golang.org/grpc/codes"
-// // 	"google.golang.org/grpc/metadata"
-// // 	"google.golang.org/grpc/status"
-// // )
 
 // // func (server *Server) GetData(ctx context.Context, res *pb.DataInfoResquest) (*pb.DataInfoRespone, error) {
 
@@ -442,6 +412,19 @@ import (
 func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request) {
 
 	token := r.Header.Get("token")
+	idProcsessService := r.Header.Get("id_process_service")
+	idUploadService := r.Header.Get("id_upload_service")
+	idFunctionProcess := r.Header.Get("id_function_process")
+
+	values := r.URL.Query()
+
+	account := values.Get("account")
+
+	var temp string
+
+	if len(token) == 0 && len(idUploadService) == 0 {
+		http.Error(w, "Get token, idUploadService  failed", http.StatusUnauthorized)
+	}
 
 	resp, err := server.clientAuthen.AuthenTokenClient(context.Background(), token)
 
@@ -467,99 +450,39 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 	}
 
 	fmt.Println("Gateway server")
-
+	var idFileUpLoad *pb_storage.FileInfoRespone
 	content, err := ioutil.ReadAll(file_ex)
 
-	idFileUpLoad, err := server.clientStogare.UploadFile(context.Background(), a.Filename, a.Header.Get("Content-Type"), resp.Iduser, a.Size, content)
-
-	// fmt.Println("check id File: ", idFile)
-	if r.Header.Get("run") == "run" {
-		go func(idFile, fileName string, fileContent []byte) {
-			_, err := server.clientProcessing.ProcessingDataClient(context.Background(), idFile, fileName, fileContent)
-
-			if err != nil {
-				http.Error(w, "ProcessingDataClient Failed ", http.StatusBadRequest)
-			}
-		}(idFileUpLoad.Link, a.Filename, content)
+	switch idUploadService {
+	case "1":
+		idFileUpLoad, err = server.clientStogare.UploadFile(context.Background(), a.Filename, a.Header.Get("Content-Type"), resp.Iduser, a.Size, content)
+	default:
+		http.Error(w, "Id Upload Service incorrect", http.StatusBadRequest)
+		return
 	}
 
-	// if a.Size > 1024*1024 {
-	// 	logs.Logger.Error("ImportDataWithHttp: File too lagre")
-	// 	http.Error(w, "File too lagre (<=1 Mb)", http.StatusBadRequest)
-	// 	return
-	// }
+	// fmt.Println("check id File: ", idFile)
+	if idProcsessService == "1" {
+		// go func(idFile, fileName string, fileContent []byte) {
+		_, err := server.clientProcessing.ProcessingDataClient(context.Background(), idFileUpLoad.Link, a.Filename, content)
 
-	// xlsx, err := excelize.OpenReader(bytes.NewReader(content))
-	// xlsx, err := excelize.OpenReader(file_ex)
+		if err != nil {
+			http.Error(w, "ProcessingDataClient Failed ", http.StatusBadRequest)
+		}
+		// }(idFileUpLoad.Link, a.Filename, content)
 
-	// if err != nil {
-	// 	logs.Logger.Error("ImportDataWithHttp: Failed to open Excel file ", err)
-	// 	http.Error(w, "Failed to open Excel file", http.StatusBadRequest)
-	// 	return
-	// }
-
-	// var info_file []InfoFile
-	// for _, name := range xlsx.GetSheetMap() {
-	// 	// fmt.Println(index, name)
-	// 	// nameSheet = append(nameSheet, name)
-	// 	dataRows, err := xlsx.GetRows(name)
-	// 	if err != nil {
-	// 		logs.Logger.Error("ImportDataWithHttp: GetRows failed")
-	// 		http.Error(w, "GetRows failed", http.StatusBadRequest)
-	// 		return
-	// 	}
-
-	// 	var data []map[string]string
-	// 	for _, row := range dataRows {
-	// 		item := make(map[string]string)
-	// 		for i, colCell := range row {
-	// 			temp, _ := excelize.ColumnNumberToName(i + 1)
-
-	// 			temp1, _ := xlsx.GetCellValue(name, temp+"1")
-
-	// 			item[temp1] = colCell
-	// 		}
-	// 		data = append(data, item)
-	// 	}
-	// 	jsonData, err := json.Marshal(data)
-
-	// 	if err != nil {
-	// 		logs.Logger.Error("ImportDataWithHttp: Masrhal Data error:", err)
-	// 		return
-	// 	}
-
-	// 	info_file = append(info_file, InfoFile{name: name, content: jsonData})
-	// }
-
-	// for i := 0; i < len(info_file); i++ {
-	// 	// Create an empty map to unmarshal JSON into
-	// 	var person []map[string]interface{}
-
-	// 	// Unmarshal the JSON data into the map
-	// 	err = json.Unmarshal([]byte(info_file[i].content), &person)
-	// 	if err != nil {
-	// 		fmt.Println(err)
-	// 	}
-
-	// 	infos := make([]interface{}, len(person))
-	// 	for i, s := range person {
-	// 		infos[i] = s
-	// 	}
-
-	// 	infos = infos[1:]
-
-	// 	err = mongodb.AddManyInfoNotModel(server.config, infos, info_file[i].name)
-	// 	if err != nil {
-	// 		logs.Logger.Error("ImportDataWithHttp: Post Data to Mongo Database failed:", err)
-	// 	}
-
-	// }
+		if idFunctionProcess == "1" {
+			temp = "localhost:3000/v1/exportfunction?account=" + account
+		}
+	} else {
+		temp = "Upload Done"
+	}
 
 	type Respone struct {
 		Notice string
 	}
 
-	noticeDb := Respone{Notice: "Upload Done"}
+	noticeDb := Respone{Notice: temp}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(noticeDb)
@@ -780,6 +703,29 @@ func (server *Server) DowloadLinkWithHttp(w http.ResponseWriter, r *http.Request
 		w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 		w.Write(resp.Content)
 	}
+
+	// http.ServeContent(w, r, "DataImportToDB.xlsx", currentTime, file)
+}
+
+func (server *Server) ExportFuntionWithHttp(w http.ResponseWriter, r *http.Request) {
+
+	values := r.URL.Query()
+
+	account := values.Get("account")
+
+	resp, err := server.clientProcessing.ExportFuntionClient(context.Background(), account)
+
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "DownloadFileClient failded", http.StatusBadRequest)
+		return
+	}
+	// name := strings.Split(resp.NameFile, "/")
+	// fmt.Println(name)
+
+	w.Header().Set("Content-Disposition", "attachment; filename=InfoTransaction.xlsx")
+	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	w.Write(resp.Content)
 
 	// http.ServeContent(w, r, "DataImportToDB.xlsx", currentTime, file)
 }

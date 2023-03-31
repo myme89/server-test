@@ -404,6 +404,100 @@ func (x *DownloadFileProcessRespone) GetContentFile() []byte {
 	return nil
 }
 
+type GetTransactionByAccountResquest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Account string `protobuf:"bytes,1,opt,name=account,proto3" json:"account,omitempty"`
+}
+
+func (x *GetTransactionByAccountResquest) Reset() {
+	*x = GetTransactionByAccountResquest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rpc_data_processing_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetTransactionByAccountResquest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTransactionByAccountResquest) ProtoMessage() {}
+
+func (x *GetTransactionByAccountResquest) ProtoReflect() protoreflect.Message {
+	mi := &file_rpc_data_processing_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTransactionByAccountResquest.ProtoReflect.Descriptor instead.
+func (*GetTransactionByAccountResquest) Descriptor() ([]byte, []int) {
+	return file_rpc_data_processing_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *GetTransactionByAccountResquest) GetAccount() string {
+	if x != nil {
+		return x.Account
+	}
+	return ""
+}
+
+type GetTransactionByAccountRespone struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Content []byte `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
+}
+
+func (x *GetTransactionByAccountRespone) Reset() {
+	*x = GetTransactionByAccountRespone{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rpc_data_processing_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetTransactionByAccountRespone) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTransactionByAccountRespone) ProtoMessage() {}
+
+func (x *GetTransactionByAccountRespone) ProtoReflect() protoreflect.Message {
+	mi := &file_rpc_data_processing_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTransactionByAccountRespone.ProtoReflect.Descriptor instead.
+func (*GetTransactionByAccountRespone) Descriptor() ([]byte, []int) {
+	return file_rpc_data_processing_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetTransactionByAccountRespone) GetContent() []byte {
+	if x != nil {
+		return x.Content
+	}
+	return nil
+}
+
 var File_rpc_data_processing_proto protoreflect.FileDescriptor
 
 var file_rpc_data_processing_proto_rawDesc = []byte{
@@ -442,10 +536,18 @@ var file_rpc_data_processing_proto_rawDesc = []byte{
 	0x69, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6e, 0x61, 0x6d, 0x65, 0x46,
 	0x69, 0x6c, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x46, 0x69,
 	0x6c, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x0b, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e,
-	0x74, 0x46, 0x69, 0x6c, 0x65, 0x42, 0x2f, 0x5a, 0x2d, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2d,
-	0x74, 0x65, 0x73, 0x74, 0x2f, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2d, 0x70, 0x72, 0x6f, 0x63,
-	0x65, 0x73, 0x73, 0x2d, 0x64, 0x61, 0x74, 0x61, 0x2f, 0x70, 0x62, 0x5f, 0x70, 0x72, 0x6f, 0x63,
-	0x65, 0x73, 0x73, 0x69, 0x6e, 0x67, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x74, 0x46, 0x69, 0x6c, 0x65, 0x22, 0x3b, 0x0a, 0x1f, 0x47, 0x65, 0x74, 0x54, 0x72, 0x61, 0x6e,
+	0x73, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x79, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74,
+	0x52, 0x65, 0x73, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x61, 0x63, 0x63, 0x6f,
+	0x75, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x61, 0x63, 0x63, 0x6f, 0x75,
+	0x6e, 0x74, 0x22, 0x3a, 0x0a, 0x1e, 0x47, 0x65, 0x74, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x61, 0x63,
+	0x74, 0x69, 0x6f, 0x6e, 0x42, 0x79, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x42, 0x2f,
+	0x5a, 0x2d, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2d, 0x74, 0x65, 0x73, 0x74, 0x2f, 0x73, 0x65,
+	0x72, 0x76, 0x65, 0x72, 0x2d, 0x70, 0x72, 0x6f, 0x63, 0x65, 0x73, 0x73, 0x2d, 0x64, 0x61, 0x74,
+	0x61, 0x2f, 0x70, 0x62, 0x5f, 0x70, 0x72, 0x6f, 0x63, 0x65, 0x73, 0x73, 0x69, 0x6e, 0x67, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -460,25 +562,27 @@ func file_rpc_data_processing_proto_rawDescGZIP() []byte {
 	return file_rpc_data_processing_proto_rawDescData
 }
 
-var file_rpc_data_processing_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_rpc_data_processing_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_rpc_data_processing_proto_goTypes = []interface{}{
-	(*DataInfoTestResquest1)(nil),       // 0: pb_storage.DataInfoTestResquest1
-	(*DataInfoTestRespone1)(nil),        // 1: pb_storage.DataInfoTestRespone1
-	(*ProcessingFileResquest)(nil),      // 2: pb_storage.ProcessingFileResquest
-	(*ProcessingFileRespone)(nil),       // 3: pb_storage.ProcessingFileRespone
-	(*ExportFileResquest)(nil),          // 4: pb_storage.ExportFileResquest
-	(*ExportFileRespone)(nil),           // 5: pb_storage.ExportFileRespone
-	(*DownloadFileProcessResquest)(nil), // 6: pb_storage.DownloadFileProcessResquest
-	(*DownloadFileProcessRespone)(nil),  // 7: pb_storage.DownloadFileProcessRespone
-	(*FileInfoProcess)(nil),             // 8: pb_storage.FileInfoProcess
+	(*DataInfoTestResquest1)(nil),           // 0: pb_storage.DataInfoTestResquest1
+	(*DataInfoTestRespone1)(nil),            // 1: pb_storage.DataInfoTestRespone1
+	(*ProcessingFileResquest)(nil),          // 2: pb_storage.ProcessingFileResquest
+	(*ProcessingFileRespone)(nil),           // 3: pb_storage.ProcessingFileRespone
+	(*ExportFileResquest)(nil),              // 4: pb_storage.ExportFileResquest
+	(*ExportFileRespone)(nil),               // 5: pb_storage.ExportFileRespone
+	(*DownloadFileProcessResquest)(nil),     // 6: pb_storage.DownloadFileProcessResquest
+	(*DownloadFileProcessRespone)(nil),      // 7: pb_storage.DownloadFileProcessRespone
+	(*GetTransactionByAccountResquest)(nil), // 8: pb_storage.GetTransactionByAccountResquest
+	(*GetTransactionByAccountRespone)(nil),  // 9: pb_storage.GetTransactionByAccountRespone
+	(*FileInfoProcess)(nil),                 // 10: pb_storage.FileInfoProcess
 }
 var file_rpc_data_processing_proto_depIdxs = []int32{
-	8, // 0: pb_storage.ProcessingFileResquest.fileinfoprocess:type_name -> pb_storage.FileInfoProcess
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	10, // 0: pb_storage.ProcessingFileResquest.fileinfoprocess:type_name -> pb_storage.FileInfoProcess
+	1,  // [1:1] is the sub-list for method output_type
+	1,  // [1:1] is the sub-list for method input_type
+	1,  // [1:1] is the sub-list for extension type_name
+	1,  // [1:1] is the sub-list for extension extendee
+	0,  // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_rpc_data_processing_proto_init() }
@@ -584,6 +688,30 @@ func file_rpc_data_processing_proto_init() {
 				return nil
 			}
 		}
+		file_rpc_data_processing_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetTransactionByAccountResquest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_rpc_data_processing_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetTransactionByAccountRespone); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -591,7 +719,7 @@ func file_rpc_data_processing_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_rpc_data_processing_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

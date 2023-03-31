@@ -10,7 +10,6 @@ import (
 	"server-test/server-proccess-data/database/mongodb"
 	"server-test/server-proccess-data/model"
 	"server-test/server-proccess-data/pb_processing"
-	"strings"
 
 	log "github.com/sirupsen/logrus"
 
@@ -106,33 +105,33 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 		// info_file = append(info_file, model.InfoFile{Name: name, Content: jsonData})
 	}
 
-	date := "23"
-	var result []model.TemplateInfoTransaction
+	// date := "23"
+	// var result []model.TemplateInfoTransaction
 
 	infoTran := infoTrans[1:]
 	// fmt.Println("data test=", t)
 
-	for i := 0; i < len(infoTran); i++ {
-		t := strings.Split(infoTran[i].TimeTrans, " ")
-		k := strings.Split(t[0], "-")
-		fmt.Println("data test=", k)
-		if infoTran[i].AccRec == "1234" && k[2] == date {
-			result = append(result, model.TemplateInfoTransaction{
-				IdTran:    infoTran[i].IdTran,
-				AccRec:    infoTran[i].AccRec,
-				AccSend:   infoTran[i].AccSend,
-				AccFee:    infoTran[i].AccFee,
-				Deposits:  infoTran[i].Deposits,
-				MoneyRec:  infoTran[i].MoneyRec,
-				Fee:       infoTran[i].Fee,
-				TimeTrans: infoTran[i].TimeTrans,
-			})
-		}
-	}
+	// for i := 0; i < len(infoTran); i++ {
+	// 	t := strings.Split(infoTran[i].TimeTrans, " ")
+	// 	k := strings.Split(t[0], "-")
+	// 	fmt.Println("data test=", k)
+	// 	if infoTran[i].AccRec == "1234" && k[2] == date {
+	// 		result = append(result, model.TemplateInfoTransaction{
+	// 			IdTran:    infoTran[i].IdTran,
+	// 			AccRec:    infoTran[i].AccRec,
+	// 			AccSend:   infoTran[i].AccSend,
+	// 			AccFee:    infoTran[i].AccFee,
+	// 			Deposits:  infoTran[i].Deposits,
+	// 			MoneyRec:  infoTran[i].MoneyRec,
+	// 			Fee:       infoTran[i].Fee,
+	// 			TimeTrans: infoTran[i].TimeTrans,
+	// 		})
+	// 	}
+	// }
 
 	// fmt.Println("data test=", count)
 
-	err = mongodb.AddManyInfoTrans(serverProcessing.config, result)
+	err = mongodb.AddManyInfoTrans(serverProcessing.config, infoTran)
 
 	// nameFileExcel := infoFileProcess.Filename + " " + infoFileProcess.Idfile
 	// resp, err := serverProcessing.clientDatabase.UploadDataFileExcelClient(ctx, info_file, nameFileExcel)
@@ -174,16 +173,6 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 
 	fmt.Println("trongnhat 1")
 
-	// Replace with the data you want to send in the request body
-	// data := map[string]string{"status": "Done", "idfile": infoFileProcess.Idfile}
-	// payload, err := json.Marshal(data)
-	// if err != nil {
-	// 	// Handle error
-	// 	return nil, status.Errorf(codes.InvalidArgument, "Error while encoding data to JSON")
-	// 	// fmt.Println("Error while encoding data to JSON:", err)
-	// 	// return
-	// }
-
 	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {
 		// Handle error
@@ -199,7 +188,6 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 	client := &http.Client{}
 	resp, err := client.Do(req)
 
-	// fmt.Println("1231212312= ", resp)
 	if err != nil {
 		// Handle error
 		return nil, status.Errorf(codes.InvalidArgument, "Error making request")
@@ -207,29 +195,6 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 	}
 	defer resp.Body.Close()
 
-	// Read the response body
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		// Handle error
-		return nil, status.Errorf(codes.InvalidArgument, "Error reading response body")
-
-		// fmt.Println("Error reading response body:", err)
-		// return
-	}
-
-	// Use the content of the response as needed
-	fmt.Println(string(body))
-	// if err != nil {
-	// 	return nil, status.Errorf(codes.InvalidArgument, "UploadDataFileExcelClient failed")
-	// }
-
-	// noti, err := serverProcessing.clientDatabase.UpdateStatusProcessingClient(ctx, "Done", infoFileProcess.Idfile)
-
-	// if err != nil {
-	// 	return nil, status.Errorf(codes.InvalidArgument, "UpdateStatusProcessingClient failed")
-
-	// }
-	// fmt.Println("noti ", resp)
 	return &pb_processing.ProcessingFileRespone{Noti: "Processing Done"}, nil
 }
 
@@ -284,7 +249,7 @@ func (serverProcessing *ServerProcessing) ExportTemplateFileUpload(ctx context.C
 		}
 	}
 
-	err := f.SetColWidth("Sheet1", "A", "G", 30)
+	err := f.SetColWidth("Sheet1", "A", "Z", 30)
 
 	if err != nil {
 
@@ -342,4 +307,59 @@ func (serverProcessing *ServerProcessing) DownloafFileProcess(ctx context.Contex
 	}
 
 	return &pb_processing.DownloadFileProcessRespone{NameFile: name, ContentFile: content}, nil
+}
+
+func (serverProcessing *ServerProcessing) GetTransactionByAccount(ctx context.Context, res *pb_processing.GetTransactionByAccountResquest) (*pb_processing.GetTransactionByAccountRespone, error) {
+
+	account := res.GetAccount()
+
+	infoTransaction, err := mongodb.GetTransactionByAccountRec(serverProcessing.config, account)
+
+	fmt.Println("trongnhat infoTransaction= ", infoTransaction)
+	if err != nil {
+		// Handle error
+		return nil, status.Errorf(codes.InvalidArgument, "GetTransactionByAccountRec failed")
+
+	}
+
+	var expenseData = [][]interface{}{}
+
+	f := excelize.NewFile()
+	index, _ := f.NewSheet("Sheet1")
+	f.SetActiveSheet(index)
+
+	for i := 0; i < len(infoTransaction); i++ {
+		temp := []interface{}{infoTransaction[i].IdTran, infoTransaction[i].AccRec, infoTransaction[i].AccSend, infoTransaction[i].AccFee, infoTransaction[i].Deposits, infoTransaction[i].MoneyRec, infoTransaction[i].Fee, infoTransaction[i].TimeTrans}
+		expenseData = append(expenseData, temp)
+	}
+
+	err = f.SetSheetRow("Sheet1", "A1", &[]interface{}{"ID Trans", "Account Receive", "Account Send", "Account Fee", "Deposits", "Money Received", "Fee", "Time"})
+	if err != nil {
+
+		log.Error("ExportData: Error SetSheetRow: ", err)
+	}
+
+	err = f.SetColWidth("Sheet1", "A", "Z", 30)
+
+	if err != nil {
+
+		log.Error("ExportData: Error SetColWidth: ", err)
+	}
+
+	startRow := 2
+	for i := startRow; i < (len(expenseData) + startRow); i++ {
+		err = f.SetSheetRow("Sheet1", fmt.Sprintf("A%d", i), &expenseData[i-2])
+		if err != nil {
+			log.Error("ExportData: Error SetSheetRow: ", err)
+		}
+	}
+
+	fileBytes, err := f.WriteToBuffer()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	temp := fileBytes.Bytes()
+
+	return &pb_processing.GetTransactionByAccountRespone{Content: temp}, nil
 }
