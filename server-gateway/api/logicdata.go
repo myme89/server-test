@@ -539,7 +539,7 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 func (server *Server) SignUp(ctx context.Context, res *pb.SignUpResquest) (*pb.SignUpRespone, error) {
 
 	md, ok := metadata.FromIncomingContext(ctx)
-	log.Info("nhatnt md: ", md)
+	// log.Info("nhatnt md: ", md)
 	temp := md["username"][0]
 
 	log.Info("nhatnt UserName: ", temp)
@@ -556,7 +556,7 @@ func (server *Server) SignUp(ctx context.Context, res *pb.SignUpResquest) (*pb.S
 func (server *Server) LogInAcc(ctx context.Context, res *pb.SignInResquest) (*pb.SignInRespone, error) {
 
 	md, ok := metadata.FromIncomingContext(ctx)
-	log.Info("nhatnt md: ", md)
+	// log.Info("nhatnt md: ", md)
 	temp := md["username"][0]
 
 	log.Info("nhatnt UserName: ", temp)
@@ -587,7 +587,7 @@ func (server *Server) LogInAcc(ctx context.Context, res *pb.SignInResquest) (*pb
 func (server *Server) GetFileUploadInfo(ctx context.Context, res *pb.FileUploadInfoResquest) (*pb.FileUploadInfoRespone, error) {
 
 	md, _ := metadata.FromIncomingContext(ctx)
-	log.Info("nhatnt md: ", md)
+	// log.Info("nhatnt md: ", md)
 
 	resp, err := server.clientAuthen.AuthenTokenClient(context.Background(), md["token"][0])
 
@@ -717,7 +717,7 @@ func (server *Server) GetFileUploadShortInfo(ctx context.Context, res *pb.FileUp
 	idFile := res.GetIdfile()
 
 	md, _ := metadata.FromIncomingContext(ctx)
-	log.Info("nhatnt md: ", md)
+	// log.Info("nhatnt md: ", md)
 
 	_, err := server.clientAuthen.AuthenTokenClient(context.Background(), md["token"][0])
 

@@ -196,7 +196,7 @@ func (serverStorage *ServerStorage) GetShortInfoFileUpload(ctx context.Context, 
 	idFile := res.GetIdFile()
 
 	shortInfo, err := mongodb.GetShortInfoFile(serverStorage.config, idFile)
-	fmt.Println("test= ", shortInfo)
+	// fmt.Println("test= ", shortInfo)
 
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "get short info file failed")

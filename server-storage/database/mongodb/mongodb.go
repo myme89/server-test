@@ -461,6 +461,6 @@ func GetShortInfoFile(config *config.Config, idFile string) ([]model.FileInfoUpl
 		log.Error("Get List File error err: ", err)
 		return arr, err
 	}
-	fmt.Println(arr)
+	// fmt.Println(arr)
 	return arr, err
 }

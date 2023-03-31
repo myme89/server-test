@@ -65,7 +65,7 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 
 		for _, row := range dataRows {
 
-			fmt.Println("trongnhat test", row[0])
+			// fmt.Println("trongnhat test", row[0])
 
 			// item := make(map[string]string)
 			// for i, colCell := range row {
