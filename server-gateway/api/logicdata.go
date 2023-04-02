@@ -415,11 +415,11 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 	token := r.Header.Get("token")
 	idProcsessService := r.Header.Get("id_process_service")
 	idUploadService := r.Header.Get("id_upload_service")
-	idFunctionProcess := r.Header.Get("id_function_process")
+	// idFunctionProcess := r.Header.Get("id_function_process")
 
-	values := r.URL.Query()
+	// values := r.URL.Query()
 
-	account := values.Get("account")
+	// account := values.Get("account")
 
 	var temp string
 
@@ -472,18 +472,20 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 		}
 		// }(idFileUpLoad.Link, a.Filename, content)
 
-		if idFunctionProcess == "1" {
-			temp = "localhost:3000/v1/exportfunction?account=" + account
-		}
+		// if idFunctionProcess == "1" {
+		// 	temp = "localhost:3000/v1/exportfunction?account=" + account
+		// }
+
+		temp = "Upload Done and Processing Done"
 	} else {
 		temp = "Upload Done and Not Processing"
 	}
 
 	type Respone struct {
-		LinkExport string
+		Notice string
 	}
 
-	noticeDb := Respone{LinkExport: temp}
+	noticeDb := Respone{Notice: temp}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(noticeDb)
