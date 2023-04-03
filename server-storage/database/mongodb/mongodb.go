@@ -275,8 +275,7 @@ func FilterIdFile(config *config.Config, fileName string) (string, error) {
 		if len(arr) > 0 {
 			return arr[0].Id, err
 		} else {
-			arr[0].Id = ""
-			return arr[0].Id, err
+			return "", err
 		}
 
 	}

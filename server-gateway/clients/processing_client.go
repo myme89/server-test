@@ -55,13 +55,13 @@ func prepareProcessingGrpcClient(ctx context.Context) error {
 // 	return noti, nil
 // }
 
-func (processingClient *ProcessingClient) ProcessingDataClient(ctx context.Context, idFile, fileName string, content []byte) (*pb_processing.ProcessingFileRespone, error) {
+func (processingClient *ProcessingClient) ProcessingDataClient(ctx context.Context, idFile, fileName, linkFile string) (*pb_processing.ProcessingFileRespone, error) {
 	fmt.Println(ctx)
 	if err := prepareProcessingGrpcClient(ctx); err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "method prepareProcessingGrpcClient in ProcessingDataClient failed")
 	}
 
-	infoFile := &pb_processing.FileInfoProcess{Filename: fileName, Content: content, Idfile: idFile}
+	infoFile := &pb_processing.FileInfoProcess{Filename: fileName, LinkFile: linkFile, Idfile: idFile}
 	resp, err := processingGrpcServiceClient.ProcessingFileExcel(ctx, &pb_processing.ProcessingFileResquest{Fileinfoprocess: infoFile})
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "method ProcessingFileExcel in ProcessingDataClient failed")

@@ -451,12 +451,12 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 	}
 
 	fmt.Println("Gateway server")
-	var idFileUpLoad *pb_storage.FileInfoRespone
+	var infoFileUpLoad *pb_storage.FileInfoRespone
 	content, err := ioutil.ReadAll(file_ex)
 
 	switch idUploadService {
 	case "1":
-		idFileUpLoad, err = server.clientStogare.UploadFile(context.Background(), a.Filename, a.Header.Get("Content-Type"), resp.Iduser, a.Size, content)
+		infoFileUpLoad, err = server.clientStogare.UploadFile(context.Background(), a.Filename, a.Header.Get("Content-Type"), resp.Iduser, a.Size, content)
 	default:
 		http.Error(w, "Id Upload Service incorrect", http.StatusBadRequest)
 		return
@@ -464,13 +464,13 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 
 	// fmt.Println("check id File: ", idFile)
 	if idProcsessService == "1" && idFunctionProcess == "1" {
-		// go func(idFile, fileName string, fileContent []byte) {
-		_, err := server.clientProcessing.ProcessingDataClient(context.Background(), idFileUpLoad.Link, a.Filename, content)
+		// go func(idFile, fileName, fileContent string) {
+		_, err := server.clientProcessing.ProcessingDataClient(context.Background(), infoFileUpLoad.Id, a.Filename, infoFileUpLoad.Link)
 
 		if err != nil {
 			http.Error(w, "ProcessingDataClient Failed ", http.StatusBadRequest)
 		}
-		// }(idFileUpLoad.Link, a.Filename, content)
+		// }(infoFileUpLoad.Id, a.Filename, infoFileUpLoad.Link)
 
 		// if idFunctionProcess == "1" {
 		// 	temp = "localhost:3000/v1/exportfunction?account=" + account

@@ -22,6 +22,7 @@ message FileInfoResquest{
 
 message FileInfoRespone{
     string  link = 1;
+    string id = 2;
 }
 
 

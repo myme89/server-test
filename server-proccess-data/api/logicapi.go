@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"os"
 	"server-test/server-proccess-data/database/mongodb"
 	"server-test/server-proccess-data/model"
 	"server-test/server-proccess-data/pb_processing"
@@ -16,182 +18,172 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// import (
-// 	"bytes"
-// 	"context"
-// 	"encoding/json"
-// 	"fmt"
-// 	"server-test/server-proccess-data/model"
-// 	"server-test/server-proccess-data/pb_processing"
-// 	"time"
-
-// 	"google.golang.org/grpc/codes"
-// 	"google.golang.org/grpc/status"
-
-// 	"github.com/xuri/excelize/v2"
-// )
-
-// func (serverProcessing *ServerProcessing) TestData2(ctx context.Context, res *pb_processing.DataInfoTestResquest1) (*pb_processing.DataInfoTestRespone1, error) {
-
-// 	fmt.Println("TestData server Storage start")
-// 	temp := res.GetDataTest() + " TestData2" + " TestData2"
-
-// 	time.Sleep(5 * time.Second)
-
-// 	fmt.Println("TestData server Storage end")
-
-// 	return &pb_processing.DataInfoTestRespone1{DataResp: temp}, nil
-// }
-
 func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Context, res *pb_processing.ProcessingFileResquest) (*pb_processing.ProcessingFileRespone, error) {
 
 	infoFileProcess := res.GetFileinfoprocess()
 
-	xlsx, err := excelize.OpenReader(bytes.NewReader(infoFileProcess.Content))
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "OpenReader file excel failed")
-	}
-	var infoTrans []model.TemplateInfoTransaction
-	// var info_file []model.InfoFile
-	for _, name := range xlsx.GetSheetMap() {
-		// fmt.Println(index, name)
-		// nameSheet = append(nameSheet, name)
-		dataRows, err := xlsx.GetRows(name)
+	fmt.Println("trongnhat 123")
+	go func(idFile, fileName, linkFile string) {
+		var status string
+		file, err := os.Open(linkFile)
 		if err != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "GetRows file excel failed")
+
+			fmt.Println("err= ", err)
+			status = "Failed"
 		}
 
-		// var data []map[string]string
+		content, err := ioutil.ReadAll(file)
 
-		for _, row := range dataRows {
+		xlsx, err := excelize.OpenReader(bytes.NewReader(content))
+		if err != nil {
+			status = "Failed"
+		}
+		var infoTrans []model.TemplateInfoTransaction
+		// var info_file []model.InfoFile
+		for _, name := range xlsx.GetSheetMap() {
+			// fmt.Println(index, name)
+			// nameSheet = append(nameSheet, name)
+			dataRows, err := xlsx.GetRows(name)
+			if err != nil {
+				status = "Failed"
+			}
 
-			// fmt.Println("trongnhat test", row[0])
+			// var data []map[string]string
 
-			// item := make(map[string]string)
-			// for i, colCell := range row {
-			// 	temp, _ := excelize.ColumnNumberToName(i + 1)
+			for _, row := range dataRows {
 
-			// 	temp1, _ := xlsx.GetCellValue(name, temp+"1")
-			// 	// infoTran := model.TemplateInfoTransaction{
-			// 	// 	IdTran: colCell,
-			// 	// }
-			// 	item[temp1] = colCell
-			// 	fmt.Println("trongnhat test", item[temp1])
+				// fmt.Println("trongnhat test", row[0])
+
+				// item := make(map[string]string)
+				// for i, colCell := range row {
+				// 	temp, _ := excelize.ColumnNumberToName(i + 1)
+
+				// 	temp1, _ := xlsx.GetCellValue(name, temp+"1")
+				// 	// infoTran := model.TemplateInfoTransaction{
+				// 	// 	IdTran: colCell,
+				// 	// }
+				// 	item[temp1] = colCell
+				// 	fmt.Println("trongnhat test", item[temp1])
+				// }
+				// // fmt.Println("trongnhat test", item)
+				// data = append(data, item)
+
+				infoTrans = append(infoTrans, model.TemplateInfoTransaction{
+					IdTran:    row[0],
+					AccRec:    row[1],
+					AccSend:   row[2],
+					AccFee:    row[3],
+					Deposits:  row[4],
+					MoneyRec:  row[5],
+					Fee:       row[6],
+					TimeTrans: row[7],
+				})
+
+			}
+			// jsonData, err := json.Marshal(data)
+
+			// if err != nil {
+			// 	return nil, status.Errorf(codes.InvalidArgument, "Marshal data failed")
+
 			// }
-			// // fmt.Println("trongnhat test", item)
-			// data = append(data, item)
 
-			infoTrans = append(infoTrans, model.TemplateInfoTransaction{
-				IdTran:    row[0],
-				AccRec:    row[1],
-				AccSend:   row[2],
-				AccFee:    row[3],
-				Deposits:  row[4],
-				MoneyRec:  row[5],
-				Fee:       row[6],
-				TimeTrans: row[7],
-			})
-
+			// info_file = append(info_file, model.InfoFile{Name: name, Content: jsonData})
 		}
-		// jsonData, err := json.Marshal(data)
 
-		// if err != nil {
-		// 	return nil, status.Errorf(codes.InvalidArgument, "Marshal data failed")
+		// date := "23"
+		// var result []model.TemplateInfoTransaction
+
+		infoTran := infoTrans[1:]
+		// fmt.Println("data test=", t)
+
+		// for i := 0; i < len(infoTran); i++ {
+		// 	t := strings.Split(infoTran[i].TimeTrans, " ")
+		// 	k := strings.Split(t[0], "-")
+		// 	fmt.Println("data test=", k)
+		// 	if infoTran[i].AccRec == "1234" && k[2] == date {
+		// 		result = append(result, model.TemplateInfoTransaction{
+		// 			IdTran:    infoTran[i].IdTran,
+		// 			AccRec:    infoTran[i].AccRec,
+		// 			AccSend:   infoTran[i].AccSend,
+		// 			AccFee:    infoTran[i].AccFee,
+		// 			Deposits:  infoTran[i].Deposits,
+		// 			MoneyRec:  infoTran[i].MoneyRec,
+		// 			Fee:       infoTran[i].Fee,
+		// 			TimeTrans: infoTran[i].TimeTrans,
+		// 		})
+		// 	}
+		// }
+
+		// fmt.Println("data test=", count)
+
+		err = mongodb.AddManyInfoTrans(serverProcessing.config, infoTran)
+
+		// nameFileExcel := infoFileProcess.Filename + " " + infoFileProcess.Idfile
+		// resp, err := serverProcessing.clientDatabase.UploadDataFileExcelClient(ctx, info_file, nameFileExcel)
+
+		// for i := 0; i < len(info_file); i++ {
+		// 	// Create an empty map to unmarshal JSON into
+		// 	var person []map[string]interface{}
+
+		// 	// Unmarshal the JSON data into the map
+		// 	err := json.Unmarshal([]byte(info_file[i].Content), &person)
+		// 	if err != nil {
+		// 		fmt.Println(err)
+		// 		return nil, status.Errorf(codes.Unimplemented, "Unmarshal failed")
+		// 	}
+
+		// 	infos := make([]interface{}, len(person))
+		// 	for i, s := range person {
+		// 		infos[i] = s
+		// 	}
+
+		// 	infos = infos[1:]
+		// 	fmt.Println("trongnhat test1= ", infos)
+		// 	// var datasAdd []model.TemplateInfoTransaction
+		// 	// for i := 0; i < len(infos); i++ {
+		// 	// 	datasAdd = append(datasAdd, model.TemplateInfoTransaction{AccRec: , Name: data[i][1], FullName: data[i][2]})
+
+		// 	// }
+
+		// 	fmt.Println("nhatnt test", serverProcessing.config)
+		// 	err = mongodb.AddManyInfoNotModel(serverProcessing.config, infos, nameFileExcel)
+		// 	if err != nil {
+		// 		log.Error(" Post Data to Mongo Database failed:", err)
+		// 		return nil, status.Errorf(codes.Unimplemented, "AddManyInfoNotModel failed")
+		// 	}
 
 		// }
 
-		// info_file = append(info_file, model.InfoFile{Name: name, Content: jsonData})
-	}
+		url := "http://localhost:3000/v1/status"
 
-	// date := "23"
-	// var result []model.TemplateInfoTransaction
+		fmt.Println("trongnhat 1")
 
-	infoTran := infoTrans[1:]
-	// fmt.Println("data test=", t)
+		req, err := http.NewRequest("POST", url, nil)
+		if err != nil {
+			// Handle error
+			// status = "Failed"
 
-	// for i := 0; i < len(infoTran); i++ {
-	// 	t := strings.Split(infoTran[i].TimeTrans, " ")
-	// 	k := strings.Split(t[0], "-")
-	// 	fmt.Println("data test=", k)
-	// 	if infoTran[i].AccRec == "1234" && k[2] == date {
-	// 		result = append(result, model.TemplateInfoTransaction{
-	// 			IdTran:    infoTran[i].IdTran,
-	// 			AccRec:    infoTran[i].AccRec,
-	// 			AccSend:   infoTran[i].AccSend,
-	// 			AccFee:    infoTran[i].AccFee,
-	// 			Deposits:  infoTran[i].Deposits,
-	// 			MoneyRec:  infoTran[i].MoneyRec,
-	// 			Fee:       infoTran[i].Fee,
-	// 			TimeTrans: infoTran[i].TimeTrans,
-	// 		})
-	// 	}
-	// }
+			fmt.Println("Error while creating request:", err)
+			// return
+		}
 
-	// fmt.Println("data test=", count)
+		status = "Done"
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("status", status)
+		req.Header.Set("idfile", infoFileProcess.Idfile)
 
-	err = mongodb.AddManyInfoTrans(serverProcessing.config, infoTran)
+		client := &http.Client{}
+		resp, err := client.Do(req)
 
-	// nameFileExcel := infoFileProcess.Filename + " " + infoFileProcess.Idfile
-	// resp, err := serverProcessing.clientDatabase.UploadDataFileExcelClient(ctx, info_file, nameFileExcel)
+		if err != nil {
+			// Handle error
+			// status = "Failed"
+			fmt.Println("Error while creating request:", err)
 
-	// for i := 0; i < len(info_file); i++ {
-	// 	// Create an empty map to unmarshal JSON into
-	// 	var person []map[string]interface{}
+		}
+		defer resp.Body.Close()
 
-	// 	// Unmarshal the JSON data into the map
-	// 	err := json.Unmarshal([]byte(info_file[i].Content), &person)
-	// 	if err != nil {
-	// 		fmt.Println(err)
-	// 		return nil, status.Errorf(codes.Unimplemented, "Unmarshal failed")
-	// 	}
-
-	// 	infos := make([]interface{}, len(person))
-	// 	for i, s := range person {
-	// 		infos[i] = s
-	// 	}
-
-	// 	infos = infos[1:]
-	// 	fmt.Println("trongnhat test1= ", infos)
-	// 	// var datasAdd []model.TemplateInfoTransaction
-	// 	// for i := 0; i < len(infos); i++ {
-	// 	// 	datasAdd = append(datasAdd, model.TemplateInfoTransaction{AccRec: , Name: data[i][1], FullName: data[i][2]})
-
-	// 	// }
-
-	// 	fmt.Println("nhatnt test", serverProcessing.config)
-	// 	err = mongodb.AddManyInfoNotModel(serverProcessing.config, infos, nameFileExcel)
-	// 	if err != nil {
-	// 		log.Error(" Post Data to Mongo Database failed:", err)
-	// 		return nil, status.Errorf(codes.Unimplemented, "AddManyInfoNotModel failed")
-	// 	}
-
-	// }
-
-	url := "http://localhost:3000/v1/status"
-
-	fmt.Println("trongnhat 1")
-
-	req, err := http.NewRequest("POST", url, nil)
-	if err != nil {
-		// Handle error
-		return nil, status.Errorf(codes.InvalidArgument, "Error while creating request:")
-
-		// fmt.Println("Error while creating request:", err)
-		// return
-	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("status", "Done")
-	req.Header.Set("idfile", infoFileProcess.Idfile)
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-
-	if err != nil {
-		// Handle error
-		return nil, status.Errorf(codes.InvalidArgument, "Error making request")
-
-	}
-	defer resp.Body.Close()
+	}(infoFileProcess.Idfile, infoFileProcess.Filename, infoFileProcess.LinkFile)
 
 	return &pb_processing.ProcessingFileRespone{Noti: "Processing Done"}, nil
 }

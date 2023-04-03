@@ -94,7 +94,8 @@ func (serverStorage *ServerStorage) UploadFile(ctx context.Context, res *pb_stor
 	}
 
 	rsp := &pb_storage.FileInfoRespone{
-		Link: idFile,
+		Link: absPath + "/" + hashNameFile,
+		Id:   idFile,
 	}
 	return rsp, nil
 }
