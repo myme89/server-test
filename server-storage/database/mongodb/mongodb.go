@@ -419,28 +419,14 @@ func GetDirFile(config *config.Config, idFile string) (string, string, error) {
 	cursor, err := collection.Find(context.TODO(), filter, option)
 
 	if err = cursor.All(context.Background(), &arr); err != nil {
-		if len(arr) > 0 {
-			return arr[0].Link, arr[0].FileName, err
-		} else {
-			arr[0].Link = ""
-			arr[0].FileName = ""
-			return arr[0].Link, arr[0].FileName, err
-		}
-
+		return arr[0].Link, arr[0].FileName, err
 	}
-	return arr[0].Link, arr[0].FileName, err
-	// update := bson.D{{Key: "$set", Value: bson.D{{Key: "status_processing", Value: status}}}}
-	// // updateOptions := options.Update().SetUpsert(true)
-	// _, err := collection.UpdateOne(
-	// 	ctx,
-	// 	filter,
-	// 	update,
-	// )
-	// if err != nil {
-	// 	log.Info(err)
-	// }
 
-	// return err
+	if len(arr) > 0 {
+		return arr[0].Link, arr[0].FileName, err
+	} else {
+		return "", "", err
+	}
 }
 
 func GetShortInfoFile(config *config.Config, idFile string) ([]model.FileInfoUpload, error) {

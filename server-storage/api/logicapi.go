@@ -130,9 +130,16 @@ func (serverStorage *ServerStorage) DownloafFile(ctx context.Context, res *pb_st
 	idFile := res.GetIdFile()
 	dir, nameFile, err := mongodb.GetDirFile(serverStorage.config, idFile)
 
+	if dir == "" && nameFile == "" {
+		return nil, status.Errorf(codes.Unimplemented, "File not exits")
+	}
+
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "method GetDirFile failded")
 	}
+
+	fmt.Println("nhatnt")
+
 	hashNameFile := HashNameFile((strings.Split(nameFile, "."))[0]) + "." + (strings.Split(nameFile, "."))[1]
 	fmt.Println((strings.Split(nameFile, "."))[0])
 

@@ -96,7 +96,7 @@ func (stogareClient *StorageClient) DownloadFileClient(ctx context.Context, idFi
 	resp, err := stogareGrpcServiceClient.DownloafFile(ctx, &pb_storage.DownloadFileResquest{IdFile: idFile})
 
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "method ExportFileTemplateExcelClient in client stogare failed")
+		return nil, err
 	}
 	fmt.Println("UploadFileClient Storage")
 

@@ -415,7 +415,7 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 	token := r.Header.Get("token")
 	idProcsessService := r.Header.Get("id_process_service")
 	idUploadService := r.Header.Get("id_upload_service")
-	// idFunctionProcess := r.Header.Get("id_function_process")
+	idFunctionProcess := r.Header.Get("id_function_process")
 
 	// values := r.URL.Query()
 
@@ -463,7 +463,7 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 	}
 
 	// fmt.Println("check id File: ", idFile)
-	if idProcsessService == "1" {
+	if idProcsessService == "1" && idFunctionProcess == "1" {
 		// go func(idFile, fileName string, fileContent []byte) {
 		_, err := server.clientProcessing.ProcessingDataClient(context.Background(), idFileUpLoad.Link, a.Filename, content)
 
@@ -676,6 +676,23 @@ func (server *Server) DowloadLinkWithHttp(w http.ResponseWriter, r *http.Request
 
 	idFile := values.Get("idfile")
 
+	token := r.Header.Get("token")
+
+	// values := r.URL.Query()
+
+	// account := values.Get("account")
+
+	if len(token) == 0 {
+		http.Error(w, "Get token, idUploadService  failed", http.StatusUnauthorized)
+	}
+
+	_, err := server.clientAuthen.AuthenTokenClient(context.Background(), token)
+
+	if err != nil {
+		http.Error(w, "Authen token failed", http.StatusUnauthorized)
+		return
+	}
+
 	resp, err := server.clientStogare.DownloadFileClient(context.Background(), idFile)
 
 	if err != nil {
@@ -683,6 +700,7 @@ func (server *Server) DowloadLinkWithHttp(w http.ResponseWriter, r *http.Request
 		http.Error(w, "DownloadFileClient failded", http.StatusBadRequest)
 		return
 	}
+
 	name := strings.Split(resp.Name, "/")
 	fmt.Println(name)
 
@@ -698,6 +716,22 @@ func (server *Server) ExportFuntionWithHttp(w http.ResponseWriter, r *http.Reque
 	values := r.URL.Query()
 
 	account := values.Get("account")
+
+	token := r.Header.Get("token")
+
+	// values := r.URL.Query()
+
+	// account := values.Get("account")
+
+	if len(token) == 0 {
+		http.Error(w, "Get token, idUploadService  failed", http.StatusUnauthorized)
+	}
+
+	_, err := server.clientAuthen.AuthenTokenClient(context.Background(), token)
+
+	if err != nil {
+		http.Error(w, "Authen token failed", http.StatusUnauthorized)
+	}
 
 	resp, err := server.clientProcessing.ExportFuntionClient(context.Background(), account)
 
