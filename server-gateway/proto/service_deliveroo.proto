@@ -8,38 +8,38 @@ import "google/api/annotations.proto";
 option go_package = "server-test/pb";
 
 service Deliveroo {
-    rpc GetData(DataInfoResquest) returns (DataInfoRespone) {
-        option (google.api.http) = {
-            get: "/v1/getdata"
-            // body: "*"
-        };
-    }
+    // rpc GetData(DataInfoResquest) returns (DataInfoRespone) {
+    //     option (google.api.http) = {
+    //         get: "/v1/getdata"
+    //         // body: "*"
+    //     };
+    // }
 
-    rpc PostData(DataPostResqest) returns (DataPostRespone) {
-        option (google.api.http) = {
-            post: "/v1/postdata"
-            body: "*"
-        };
-    }
-    rpc UpdateData(DataUpdateResqest) returns (DataUpdateRespone) {
-        option (google.api.http) = {
-            put: "/v1/updatedata"
-            body: "*"
-        };
-    }
-    rpc ExportData(ExportDataResquest) returns (ExportDataRespone) {
-        option (google.api.http) = {
-            get: "/v1/exportdata"
-            // body: "*"
-        };
-    }
+    // rpc PostData(DataPostResqest) returns (DataPostRespone) {
+    //     option (google.api.http) = {
+    //         post: "/v1/postdata"
+    //         body: "*"
+    //     };
+    // }
+    // rpc UpdateData(DataUpdateResqest) returns (DataUpdateRespone) {
+    //     option (google.api.http) = {
+    //         put: "/v1/updatedata"
+    //         body: "*"
+    //     };
+    // }
+    // rpc ExportData(ExportDataResquest) returns (ExportDataRespone) {
+    //     option (google.api.http) = {
+    //         get: "/v1/exportdata"
+    //         // body: "*"
+    //     };
+    // }
 
-    rpc ImportData(ImportDataResquest) returns (ImportDataRespone) {
-        // option (google.api.http) = {
-        //     post: "/v1/importdata"
-        //     body: "*"
-        // };
-    }
+    // rpc ImportData(ImportDataResquest) returns (ImportDataRespone) {
+    //     // option (google.api.http) = {
+    //     //     post: "/v1/importdata"
+    //     //     body: "*"
+    //     // };
+    // }
 
 
     rpc TestData1(TestResquest) returns (TestRespone) {
@@ -52,7 +52,7 @@ service Deliveroo {
 
     rpc SignUp(SignUpResquest) returns (SignUpRespone) {
         option (google.api.http) = {
-            post: "/v1/signup"
+            post: "/v1/sign-up"
             body: "*"
         };
     }
@@ -66,7 +66,7 @@ service Deliveroo {
 
     rpc GetFileUploadInfo(FileUploadInfoResquest) returns (FileUploadInfoRespone) {
         option (google.api.http) = {
-            get: "/v1/getlistfile"
+            get: "/v1/get-list-file"
             // body: "*"
         };
     }
@@ -74,28 +74,28 @@ service Deliveroo {
 
     rpc GetFileUploadShortInfo(FileUploadShortInfoResquest) returns (FileUploadShortInfoRespone) {
         option (google.api.http) = {
-            get: "/v1/getshortinfofile/{idfile}"
+            get: "/v1/get-short-info-file/{idfile}"
             // body: "*"
         };
     }
 
     rpc GetListServiceUpload(GetListServiceUploadResquest) returns (GetListServiceUploadRespone) {
         option (google.api.http) = {
-            get: "/v1/getlistserviceupload"
+            get: "/v1/get-list-service-upload"
             // body: "*"
         };
     }
 
     rpc GetListServiceProcess(GetListServiceProcessResquest) returns (GetListServiceProcessRespone) {
         option (google.api.http) = {
-            get: "/v1/getlistserviceprocess/{idServiceUpload}"
+            get: "/v1/get-list-service-process/{idServiceUpload}"
             // body: "*"
         };
     }
 
     rpc GetListFunctionProcess(GetListFunctionProcessResquest) returns (GetListFunctionProcessRespone) {
         option (google.api.http) = {
-            get: "/v1/getlistfunctionprocess/{idServiceProcess}"
+            get: "/v1/get-list-function-process/{idServiceProcess}"
             // body: "*"
         };
     }

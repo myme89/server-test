@@ -20,22 +20,6 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// import (
-// 	"context"
-// 	"fmt"
-// 	"io/ioutil"
-// 	"os"
-// 	"path/filepath"
-// 	"server-test/server-storage/pb_storage"
-// 	"strings"
-
-// 	"github.com/xuri/excelize/v2"
-// 	"google.golang.org/grpc/codes"
-// 	"google.golang.org/grpc/status"
-
-// 	log "github.com/sirupsen/logrus"
-// )
-
 // func (serverStorage *ServerStorage) TestData(ctx context.Context, res *pb_storage.DataInfoTestResquest) (*pb_storage.DataInfoTestRespone, error) {
 
 // 	temp := res.GetDataTest() + "trong nhat 1 processing"

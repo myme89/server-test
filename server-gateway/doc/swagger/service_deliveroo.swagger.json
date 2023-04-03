@@ -1,0 +1,564 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "service_deliveroo.proto",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3000",
+  "basePath": "/v1",
+  "schemes": ["https"],
+  "tags": [
+    {
+      "name": "Deliveroo"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+
+    "/signup": {
+      "post": {
+        "operationId": "Deliveroo_SignUp",
+        "summary": "Create a User",
+        "description": "Create a new user with the given data",
+        "responses": {
+          "200": {
+            "description": "Sign Up a User successful.",
+            "schema": {
+              "$ref": "#/definitions/pbSignUpRespone"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Grpc-Metadata-UserName",
+            "in": "header",
+            "description": "Username SignUp",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Grpc-Metadata-Password",
+            "in": "header",
+            "description": "Password SignUp",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Grpc-Metadata-LastName",
+            "in": "header",
+            "description": "Last Name User",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Grpc-Metadata-FirstName",
+            "in": "header",
+            "description": "First Name User",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Deliveroo"
+        ]
+      }
+    },
+
+    "/login": {
+      "post": {
+        "operationId": "Deliveroo_LogInAcc",
+        "summary": "Login a User",
+        "description": "Login a new user with the given data",
+        "responses": {
+          "200": {
+            "description": "Login successful.",
+            "schema": {
+              "$ref": "#/definitions/pbSignInRespone"
+            }
+          },
+          "401": {
+            "description": "Username or password failed",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Grpc-Metadata-UserName",
+            "in": "header",
+            "description": "Username Login",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Grpc-Metadata-Password",
+            "in": "header",
+            "description": "Password Login",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Deliveroo"
+        ]
+      }
+    },
+
+    "/getlistfile": {
+      "get": {
+        "operationId": "Deliveroo_GetFileUploadInfo",
+        "summary": "Get list all file",
+        "description": "Get list file upload with the given user",
+        "responses": {
+          "200": {
+            "description": "Get list file successful",
+            "schema": {
+              "$ref": "#/definitions/pbFileUploadInfoRespone"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "401": {
+            "description": "Authorization token error",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters":[
+          {
+            "name": "token",
+            "in": "header",
+            "description": "The API token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Deliveroo"
+        ]
+      }
+    },
+
+    "/getshortinfofile/{idfile}": {
+      "get": {
+        "operationId": "Deliveroo_GetFileUploadShortInfo",
+        "summary": "Get short infomation file",
+        "description": "Get short information file with the given ID file",
+        "responses": {
+          "200": {
+            "description": "Get short infomation of a file successful.",
+            "schema": {
+              "$ref": "#/definitions/pbFileUploadShortInfoRespone"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "401": {
+            "description": "Authorization token error",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "idfile",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "token",
+            "in": "header",
+            "description": "The API token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Deliveroo"
+        ]
+      }
+    },
+
+    "/uploadfile": {
+      "post": {
+        "summary": "Upload and storage a file",
+        "description": "Upload and storage a new file with the given data",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "responses": {
+          "200": {
+            "description": "Upload file and not Processing successful or Upload file and Processing successful .",
+            "schema": {
+              "$ref": "#/definitions/UploadFileRespone"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          },
+          "401": {
+            "description": "Authorization token error",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "file",
+            "in": "formData",
+            "description": "The file to upload",
+            "required": true,
+            "type": "file"
+          },
+          {
+            "name": "token",
+            "in": "header",
+            "description": "The API token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id_upload_service",
+            "in": "header",
+            "description": "The ID of Upload Service",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id_process_service",
+            "in": "header",
+            "description": "The ID of Process Service",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Deliveroo"
+        ]
+      }
+    },
+
+    "/downloadlink/{idfile}": {
+      "get": {
+        "summary": "Download a file",
+        "description": "Download a file with the given ID file",
+  
+        "produces": [
+          "application/octet-stream",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        ],
+        "responses": {
+          "200": {
+            "description": "Download a file successful.",
+            "schema": {
+              "type": "file"
+            },
+  
+            "headers": {
+              "Content-Disposition": {
+                "type": "string",
+                "description": "The content disposition header"
+              } 
+            }
+          },
+
+          "401": {
+            "description": "Authorization token error",
+            "schema": {
+              "type": "string"
+            }
+          },
+
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "idfile",
+            "in": "path",
+            "description": "The ID of the file to download",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "token",
+            "in": "header",
+            "description": "The API token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Deliveroo"
+        ]
+      }
+    },
+
+    "/exporttemplate/{template}": {
+      "get": {
+        "summary": "Export a template file",
+        "description": "Export a template file with the given template name",
+  
+        "produces": [
+          "application/octet-stream",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        ],
+        "responses": {
+          "200": {
+            "description": "Export a file template successful.",
+            "schema": {
+              "type": "file"
+            },
+  
+            "headers": {
+              "Content-Disposition": {
+                "type": "string",
+                "description": "The content disposition header"
+              } 
+            }
+          },
+
+          "401": {
+            "description": "Authorization token error",
+            "schema": {
+              "type": "string"
+            }
+          },
+
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "template",
+            "in": "path",
+            "description": "The template name of the file to export",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "token",
+            "in": "header",
+            "description": "The API token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Deliveroo"
+        ]
+      }
+    },
+
+    "/exportfunction/{account}": {
+      "get": {
+        "summary": "Export result a function get transaction by ID process",
+        "description": "Export result a function get transaction by ID process with the given account",
+  
+        "produces": [
+          "application/octet-stream",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        ],
+        "responses": {
+          "200": {
+            "description": "Export result successful.",
+            "schema": {
+              "type": "file"
+            },
+  
+            "headers": {
+              "Content-Disposition": {
+                "type": "string",
+                "description": "The content disposition header"
+              }
+            }
+          },
+
+          "401": {
+            "description": "Authorization token error",
+            "schema": {
+              "type": "string"
+            }
+          },
+
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "account",
+            "in": "path",
+            "description": "The template name of the file to export",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "token",
+            "in": "header",
+            "description": "The API token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Deliveroo"
+        ]
+      }
+    }
+
+  },
+
+
+
+  "definitions": {
+    "pbFileUploadInfo": {
+      "type": "object",
+      "properties": {
+        "filename": {
+          "type": "string"
+        },
+        "filetype": {
+          "type": "string"
+        },
+        "link": {
+          "type": "string"
+        },
+        "sizefile": {
+          "type": "string",
+          "format": "int64"
+        },
+        "timecreateat": {
+          "type": "string"
+        }
+      }
+    },
+    "pbFileUploadInfoRespone": {
+      "type": "object",
+      "properties": {
+        "fileinfo": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pbFileUploadInfo"
+          }
+        }
+      }
+    },
+    "pbFileUploadShortInfoRespone": {
+      "type": "object",
+      "properties": {
+        "fileShortInfo": {
+          "$ref": "#/definitions/pbFileUploadInfo"
+        }
+      }
+    },
+
+    "pbSignInRespone": {
+      "type": "object",
+      "properties": {
+        "useraccinfo": {
+          "$ref": "#/definitions/pbUserAccInfo"
+        },
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+
+    "pbSignUpRespone": {
+      "type": "object",
+      "properties": {
+        "notice": {
+          "type": "string"
+        }
+      }
+    },
+
+    "UploadFileRespone": {
+      "type": "object",
+      "properties": {
+        "Notice": {
+          "type": "string"
+        }
+      }
+    },
+
+    "pbUserAccInfo": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "fullname": {
+          "type": "string"
+        }
+      }
+    },
+
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

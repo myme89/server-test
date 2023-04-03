@@ -74,19 +74,19 @@ func GatewaySever(serverAddr string, config *config.Config) {
 
 	// err = RegisterDeliverooHandlerServerCustom(ctx, grpcMux, srv)
 
-	grpcMux.HandlePath("POST", "/v1/uploadfile", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	grpcMux.HandlePath("POST", "/v1/upload-file", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		srv.ImportDataWithHttp(w, req)
 	})
 
-	grpcMux.HandlePath("GET", "/v1/downloadlink", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	grpcMux.HandlePath("GET", "/v1/download-link", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		srv.DowloadLinkWithHttp(w, req)
 	})
 
-	grpcMux.HandlePath("GET", "/v1/export1", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	grpcMux.HandlePath("GET", "/v1/export-template", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		srv.ExportDataHttp(w, req)
 	})
 
-	grpcMux.HandlePath("GET", "/v1/exportfunction", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	grpcMux.HandlePath("GET", "/v1/export-function", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		srv.ExportFuntionWithHttp(w, req)
 	})
 

@@ -32,6 +32,12 @@ proto-database:
         --go-grpc_out=server-database/pb_database --go-grpc_opt=paths=source_relative \
     	server-database/proto_database/*.proto
 
+
+proto-swagger:
+	protoc --proto_path=server-gateway/proto --openapiv2_out server-gateway/doc/swagger \
+    --openapiv2_opt logtostderr=true \
+    server-gateway/proto/service_deliveroo.proto
+
 # //Create table postgess
 # CREATE TABLE "data_test" (
 #   "id" INT  PRIMARY KEY,
