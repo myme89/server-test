@@ -444,11 +444,7 @@
         ]
       }
     }
-
   },
-
-
-
   "definitions": {
     "pbFileUploadInfo": {
       "type": "object",
@@ -467,6 +463,9 @@
           "format": "int64"
         },
         "timecreateat": {
+          "type": "string"
+        },
+        "fileId": {
           "type": "string"
         }
       }
@@ -532,7 +531,6 @@
         }
       }
     },
-
     "protobufAny": {
       "type": "object",
       "properties": {

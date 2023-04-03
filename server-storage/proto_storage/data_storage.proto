@@ -12,4 +12,5 @@ message FileInfo{
     int64 size = 4;
     string link = 5;
     string timecreateat = 6;
+    string fileid = 7;
 }

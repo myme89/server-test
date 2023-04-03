@@ -22,6 +22,7 @@ message FileUploadInfo {
     string link = 3;
     int64 sizefile = 4;
     string timecreateat = 5;
+    string fileId = 6;
 }
 
 

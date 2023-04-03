@@ -609,6 +609,7 @@ func (server *Server) GetFileUploadInfo(ctx context.Context, res *pb.FileUploadI
 
 	for i := 0; i < len(respDatabase.Fileinfo); i++ {
 		temp = append(temp, &pb.FileUploadInfo{
+			FileId:       respDatabase.Fileinfo[i].Fileid,
 			Filename:     respDatabase.Fileinfo[i].Filename,
 			Filetype:     respDatabase.Fileinfo[i].Typefile,
 			Sizefile:     int64(respDatabase.Fileinfo[i].Size),
