@@ -7,8 +7,6 @@ import (
 	"server-test/server-proccess-data/pb_processing"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type ProcessingClient struct {
@@ -58,13 +56,13 @@ func prepareProcessingGrpcClient(ctx context.Context) error {
 func (processingClient *ProcessingClient) ProcessingDataClient(ctx context.Context, idFile, fileName, linkFile, checkSum string) (*pb_processing.ProcessingFileRespone, error) {
 	fmt.Println(ctx)
 	if err := prepareProcessingGrpcClient(ctx); err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "method prepareProcessingGrpcClient in ProcessingDataClient failed")
+		return nil, err
 	}
 
 	infoFile := &pb_processing.FileInfoProcess{Filename: fileName, LinkFile: linkFile, Idfile: idFile, CheckSum: checkSum}
 	resp, err := processingGrpcServiceClient.ProcessingFileExcel(ctx, &pb_processing.ProcessingFileResquest{Fileinfoprocess: infoFile})
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "method ProcessingFileExcel in ProcessingDataClient failed")
+		return nil, err
 	}
 	fmt.Println("ProcessingDataClient server Storage")
 
@@ -82,7 +80,7 @@ func (processingClient *ProcessingClient) ExportFileTemplateExcelClient(ctx cont
 	resp, err := processingGrpcServiceClient.ExportTemplateFileUpload(ctx, &pb_processing.ExportFileResquest{TemplateExport: templateName})
 
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "method ExportFileTemplateExcelClient in client process failed")
+		return nil, err
 	}
 	fmt.Println("UploadFileClient Process")
 
@@ -100,7 +98,7 @@ func (processingClient *ProcessingClient) ExportFuntionClient(ctx context.Contex
 	resp, err := processingGrpcServiceClient.GetTransactionByAccount(ctx, &pb_processing.GetTransactionByAccountResquest{Account: accountRec})
 
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "method GetTransactionByAccount in client process failed")
+		return nil, err
 	}
 	fmt.Println("GetTransactionByAccount Process")
 

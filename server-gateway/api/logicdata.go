@@ -395,7 +395,8 @@ func (server *Server) GetFileUploadInfo(ctx context.Context, res *pb.FileUploadI
 	respDatabase, err := server.clientStogare.GetUploadFileInfoClient(context.Background(), resp.Iduser)
 
 	if err != nil {
-		return nil, ultils.ErrorHandlerGRPC(codes.InvalidArgument, "Call function GetUploadFileInfoClient failed", http.StatusBadRequest)
+		errorName := strings.Split(err.Error(), "=")
+		return nil, ultils.ErrorHandlerGRPC(codes.InvalidArgument, "Call function GetUploadFileInfoClient error:"+errorName[len(errorName)-1], http.StatusBadRequest)
 	}
 
 	var temp []*pb.FileUploadInfo
@@ -426,7 +427,7 @@ func (server *Server) GetFileUploadShortInfo(ctx context.Context, res *pb.FileUp
 		return nil, ultils.ErrorHandlerGRPC(codes.Unauthenticated, "Missing context metadata", http.StatusUnauthorized)
 	}
 
-	if len(md["authorization"]) != 1 {
+	if len(md["token"]) != 1 {
 		return nil, ultils.ErrorHandlerGRPC(codes.Unauthenticated, "Invalid token", http.StatusUnauthorized)
 	}
 
@@ -439,7 +440,8 @@ func (server *Server) GetFileUploadShortInfo(ctx context.Context, res *pb.FileUp
 	respDatabase, err := server.clientStogare.GetUploadFileShortInfoClient(ctx, idFile)
 
 	if err != nil {
-		return nil, ultils.ErrorHandlerGRPC(codes.InvalidArgument, "Call function GetUploadFileInfoClient failed", http.StatusBadRequest)
+		errorName := strings.Split(err.Error(), "=")
+		return nil, ultils.ErrorHandlerGRPC(codes.InvalidArgument, "Call function GetUploadFileInfoClient error:"+errorName[len(errorName)-1], http.StatusBadRequest)
 	}
 
 	linkSplit := strings.Split(respDatabase.Fileinfo.Link, "/")
@@ -534,10 +536,11 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 	case "1":
 		infoFileUpLoad, err = server.clientStogare.UploadFile(context.Background(), a.Filename, a.Header.Get("Content-Type"), resp.Iduser, a.Size, content)
 		if err != nil {
+			errorName := strings.Split(err.Error(), "=")
 			ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
 				"code":    http.StatusBadRequest,
 				"status":  "error",
-				"message": "Funtion UploadFile Failed",
+				"message": "Funtion UploadFile error:" + errorName[len(errorName)-1],
 			})
 			return
 		}
@@ -623,10 +626,11 @@ func (server *Server) ExportDataHttp(w http.ResponseWriter, r *http.Request) {
 	resp, err := server.clientProcessing.ExportFileTemplateExcelClient(context.Background(), template)
 
 	if err != nil {
+		errorName := strings.Split(err.Error(), "=")
 		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
 			"code":    http.StatusBadRequest,
 			"status":  "error",
-			"message": "Call Function ExportFileTemplateExcelClient failded",
+			"message": "Call Function ExportFileTemplateExcelClient error:" + errorName[len(errorName)-1],
 		})
 		return
 	}
@@ -668,10 +672,11 @@ func (server *Server) ExportFuntionWithHttp(w http.ResponseWriter, r *http.Reque
 	resp, err := server.clientProcessing.ExportFuntionClient(context.Background(), account)
 
 	if err != nil {
+		errorName := strings.Split(err.Error(), "=")
 		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
 			"code":    http.StatusBadRequest,
 			"status":  "error",
-			"message": "Call funtion ExportFuntionClient failed",
+			"message": "Call funtion ExportFuntionClient error:" + errorName[len(errorName)-1],
 		})
 		return
 	}
@@ -720,10 +725,11 @@ func (server *Server) DowloadLinkWithHttp(w http.ResponseWriter, r *http.Request
 	resp, err := server.clientStogare.DownloadFileClient(context.Background(), idFile)
 
 	if err != nil {
+		errorName := strings.Split(err.Error(), "=")
 		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
 			"code":    http.StatusBadRequest,
 			"status":  "error",
-			"message": "Call Function DownloadFileClient failded",
+			"message": "Call Function DownloadFileClient error:" + errorName[len(errorName)-1],
 		})
 		return
 	}

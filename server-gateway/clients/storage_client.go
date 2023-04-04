@@ -7,7 +7,6 @@ import (
 	"server-test/server-storage/pb_storage"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
@@ -59,14 +58,14 @@ func (stogareClient *StorageClient) UploadFile(ctx context.Context, fileName, fi
 
 	fmt.Println("stogareClient Upload file")
 	if err := prepareStorageGrpcClient(ctx); err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "method prepareStorageGrpcClient in UploadFile failed")
+		return nil, err
 	}
 
 	file := &pb_storage.FileInfo{Filename: fileName, Typefile: fileType, Content: content, Size: size}
 
 	res, err := stogareGrpcServiceClient.UploadFile(ctx, &pb_storage.FileInfoResquest{File: file, Iduser: idUser})
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "method UploadFile failed")
+		return nil, err
 	}
 
 	// noti := res.Link
@@ -80,7 +79,7 @@ func (stogareClient *StorageClient) GetUploadFileInfoClient(ctx context.Context,
 
 	resp, err := stogareGrpcServiceClient.GetListFileUpload(ctx, &pb_storage.GetListFileUploadResquest{Iduser: idUser})
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "method GetListFileUpload in client stogare failed")
+		return nil, err
 	}
 	fmt.Println("UploadFileClient Storage")
 
@@ -129,7 +128,7 @@ func (stogareClient *StorageClient) GetUploadFileShortInfoClient(ctx context.Con
 
 	resp, err := stogareGrpcServiceClient.GetShortInfoFileUpload(ctx, &pb_storage.GetShortInfoFileUploadResquest{IdFile: idFile})
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "method GetUploadFileShortInfoClient in client stogare failed")
+		return nil, err
 	}
 	fmt.Println("GetUploadFileShortInfoClient Storage")
 
