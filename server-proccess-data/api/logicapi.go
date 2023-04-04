@@ -160,11 +160,8 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 
 		req, err := http.NewRequest("POST", url, nil)
 		if err != nil {
-			// Handle error
-			// status = "Failed"
-
 			fmt.Println("Error while creating request:", err)
-			// return
+			return
 		}
 
 		status = "Done"
@@ -176,10 +173,8 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 		resp, err := client.Do(req)
 
 		if err != nil {
-			// Handle error
-			// status = "Failed"
 			fmt.Println("Error while creating request:", err)
-
+			return
 		}
 		defer resp.Body.Close()
 
@@ -237,11 +232,9 @@ func (serverProcessing *ServerProcessing) GetTransactionByAccount(ctx context.Co
 
 	infoTransaction, err := mongodb.GetTransactionByAccountRec(serverProcessing.config, account)
 
-	fmt.Println("trongnhat infoTransaction= ", infoTransaction)
 	if err != nil {
 		// Handle error
 		return nil, status.Errorf(codes.InvalidArgument, "GetTransactionByAccountRec failed")
-
 	}
 
 	var expenseData = [][]interface{}{}
@@ -259,6 +252,8 @@ func (serverProcessing *ServerProcessing) GetTransactionByAccount(ctx context.Co
 	if err != nil {
 
 		log.Error("ExportData: Error SetSheetRow: ", err)
+		return nil, status.Errorf(codes.InvalidArgument, "SetSheetRow failed")
+
 	}
 
 	err = f.SetColWidth("Sheet1", "A", "Z", 30)
@@ -266,6 +261,8 @@ func (serverProcessing *ServerProcessing) GetTransactionByAccount(ctx context.Co
 	if err != nil {
 
 		log.Error("ExportData: Error SetColWidth: ", err)
+		return nil, status.Errorf(codes.InvalidArgument, "SetColWidth failed")
+
 	}
 
 	startRow := 2
@@ -273,15 +270,17 @@ func (serverProcessing *ServerProcessing) GetTransactionByAccount(ctx context.Co
 		err = f.SetSheetRow("Sheet1", fmt.Sprintf("A%d", i), &expenseData[i-2])
 		if err != nil {
 			log.Error("ExportData: Error SetSheetRow: ", err)
+			return nil, status.Errorf(codes.InvalidArgument, "ExportData: Error SetSheetRow failed")
+
 		}
 	}
 
 	fileBytes, err := f.WriteToBuffer()
 	if err != nil {
 		log.Fatal(err)
+		return nil, status.Errorf(codes.InvalidArgument, "WriteToBuffer failed")
 	}
 
 	temp := fileBytes.Bytes()
-
 	return &pb_processing.GetTransactionByAccountRespone{Content: temp}, nil
 }

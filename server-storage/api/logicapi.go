@@ -46,7 +46,7 @@ func (serverStorage *ServerStorage) UploadFile(ctx context.Context, res *pb_stor
 	file := res.GetFile()
 
 	IdUser := res.GetIduser()
-
+	fmt.Println("stogareClient Upload file2")
 	// Create the folder
 	folderName := "storage"
 

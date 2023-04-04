@@ -2,8 +2,6 @@ package api
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"net"
 	"net/http"
 	"server-test/server-gateway/clients"
@@ -91,18 +89,7 @@ func GatewaySever(serverAddr string, config *config.Config) {
 	})
 
 	grpcMux.HandlePath("POST", "/v1/status", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		status := req.Header.Get("status")
-		idFile := req.Header.Get("idfile")
-		resp, err := srv.clientStogare.UpdateStatusFileClient(context.Background(), idFile, status)
-		fmt.Println("trongnhat HandlePath")
-		if err != nil {
-			// logs.Logger.Error("ImportDataWithHttp: Failed to retrieve file from form data")
-			http.Error(w, "Failed to retrieve file from form data", http.StatusBadRequest)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
+		srv.UpdateStatusWithHttp(w, req)
 	})
 
 	if err != nil {

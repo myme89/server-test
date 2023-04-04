@@ -320,6 +320,7 @@ import (
 
 // API Sign Up
 func (server *Server) SignUp(ctx context.Context, res *pb.SignUpResquest) (*pb.SignUpRespone, error) {
+	fmt.Println("ExportData - API call SignUp ")
 
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
@@ -340,6 +341,7 @@ func (server *Server) SignUp(ctx context.Context, res *pb.SignUpResquest) (*pb.S
 
 // API Login
 func (server *Server) LogInAcc(ctx context.Context, res *pb.SignInResquest) (*pb.SignInRespone, error) {
+	fmt.Println("ExportData - API call LogInAcc ")
 
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
@@ -373,6 +375,7 @@ func (server *Server) LogInAcc(ctx context.Context, res *pb.SignInResquest) (*pb
 
 // API Get List File Upload
 func (server *Server) GetFileUploadInfo(ctx context.Context, res *pb.FileUploadInfoResquest) (*pb.FileUploadInfoRespone, error) {
+	fmt.Println("ExportData - API call GetFileUploadInfo ")
 
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
@@ -413,6 +416,7 @@ func (server *Server) GetFileUploadInfo(ctx context.Context, res *pb.FileUploadI
 
 // API Get Short Infomation of a File Upload
 func (server *Server) GetFileUploadShortInfo(ctx context.Context, res *pb.FileUploadShortInfoResquest) (*pb.FileUploadShortInfoRespone, error) {
+	fmt.Println("ExportData - API call GetFileUploadShortInfo ")
 
 	idFile := res.GetIdfile()
 
@@ -455,7 +459,7 @@ func (server *Server) GetFileUploadShortInfo(ctx context.Context, res *pb.FileUp
 
 // API Upload File
 func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request) {
-
+	fmt.Println("ExportData - API call ImportDataWithHttp ")
 	token := r.Header.Get("token")
 	idProcsessService := r.Header.Get("id_process_service")
 	idUploadService := r.Header.Get("id_upload_service")
@@ -463,7 +467,7 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 
 	var temp string
 
-	maxFileSize := int64(10 * 1024 * 1024)
+	maxFileSize := int64(3 * 1024 * 1024)
 
 	if len(token) == 0 || len(idUploadService) == 0 {
 		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
@@ -509,7 +513,7 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
 			"code":    http.StatusBadRequest,
 			"status":  "error",
-			"message": "Size file > 10Mb",
+			"message": "Size file > 3 Mb",
 		})
 		return
 	}
@@ -517,9 +521,26 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 	var infoFileUpLoad *pb_storage.FileInfoRespone
 	content, err := ioutil.ReadAll(file_ex)
 
+	if err != nil {
+		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+			"code":    http.StatusBadRequest,
+			"status":  "error",
+			"message": "ReadAll Failed",
+		})
+		return
+	}
+
 	switch idUploadService {
 	case "1":
 		infoFileUpLoad, err = server.clientStogare.UploadFile(context.Background(), a.Filename, a.Header.Get("Content-Type"), resp.Iduser, a.Size, content)
+		if err != nil {
+			ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+				"code":    http.StatusBadRequest,
+				"status":  "error",
+				"message": "Funtion UploadFile Failed",
+			})
+			return
+		}
 	default:
 		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
 			"code":    http.StatusBadRequest,
@@ -564,7 +585,7 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 // API Export by Template
 func (server *Server) ExportDataHttp(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("ExportData - API call ExportData1 ")
+	fmt.Println("ExportData - API call ExportDataHttp ")
 
 	values := r.URL.Query()
 
@@ -617,7 +638,7 @@ func (server *Server) ExportDataHttp(w http.ResponseWriter, r *http.Request) {
 
 // API Export by Funtion
 func (server *Server) ExportFuntionWithHttp(w http.ResponseWriter, r *http.Request) {
-
+	fmt.Println("API call ExportFuntionWithHttp ")
 	values := r.URL.Query()
 
 	account := values.Get("account")
@@ -655,6 +676,12 @@ func (server *Server) ExportFuntionWithHttp(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	type Respone struct {
+		Code    int    `json:"code"`
+		Message string `json:"message"`
+		Status  string `json:"status"`
+	}
+
 	w.Header().Set("Content-Disposition", "attachment; filename=InfoTransaction.xlsx")
 	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 	w.Write(resp.Content)
@@ -663,7 +690,7 @@ func (server *Server) ExportFuntionWithHttp(w http.ResponseWriter, r *http.Reque
 
 // API Download File by ID File
 func (server *Server) DowloadLinkWithHttp(w http.ResponseWriter, r *http.Request) {
-
+	fmt.Println("API call DowloadLinkWithHttp ")
 	values := r.URL.Query()
 
 	idFile := values.Get("idfile")
@@ -706,6 +733,35 @@ func (server *Server) DowloadLinkWithHttp(w http.ResponseWriter, r *http.Request
 	w.Header().Set("Content-Disposition", "attachment; filename="+name[len(name)-1])
 	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 	w.Write(resp.Content)
+}
+
+// API Update Status Proccess File
+func (server *Server) UpdateStatusWithHttp(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("API call UpdateStatusWithHttp ")
+	status := r.Header.Get("status")
+	idFile := r.Header.Get("idfile")
+
+	if len(status) == 0 || len(idFile) == 0 {
+		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+			"code":    http.StatusBadRequest,
+			"status":  "error",
+			"message": " Status or idfile invalid",
+		})
+		return
+	}
+	resp, err := server.clientStogare.UpdateStatusFileClient(context.Background(), idFile, status)
+
+	if err != nil {
+		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+			"code":    http.StatusBadRequest,
+			"status":  "error",
+			"message": "Call funtion UpdateStatusFileClient failed",
+		})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp.Noti)
 }
 
 // API???
