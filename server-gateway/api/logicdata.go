@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"server-test/server-gateway/database/mongodb"
 	"server-test/server-gateway/pb"
+	"server-test/server-gateway/ultils"
 	"server-test/server-storage/pb_storage"
 	"strings"
 
@@ -417,40 +418,59 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 	idUploadService := r.Header.Get("id_upload_service")
 	idFunctionProcess := r.Header.Get("id_function_process")
 
-	// values := r.URL.Query()
-
-	// account := values.Get("account")
-
 	var temp string
 
-	if len(token) == 0 && len(idUploadService) == 0 {
-		http.Error(w, "Get token, idUploadService  failed", http.StatusUnauthorized)
+	maxFileSize := int64(10 * 1024 * 1024)
+
+	if len(token) == 0 || len(idUploadService) == 0 {
+		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+			"code":    http.StatusBadRequest,
+			"status":  "error",
+			"message": "Get token, idUploadService  failed",
+		})
+		return
 	}
 
 	resp, err := server.clientAuthen.AuthenTokenClient(context.Background(), token)
-
 	if err != nil {
-		http.Error(w, "Authen token failed", http.StatusUnauthorized)
+		ultils.ErrorHandler(w, r, http.StatusUnauthorized, map[string]interface{}{
+			"code":    http.StatusUnauthorized,
+			"status":  "error",
+			"message": "Authen token failed",
+		})
+		return
 	}
-
-	fmt.Println(resp.Iduser)
 
 	file_ex, a, err := r.FormFile("file")
 
 	if err != nil {
-		// logs.Logger.Error("ImportDataWithHttp: Failed to retrieve file from form data")
-		http.Error(w, "Failed to retrieve file from form data", http.StatusBadRequest)
+		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+			"code":    http.StatusBadRequest,
+			"status":  "error",
+			"message": "Failed to retrieve file from form data",
+		})
 		return
 	}
 	defer file_ex.Close()
 
 	if a.Header.Get("Content-Type") != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" {
-		// logs.Logger.Error("ImportDataWithHttp: Format file error")
-		http.Error(w, "Format file error (xlsx)", http.StatusBadRequest)
+		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+			"code":    http.StatusBadRequest,
+			"status":  "error",
+			"message": "Format file error (xlsx)",
+		})
 		return
 	}
 
-	fmt.Println("Gateway server")
+	if a.Size > maxFileSize {
+		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+			"code":    http.StatusBadRequest,
+			"status":  "error",
+			"message": "Size file > 10Mb",
+		})
+		return
+	}
+
 	var infoFileUpLoad *pb_storage.FileInfoRespone
 	content, err := ioutil.ReadAll(file_ex)
 
@@ -458,34 +478,41 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 	case "1":
 		infoFileUpLoad, err = server.clientStogare.UploadFile(context.Background(), a.Filename, a.Header.Get("Content-Type"), resp.Iduser, a.Size, content)
 	default:
-		http.Error(w, "Id Upload Service incorrect", http.StatusBadRequest)
+		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+			"code":    http.StatusBadRequest,
+			"status":  "error",
+			"message": "Id Upload Service incorrect",
+		})
 		return
 	}
 
-	// fmt.Println("check id File: ", idFile)
 	if idProcsessService == "1" && idFunctionProcess == "1" {
-		// go func(idFile, fileName, fileContent string) {
 		_, err := server.clientProcessing.ProcessingDataClient(context.Background(), infoFileUpLoad.Id, a.Filename, infoFileUpLoad.Link)
 
 		if err != nil {
-			http.Error(w, "ProcessingDataClient Failed ", http.StatusBadRequest)
+			ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+				"code":    http.StatusBadRequest,
+				"status":  "error",
+				"message": "Funtion ProcessingDataClient Failed",
+			})
+			return
 		}
-		// }(infoFileUpLoad.Id, a.Filename, infoFileUpLoad.Link)
-
-		// if idFunctionProcess == "1" {
-		// 	temp = "localhost:3000/v1/exportfunction?account=" + account
-		// }
-
 		temp = "Upload Done and Processing Done"
 	} else {
 		temp = "Upload Done and Not Processing"
 	}
 
 	type Respone struct {
-		Notice string
+		Code    int    `json:"code"`
+		Message string `json:"message"`
+		Status  string `json:"status"`
 	}
 
-	noticeDb := Respone{Notice: temp}
+	noticeDb := Respone{
+		Code:    http.StatusOK,
+		Status:  "success",
+		Message: temp,
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(noticeDb)
@@ -645,23 +672,39 @@ func (server *Server) GetFileUploadInfo(ctx context.Context, res *pb.FileUploadI
 func (server *Server) ExportDataHttp(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("ExportData - API call ExportData1 ")
-	// md, _ := metadata.FromIncomingContext(ctx)
-	// log.Info("nhatnt md: ", md)
-	// template := r.Header.Get("template")
 
 	values := r.URL.Query()
 
 	template := values.Get("template")
-	// _, err := server.clientAuthen.AuthenTokenClient(context.Background(), md["token"][0])
 
-	// if err != nil {
-	// 	return nil, status.Errorf(codes.Unauthenticated, "Authen token failed")
-	// }
-	fmt.Println("trongnhat test", server.clientProcessing)
+	token := r.Header.Get("token")
+
+	if len(template) == 0 || len(token) == 0 {
+		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+			"code":    http.StatusBadRequest,
+			"status":  "error",
+			"message": "Get template or token failed",
+		})
+		return
+	}
+
+	_, err := server.clientAuthen.AuthenTokenClient(context.Background(), token)
+	if err != nil {
+		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+			"code":    http.StatusBadRequest,
+			"status":  "error",
+			"message": "Authen token failed",
+		})
+	}
+
 	resp, err := server.clientProcessing.ExportFileTemplateExcelClient(context.Background(), template)
 
 	if err != nil {
-		http.Error(w, "DownloadFileClient failded", http.StatusBadRequest)
+		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+			"code":    http.StatusBadRequest,
+			"status":  "error",
+			"message": "Call Function ExportFileTemplateExcelClient failded",
+		})
 		return
 	}
 
@@ -678,37 +721,42 @@ func (server *Server) DowloadLinkWithHttp(w http.ResponseWriter, r *http.Request
 
 	token := r.Header.Get("token")
 
-	// values := r.URL.Query()
-
-	// account := values.Get("account")
-
-	if len(token) == 0 {
-		http.Error(w, "Get token, idUploadService  failed", http.StatusUnauthorized)
+	if len(idFile) == 0 || len(token) == 0 {
+		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+			"code":    http.StatusBadRequest,
+			"status":  "error",
+			"message": "Get idFile or token  failed",
+		})
+		return
 	}
 
 	_, err := server.clientAuthen.AuthenTokenClient(context.Background(), token)
 
 	if err != nil {
-		http.Error(w, "Authen token failed", http.StatusUnauthorized)
+		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+			"code":    http.StatusBadRequest,
+			"status":  "error",
+			"message": "Authen token failed",
+		})
 		return
 	}
 
 	resp, err := server.clientStogare.DownloadFileClient(context.Background(), idFile)
 
 	if err != nil {
-		fmt.Println(err)
-		http.Error(w, "DownloadFileClient failded", http.StatusBadRequest)
+		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+			"code":    http.StatusBadRequest,
+			"status":  "error",
+			"message": "Call Function DownloadFileClient failded",
+		})
 		return
 	}
 
 	name := strings.Split(resp.Name, "/")
-	fmt.Println(name)
 
 	w.Header().Set("Content-Disposition", "attachment; filename="+name[len(name)-1])
 	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 	w.Write(resp.Content)
-
-	// http.ServeContent(w, r, "DataImportToDB.xlsx", currentTime, file)
 }
 
 func (server *Server) ExportFuntionWithHttp(w http.ResponseWriter, r *http.Request) {
@@ -719,35 +767,40 @@ func (server *Server) ExportFuntionWithHttp(w http.ResponseWriter, r *http.Reque
 
 	token := r.Header.Get("token")
 
-	// values := r.URL.Query()
-
-	// account := values.Get("account")
-
-	if len(token) == 0 {
-		http.Error(w, "Get token, idUploadService  failed", http.StatusUnauthorized)
+	if len(account) == 0 || len(token) == 0 {
+		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+			"code":    http.StatusBadRequest,
+			"status":  "error",
+			"message": "Get account or token  failed",
+		})
+		return
 	}
 
 	_, err := server.clientAuthen.AuthenTokenClient(context.Background(), token)
 
 	if err != nil {
-		http.Error(w, "Authen token failed", http.StatusUnauthorized)
+		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+			"code":    http.StatusBadRequest,
+			"status":  "error",
+			"message": "Authen token failed",
+		})
 	}
 
 	resp, err := server.clientProcessing.ExportFuntionClient(context.Background(), account)
 
 	if err != nil {
-		fmt.Println(err)
-		http.Error(w, "DownloadFileClient failded", http.StatusBadRequest)
+		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
+			"code":    http.StatusBadRequest,
+			"status":  "error",
+			"message": "Call funtion ExportFuntionClient failed",
+		})
 		return
 	}
-	// name := strings.Split(resp.NameFile, "/")
-	// fmt.Println(name)
 
 	w.Header().Set("Content-Disposition", "attachment; filename=InfoTransaction.xlsx")
 	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 	w.Write(resp.Content)
 
-	// http.ServeContent(w, r, "DataImportToDB.xlsx", currentTime, file)
 }
 
 func (server *Server) GetFileUploadShortInfo(ctx context.Context, res *pb.FileUploadShortInfoResquest) (*pb.FileUploadShortInfoRespone, error) {
