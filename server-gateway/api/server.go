@@ -90,25 +90,6 @@ func GatewaySever(serverAddr string, config *config.Config) {
 		srv.ExportFuntionWithHttp(w, req)
 	})
 
-	// grpcMux.HandlePath("GET", "/v1/export", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-	// 	srv.ExportDataHttp(w, req)
-	// })
-
-	// grpcMux.HandlePath("GET", "/v1/preview", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-	// 	srv.PreviewWithHttp(w, req)
-	// })
-
-	// grpcMux.HandlePath("GET", "/v1/preview1", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-	// 	fmt.Println("trongnhat1")
-
-	// 	fmt.Fprintf(w, "<html><body><img src=\"/image\" /></body></html>")
-	// })
-
-	// grpcMux.HandlePath("GET", "/v1/preview/test", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-	// 	fmt.Println("trongnhat")
-	// 	http.ServeFile(w, req, "/home/nhatnt/nhatnt/probationary-project/server-test/server-gateway/DataImportToDB.xlsx")
-	// })
-
 	grpcMux.HandlePath("POST", "/v1/status", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		status := req.Header.Get("status")
 		idFile := req.Header.Get("idfile")

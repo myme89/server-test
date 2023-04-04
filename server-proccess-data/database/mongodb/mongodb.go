@@ -48,7 +48,7 @@ func InitMongoDB(config *config.Config) *mongo.Client {
 
 	var err error
 	// collectionDB := config.Sever.ServerMongoDB.DBcollection
-	dbName := config.Sever.ServerMongoDB.DBName
+	// dbName := config.Sever.ServerMongoDB.DBName
 	host := config.Sever.ServerMongoDB.DBHost
 	port := config.Sever.ServerMongoDB.DBPort
 
@@ -87,15 +87,15 @@ func InitMongoDB(config *config.Config) *mongo.Client {
 	// 	log.Fatal("Cannot create collection User DB", err)
 	// }
 
-	err = createCollection(dbName, "TemplateInfoPerson")
-	if err != nil {
-		log.Fatal("Cannot create collection Template Info Person", err)
-	}
+	// err = createCollection(dbName, "TemplateInfoPerson")
+	// if err != nil {
+	// 	log.Fatal("Cannot create collection Template Info Person", err)
+	// }
 
-	err = createCollection(dbName, "TemplateInfoTransaction")
-	if err != nil {
-		log.Fatal("Cannot create collection Template Info Transaction", err)
-	}
+	// err = createCollection(dbName, "TemplateInfoTransaction")
+	// if err != nil {
+	// 	log.Fatal("Cannot create collection Template Info Transaction", err)
+	// }
 
 	err = clientMongo.Ping(ctx, readpref.Primary())
 	if err != nil {

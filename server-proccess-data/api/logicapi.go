@@ -192,91 +192,43 @@ func (serverProcessing *ServerProcessing) ExportTemplateFileUpload(ctx context.C
 
 	nameTemplate := res.GetTemplateExport()
 
-	var expenseData = [][]interface{}{}
-
 	f := excelize.NewFile()
 	index, _ := f.NewSheet("Sheet1")
 	f.SetActiveSheet(index)
-
-	if nameTemplate == "TemplateInfoPerson" {
-
-		dataInfo, err := mongodb.GetAllInfo(serverProcessing.config, nameTemplate)
-		// resp, err := serverStorage.clientDatabase.ExportFileTemplateExcelClient(ctx, nameTemplate)
-
-		if err != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "ExportTemplateFileUpload  failed")
-		}
-
-		for i := 0; i < len(dataInfo); i++ {
-			temp := []interface{}{dataInfo[i].LastName, dataInfo[i].FistName, dataInfo[i].FullName, dataInfo[i].PhoneNumber, dataInfo[i].Address}
-			expenseData = append(expenseData, temp)
-		}
-
-		err = f.SetSheetRow("Sheet1", "A1", &[]interface{}{"Last Name", "First Name", "Full Name", "Phone Number", "Address"})
-		if err != nil {
-
-			log.Error("ExportData: Error SetSheetRow: ", err)
-		}
-	} else {
-
-		dataInfo, err := mongodb.GetAllInfoTrans(serverProcessing.config, nameTemplate)
-
-		// resp, err := serverStorage.clientDatabase.ExportFileTemplateExcelClient(ctx, nameTemplate)
-
-		if err != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "ExportTemplateFileUpload  failed")
-		}
-
-		for i := 0; i < len(dataInfo); i++ {
-			temp := []interface{}{dataInfo[i].IdTran, dataInfo[i].AccRec, dataInfo[i].AccSend, dataInfo[i].AccFee, dataInfo[i].Deposits, dataInfo[i].MoneyRec, dataInfo[i].Fee, dataInfo[i].TimeTrans}
-			expenseData = append(expenseData, temp)
-		}
-
-		err = f.SetSheetRow("Sheet1", "A1", &[]interface{}{"ID Trans", "Account Receive", "Account Send", "Account Fee", "Deposits", "Money Received", "Fee", "Time"})
-		if err != nil {
-
-			log.Error("ExportData: Error SetSheetRow: ", err)
-		}
-	}
 
 	err := f.SetColWidth("Sheet1", "A", "Z", 30)
 
 	if err != nil {
 
 		log.Error("ExportData: Error SetColWidth: ", err)
+		return nil, status.Errorf(codes.InvalidArgument, "SetColWidth  failed")
+
 	}
 
-	startRow := 2
-	for i := startRow; i < (len(expenseData) + startRow); i++ {
-		err = f.SetSheetRow("Sheet1", fmt.Sprintf("A%d", i), &expenseData[i-2])
+	if nameTemplate == "TemplateInfoPerson" {
+		err = f.SetSheetRow("Sheet1", "A1", &[]interface{}{"Last Name", "First Name", "Full Name", "Phone Number", "Address"})
 		if err != nil {
 			log.Error("ExportData: Error SetSheetRow: ", err)
+			return nil, status.Errorf(codes.InvalidArgument, "SetSheetRow  failed")
+		}
+	} else {
+
+		err := f.SetSheetRow("Sheet1", "A1", &[]interface{}{"ID Trans", "Account Receive", "Account Send", "Account Fee", "Deposits", "Money Received", "Fee", "Time"})
+		if err != nil {
+
+			log.Error("ExportData: Error SetSheetRow: ", err)
+			return nil, status.Errorf(codes.InvalidArgument, "SetSheetRow  failed")
 		}
 	}
-
-	// Save spreadsheet by the given path.
-	// if err := f.SaveAs("./storage-export/Test.xlsx"); err != nil {
-	// 	fmt.Println(err)
-	// }
-
-	// if err != nil {
-	// 	log.Error("ExportData: Error SaveAs: ", err)
-	// }
 
 	fileBytes, err := f.WriteToBuffer()
 	if err != nil {
 		log.Fatal(err)
+		return nil, status.Errorf(codes.InvalidArgument, "WriteToBuffer  failed")
 	}
 
-	// dir, err := filepath.Abs(filepath.Dir("TemplateInfoPerson.xlsx"))
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// pathExport := dir + "/stogare-export/DataExportFromDB.xlsx"
-	// pathExport := "localhost:3000/v1/downloadlink?dir=" + "storage-export/Test.xlsx"
-
-	temp := fileBytes.Bytes()
-	return &pb_processing.ExportFileRespone{PathExport: temp}, nil
+	contentFile := fileBytes.Bytes()
+	return &pb_processing.ExportFileRespone{PathExport: contentFile}, nil
 }
 
 func (serverProcessing *ServerProcessing) GetTransactionByAccount(ctx context.Context, res *pb_processing.GetTransactionByAccountResquest) (*pb_processing.GetTransactionByAccountRespone, error) {
