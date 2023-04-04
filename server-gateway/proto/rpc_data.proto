@@ -64,7 +64,9 @@ message SignUpResquest{
 }
 
 message SignUpRespone{
-    string notice = 1;
+    string status  = 1;
+    int64 codeHttp  = 2;
+    string message = 3;
 }
 
 
@@ -74,8 +76,10 @@ message SignInResquest{
 }
 
 message SignInRespone{
-    UserAccInfo useraccinfo = 1;
-    string token = 2;
+    string status  = 1;
+    int64 codeHttp  = 2;
+    UserAccInfo userAccInfo = 3;
+    string token = 4;
 }
 
 
@@ -84,7 +88,9 @@ message FileUploadInfoResquest{
 }
 
 message FileUploadInfoRespone{
-    repeated FileUploadInfo fileinfo = 1;
+    string status  = 1;
+    int64 codeHttp  = 2;
+    repeated FileUploadInfo fileInfoList = 3;
 }
 
 
@@ -93,7 +99,9 @@ message FileUploadShortInfoResquest{
 }
 
 message FileUploadShortInfoRespone{
-    FileUploadInfo fileShortInfo = 1;
+    string status  = 1;
+    int64 codeHttp  = 2;
+    FileUploadInfo fileShortInfo = 3;
 }
 
 

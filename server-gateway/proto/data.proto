@@ -30,3 +30,8 @@ message ServiceInfo {
   string id = 1;
   string name = 2; 
 }
+
+message ErrorInfo {
+    int64 codeHttp = 2; 
+    string status = 1;
+  }

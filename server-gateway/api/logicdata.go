@@ -12,7 +12,6 @@ import (
 	"server-test/server-storage/pb_storage"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
@@ -323,38 +322,39 @@ import (
 func (server *Server) SignUp(ctx context.Context, res *pb.SignUpResquest) (*pb.SignUpRespone, error) {
 
 	md, ok := metadata.FromIncomingContext(ctx)
-	// log.Info("nhatnt md: ", md)
-	temp := md["username"][0]
+	if !ok {
+		return nil, ultils.ErrorHandlerGRPC(codes.Unauthenticated, "Missing context metadata", http.StatusUnauthorized)
+	}
 
-	log.Info("nhatnt UserName: ", temp)
-
-	log.Info("nhatnt Password: ", md["password"])
+	if len(md["username"]) != 1 || len(md["password"]) != 1 || len(md["lastname"]) != 1 || len(md["firstname"]) != 1 {
+		return nil, ultils.ErrorHandlerGRPC(codes.Unauthenticated, "Invalid username, password, firstname or lastname", http.StatusUnauthorized)
+	}
 
 	resp, err := server.clientAuthen.SignUp(ctx, md["username"][0], md["password"][0], md["lastname"][0], md["firstname"][0])
 
-	log.Info("nhatnt: ", err)
-	log.Info("nhatntq: ", ok)
-	return &pb.SignUpRespone{Notice: resp}, nil
+	if err != nil {
+		return nil, ultils.ErrorHandlerGRPC(codes.InvalidArgument, "Call function SignUp failed", http.StatusBadRequest)
+	}
+	return &pb.SignUpRespone{Message: resp, CodeHttp: http.StatusOK, Status: "success"}, nil
 }
 
 // API Login
 func (server *Server) LogInAcc(ctx context.Context, res *pb.SignInResquest) (*pb.SignInRespone, error) {
 
 	md, ok := metadata.FromIncomingContext(ctx)
-	// log.Info("nhatnt md: ", md)
-	temp := md["username"][0]
+	if !ok {
+		return nil, ultils.ErrorHandlerGRPC(codes.Unauthenticated, "Missing context metadata", http.StatusUnauthorized)
+	}
 
-	log.Info("nhatnt UserName: ", temp)
-
-	log.Info("nhatnt Password: ", md["password"])
+	if len(md["username"]) != 1 || len(md["password"]) != 1 {
+		return nil, ultils.ErrorHandlerGRPC(codes.Unauthenticated, "Invalid username or password", http.StatusUnauthorized)
+	}
 
 	resp, err := server.clientAuthen.SignInClient(ctx, md["username"][0], md["password"][0])
 
 	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "User or password is incorrect")
+		return nil, ultils.ErrorHandlerGRPC(codes.Unauthenticated, "User or password is incorrect", http.StatusUnauthorized)
 	}
-
-	log.Info("nhatntq: ", ok)
 
 	infoUser := &pb.UserAccInfo{
 
@@ -363,7 +363,9 @@ func (server *Server) LogInAcc(ctx context.Context, res *pb.SignInResquest) (*pb
 	}
 
 	info := &pb.SignInRespone{
-		Useraccinfo: infoUser,
+		Status:      "success",
+		CodeHttp:    http.StatusOK,
+		UserAccInfo: infoUser,
 		Token:       resp.Token,
 	}
 	return info, nil
@@ -372,21 +374,26 @@ func (server *Server) LogInAcc(ctx context.Context, res *pb.SignInResquest) (*pb
 // API Get List File Upload
 func (server *Server) GetFileUploadInfo(ctx context.Context, res *pb.FileUploadInfoResquest) (*pb.FileUploadInfoRespone, error) {
 
-	md, _ := metadata.FromIncomingContext(ctx)
-	// log.Info("nhatnt md: ", md)
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, ultils.ErrorHandlerGRPC(codes.Unauthenticated, "Missing context metadata", http.StatusUnauthorized)
+	}
+
+	if len(md["token"]) != 1 {
+		return nil, ultils.ErrorHandlerGRPC(codes.Unauthenticated, "Invalid token", http.StatusUnauthorized)
+	}
 
 	resp, err := server.clientAuthen.AuthenTokenClient(context.Background(), md["token"][0])
-
 	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "Authen token failed")
+
+		return nil, ultils.ErrorHandlerGRPC(codes.Unauthenticated, "Authen token failed", http.StatusUnauthorized)
 	}
+
 	respDatabase, err := server.clientStogare.GetUploadFileInfoClient(context.Background(), resp.Iduser)
 
 	if err != nil {
-		return nil, status.Errorf(codes.Unimplemented, "Get list file failed")
+		return nil, ultils.ErrorHandlerGRPC(codes.InvalidArgument, "Call function GetUploadFileInfoClient failed", http.StatusBadRequest)
 	}
-
-	fmt.Println(respDatabase)
 
 	var temp []*pb.FileUploadInfo
 
@@ -401,7 +408,7 @@ func (server *Server) GetFileUploadInfo(ctx context.Context, res *pb.FileUploadI
 		})
 	}
 
-	return &pb.FileUploadInfoRespone{Fileinfo: temp}, nil
+	return &pb.FileUploadInfoRespone{FileInfoList: temp, Status: "success", CodeHttp: http.StatusOK}, nil
 }
 
 // API Get Short Infomation of a File Upload
@@ -409,18 +416,26 @@ func (server *Server) GetFileUploadShortInfo(ctx context.Context, res *pb.FileUp
 
 	idFile := res.GetIdfile()
 
-	md, _ := metadata.FromIncomingContext(ctx)
+	md, ok := metadata.FromIncomingContext(ctx)
+
+	if !ok {
+		return nil, ultils.ErrorHandlerGRPC(codes.Unauthenticated, "Missing context metadata", http.StatusUnauthorized)
+	}
+
+	if len(md["authorization"]) != 1 {
+		return nil, ultils.ErrorHandlerGRPC(codes.Unauthenticated, "Invalid token", http.StatusUnauthorized)
+	}
 
 	_, err := server.clientAuthen.AuthenTokenClient(context.Background(), md["token"][0])
 
 	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "Authen token failed")
+		return nil, ultils.ErrorHandlerGRPC(codes.Unauthenticated, "Authen token failed", http.StatusUnauthorized)
 	}
 
 	respDatabase, err := server.clientStogare.GetUploadFileShortInfoClient(ctx, idFile)
 
 	if err != nil {
-		return nil, status.Errorf(codes.Unimplemented, "Get list file failed")
+		return nil, ultils.ErrorHandlerGRPC(codes.InvalidArgument, "Call function GetUploadFileInfoClient failed", http.StatusBadRequest)
 	}
 
 	linkSplit := strings.Split(respDatabase.Fileinfo.Link, "/")
@@ -435,7 +450,7 @@ func (server *Server) GetFileUploadShortInfo(ctx context.Context, res *pb.FileUp
 		Timecreateat: respDatabase.Fileinfo.Timecreateat,
 	}
 
-	return &pb.FileUploadShortInfoRespone{FileShortInfo: temp}, nil
+	return &pb.FileUploadShortInfoRespone{FileShortInfo: temp, Status: "success", CodeHttp: http.StatusOK}, nil
 }
 
 // API Upload File
@@ -621,8 +636,8 @@ func (server *Server) ExportFuntionWithHttp(w http.ResponseWriter, r *http.Reque
 	_, err := server.clientAuthen.AuthenTokenClient(context.Background(), token)
 
 	if err != nil {
-		ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
-			"code":    http.StatusBadRequest,
+		ultils.ErrorHandler(w, r, http.StatusUnauthorized, map[string]interface{}{
+			"code":    http.StatusUnauthorized,
 			"status":  "error",
 			"message": "Authen token failed",
 		})

@@ -57,7 +57,7 @@ func (serverAuthen *ServerAuthen) SignUp(ctx context.Context, res *pb_authen.Use
 		fmt.Println(err)
 	}
 
-	noti := &pb_authen.UserRespone{Noti: "Done"}
+	noti := &pb_authen.UserRespone{Noti: "User registration successful"}
 
 	return noti, nil
 }
