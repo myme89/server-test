@@ -403,11 +403,11 @@ func (server *Server) GetFileUploadInfo(ctx context.Context, res *pb.FileUploadI
 	for i := 0; i < len(respDatabase.Fileinfo); i++ {
 		temp = append(temp, &pb.FileUploadInfo{
 			FileId:       respDatabase.Fileinfo[i].Fileid,
-			Filename:     respDatabase.Fileinfo[i].Filename,
-			Filetype:     respDatabase.Fileinfo[i].Typefile,
-			Sizefile:     int64(respDatabase.Fileinfo[i].Size),
+			FileName:     respDatabase.Fileinfo[i].Filename,
+			FileType:     respDatabase.Fileinfo[i].Typefile,
+			SizeFile:     int64(respDatabase.Fileinfo[i].Size),
 			Link:         respDatabase.Fileinfo[i].Link,
-			Timecreateat: respDatabase.Fileinfo[i].Timecreateat,
+			TimeCreateAt: respDatabase.Fileinfo[i].Timecreateat,
 		})
 	}
 
@@ -447,11 +447,11 @@ func (server *Server) GetFileUploadShortInfo(ctx context.Context, res *pb.FileUp
 	linkStogare := strings.Join(linkSplit[:len(linkSplit)-1], "/")
 
 	temp := &pb.FileUploadInfo{
-		Filename:     respDatabase.Fileinfo.Filename,
-		Filetype:     respDatabase.Fileinfo.Typefile,
-		Sizefile:     int64(respDatabase.Fileinfo.Size),
+		FileName:     respDatabase.Fileinfo.Filename,
+		FileType:     respDatabase.Fileinfo.Typefile,
+		SizeFile:     int64(respDatabase.Fileinfo.Size),
 		Link:         linkStogare,
-		Timecreateat: respDatabase.Fileinfo.Timecreateat,
+		TimeCreateAt: respDatabase.Fileinfo.Timecreateat,
 	}
 
 	return &pb.FileUploadShortInfoRespone{FileShortInfo: temp, Status: "success", CodeHttp: http.StatusOK}, nil

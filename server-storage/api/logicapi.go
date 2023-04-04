@@ -162,6 +162,7 @@ func (serverStorage *ServerStorage) DownloafFile(ctx context.Context, res *pb_st
 	}
 
 	if HashContentFile(content) != checkSum {
+		fmt.Println("File has been edited")
 		return nil, status.Errorf(codes.InvalidArgument, "File has been edited")
 	}
 
