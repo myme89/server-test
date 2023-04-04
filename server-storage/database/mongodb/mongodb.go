@@ -318,7 +318,7 @@ func GetHashPassword(config *config.Config, useName string) model.UserInfo {
 
 }
 
-func AddInfoUploadFile(config *config.Config, fileName, idUser, typeFile, link string, size float32) error {
+func AddInfoUploadFile(config *config.Config, fileName, idUser, typeFile, link, hashContent string, size float32) error {
 
 	// collectionDB := config.Sever.ServerMongoDB.DBcollection
 	collectionDB := "FileUpload"
@@ -334,8 +334,9 @@ func AddInfoUploadFile(config *config.Config, fileName, idUser, typeFile, link s
 		{Key: "type_file", Value: typeFile},
 		{Key: "size", Value: size},
 		{Key: "create_at", Value: now.Format("2006-01-02 15:04:05")},
-		{Key: "status", Value: "Complete Upload"},
 		{Key: "link", Value: link},
+		{Key: "check_sum", Value: hashContent},
+		{Key: "status", Value: "Complete Upload"},
 		{Key: "status_processing", Value: "Non-performing"},
 	}
 
@@ -399,7 +400,7 @@ func UpdateStatus(config *config.Config, idFile, status string) error {
 	return err
 }
 
-func GetDirFile(config *config.Config, idFile string) (string, string, error) {
+func GetDirFile(config *config.Config, idFile string) (string, string, string, error) {
 
 	// collectionDB := config.Sever.ServerMongoDB.DBcollection
 	collectionDB := "FileUpload"
@@ -418,13 +419,13 @@ func GetDirFile(config *config.Config, idFile string) (string, string, error) {
 	cursor, err := collection.Find(context.TODO(), filter, option)
 
 	if err = cursor.All(context.Background(), &arr); err != nil {
-		return arr[0].Link, arr[0].FileName, err
+		return arr[0].Link, arr[0].FileName, arr[0].CheckSum, err
 	}
 
 	if len(arr) > 0 {
-		return arr[0].Link, arr[0].FileName, err
+		return arr[0].Link, arr[0].FileName, arr[0].CheckSum, err
 	} else {
-		return "", "", err
+		return "", "", "", err
 	}
 }
 

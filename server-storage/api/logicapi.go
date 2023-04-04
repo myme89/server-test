@@ -60,27 +60,24 @@ func (serverStorage *ServerStorage) UploadFile(ctx context.Context, res *pb_stor
 
 	hashNameFile := HashNameFile(fileNameSplit[0]+dateTimeNow) + "." + fileNameSplit[1]
 
-	fmt.Println(hashNameFile)
+	hashContentFile := HashContentFile(file.Content)
 
+	// The absolute path of the folder
 	absPath, err := filepath.Abs(folderName)
 	if err != nil {
-		panic(err)
+		// panic(err)
+		return nil, status.Errorf(codes.Unimplemented, "Get path folder failed")
 	}
 
 	err = ioutil.WriteFile(absPath+"/"+hashNameFile, file.Content, 0644)
 	if err != nil {
 		fmt.Println("Error writing to file:", err)
+		return nil, status.Errorf(codes.Unimplemented, "Error writing to file")
 	}
-
-	// Print the absolute path of the folder
-	// fmt.Println("Folder created:", absPath)
-
-	// fmt.Println("Temporary file created:", float32(file.Size))
-	// fmt.Println("Temporary file created1:", file.Size)
 
 	link := absPath + "/" + fileName
 
-	err = mongodb.AddInfoUploadFile(serverStorage.config, fileName, IdUser, "xlsx", link, float32(file.Size))
+	err = mongodb.AddInfoUploadFile(serverStorage.config, fileName, IdUser, "xlsx", link, hashContentFile, float32(file.Size))
 	if err != nil {
 		log.Error("Upload info file  faied ", err)
 		return nil, status.Errorf(codes.Unimplemented, "Upload info file  faied")
@@ -94,8 +91,9 @@ func (serverStorage *ServerStorage) UploadFile(ctx context.Context, res *pb_stor
 	}
 
 	rsp := &pb_storage.FileInfoRespone{
-		Link: absPath + "/" + hashNameFile,
-		Id:   idFile,
+		Id:       idFile,
+		Link:     absPath + "/" + hashNameFile,
+		CheckSum: hashContentFile,
 	}
 	return rsp, nil
 }
@@ -129,10 +127,10 @@ func (serverStorage *ServerStorage) GetListFileUpload(ctx context.Context, res *
 func (serverStorage *ServerStorage) DownloafFile(ctx context.Context, res *pb_storage.DownloadFileResquest) (*pb_storage.DownloadFileRespone, error) {
 
 	idFile := res.GetIdFile()
-	dir, nameFile, err := mongodb.GetDirFile(serverStorage.config, idFile)
+	dir, nameFile, checkSum, err := mongodb.GetDirFile(serverStorage.config, idFile)
 
-	if dir == "" && nameFile == "" {
-		return nil, status.Errorf(codes.Unimplemented, "File not exits")
+	if dir == "" || nameFile == "" || checkSum == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "File not exits")
 	}
 
 	if err != nil {
@@ -142,9 +140,9 @@ func (serverStorage *ServerStorage) DownloafFile(ctx context.Context, res *pb_st
 	fmt.Println("nhatnt")
 
 	hashNameFile := HashNameFile((strings.Split(nameFile, "."))[0]) + "." + (strings.Split(nameFile, "."))[1]
-	fmt.Println((strings.Split(nameFile, "."))[0])
+	// fmt.Println((strings.Split(nameFile, "."))[0])
 
-	fmt.Println(hashNameFile)
+	// fmt.Println(hashNameFile)
 	dirSpilt := strings.Split(dir, "/")
 
 	dirSpilt[len(dirSpilt)-1] = hashNameFile
@@ -159,11 +157,15 @@ func (serverStorage *ServerStorage) DownloafFile(ctx context.Context, res *pb_st
 
 	content, err := ioutil.ReadAll(file)
 
-	// name := file.Name()
-
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "method DownloafFile ReadAll failded")
 	}
+
+	if HashContentFile(content) != checkSum {
+		return nil, status.Errorf(codes.InvalidArgument, "File has been edited")
+	}
+
+	// name := file.Name()
 
 	return &pb_storage.DownloadFileRespone{Name: nameFile, Content: content}, nil
 }
@@ -215,6 +217,19 @@ func HashNameFile(nameFile string) string {
 	// compute HMAC-SHA256 hash of the message with key
 	hash := hmac.New(sha256.New, key)
 	hash.Write([]byte(nameFile))
+	mac := hash.Sum(nil)
+
+	macString := hex.EncodeToString(mac)
+	return macString
+}
+
+func HashContentFile(content []byte) string {
+
+	key := []byte("trongnhat99tn")
+
+	// compute HMAC-SHA256 hash of the message with key
+	hash := hmac.New(sha256.New, key)
+	hash.Write(content)
 	mac := hash.Sum(nil)
 
 	macString := hex.EncodeToString(mac)

@@ -3,6 +3,9 @@ package api
 import (
 	"bytes"
 	"context"
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -23,20 +26,30 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 	infoFileProcess := res.GetFileinfoprocess()
 
 	fmt.Println("trongnhat 123")
-	go func(idFile, fileName, linkFile string) {
+	go func(idFile, fileName, linkFile, checkSum string) {
 		var status string
 		file, err := os.Open(linkFile)
-		if err != nil {
 
+		if err != nil {
 			fmt.Println("err= ", err)
-			status = "Failed"
+			status = "Processing Error"
+			CallAPIUpdateStatus(status, infoFileProcess.Idfile)
+			return
 		}
 
 		content, err := ioutil.ReadAll(file)
 
+		if HashContentFile(content) != checkSum {
+			status = "Processing Error"
+			CallAPIUpdateStatus(status, infoFileProcess.Idfile)
+			return
+		}
+
 		xlsx, err := excelize.OpenReader(bytes.NewReader(content))
 		if err != nil {
-			status = "Failed"
+			status = "Processing Error"
+			CallAPIUpdateStatus(status, infoFileProcess.Idfile)
+			return
 		}
 		var infoTrans []model.TemplateInfoTransaction
 		// var info_file []model.InfoFile
@@ -45,7 +58,9 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 			// nameSheet = append(nameSheet, name)
 			dataRows, err := xlsx.GetRows(name)
 			if err != nil {
-				status = "Failed"
+				status = "Processing Error"
+				CallAPIUpdateStatus(status, infoFileProcess.Idfile)
+				return
 			}
 
 			// var data []map[string]string
@@ -118,6 +133,15 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 
 		err = mongodb.AddManyInfoTrans(serverProcessing.config, infoTran)
 
+		if err != nil {
+			status = "Processing Error"
+			CallAPIUpdateStatus(status, infoFileProcess.Idfile)
+			return
+		}
+
+		status = "Processing Successfully"
+		CallAPIUpdateStatus(status, infoFileProcess.Idfile)
+
 		// nameFileExcel := infoFileProcess.Filename + " " + infoFileProcess.Idfile
 		// resp, err := serverProcessing.clientDatabase.UploadDataFileExcelClient(ctx, info_file, nameFileExcel)
 
@@ -154,31 +178,7 @@ func (serverProcessing *ServerProcessing) ProcessingFileExcel(ctx context.Contex
 
 		// }
 
-		url := "http://localhost:3000/v1/status"
-
-		fmt.Println("trongnhat 1")
-
-		req, err := http.NewRequest("POST", url, nil)
-		if err != nil {
-			fmt.Println("Error while creating request:", err)
-			return
-		}
-
-		status = "Done"
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("status", status)
-		req.Header.Set("idfile", infoFileProcess.Idfile)
-
-		client := &http.Client{}
-		resp, err := client.Do(req)
-
-		if err != nil {
-			fmt.Println("Error while creating request:", err)
-			return
-		}
-		defer resp.Body.Close()
-
-	}(infoFileProcess.Idfile, infoFileProcess.Filename, infoFileProcess.LinkFile)
+	}(infoFileProcess.Idfile, infoFileProcess.Filename, infoFileProcess.LinkFile, infoFileProcess.CheckSum)
 
 	return &pb_processing.ProcessingFileRespone{Noti: "Processing Done"}, nil
 }
@@ -283,4 +283,42 @@ func (serverProcessing *ServerProcessing) GetTransactionByAccount(ctx context.Co
 
 	temp := fileBytes.Bytes()
 	return &pb_processing.GetTransactionByAccountRespone{Content: temp}, nil
+}
+
+func CallAPIUpdateStatus(status, idFile string) {
+	url := "http://localhost:3000/v1/status"
+
+	fmt.Println("trongnhat 1")
+
+	req, err := http.NewRequest("POST", url, nil)
+	if err != nil {
+		fmt.Println("Error while creating request:", err)
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("status", status)
+	req.Header.Set("idfile", idFile)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+
+	if err != nil {
+		fmt.Println("Error while creating request:", err)
+		return
+	}
+	defer resp.Body.Close()
+}
+
+func HashContentFile(content []byte) string {
+
+	key := []byte("trongnhat99tn")
+
+	// compute HMAC-SHA256 hash of the message with key
+	hash := hmac.New(sha256.New, key)
+	hash.Write(content)
+	mac := hash.Sum(nil)
+
+	macString := hex.EncodeToString(mac)
+	return macString
 }

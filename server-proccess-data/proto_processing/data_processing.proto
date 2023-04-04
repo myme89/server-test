@@ -12,5 +12,6 @@ message DataInfo1{
 message FileInfoProcess {
     string filename = 1;
     string linkFile = 2;
-    string idfile =3;
+    string idfile = 3;
+    string checkSum = 4;
 }

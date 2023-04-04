@@ -551,7 +551,7 @@ func (server *Server) ImportDataWithHttp(w http.ResponseWriter, r *http.Request)
 	}
 
 	if idProcsessService == "1" && idFunctionProcess == "1" {
-		_, err := server.clientProcessing.ProcessingDataClient(context.Background(), infoFileUpLoad.Id, a.Filename, infoFileUpLoad.Link)
+		_, err := server.clientProcessing.ProcessingDataClient(context.Background(), infoFileUpLoad.Id, a.Filename, infoFileUpLoad.Link, infoFileUpLoad.CheckSum)
 
 		if err != nil {
 			ultils.ErrorHandler(w, r, http.StatusBadRequest, map[string]interface{}{
