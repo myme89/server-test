@@ -449,6 +449,7 @@ func (server *Server) GetFileUploadShortInfo(ctx context.Context, res *pb.FileUp
 	linkStogare := strings.Join(linkSplit[:len(linkSplit)-1], "/")
 
 	temp := &pb.FileUploadInfo{
+		FileId:       idFile,
 		FileName:     respDatabase.Fileinfo.Filename,
 		FileType:     respDatabase.Fileinfo.Typefile,
 		SizeFile:     int64(respDatabase.Fileinfo.Size),
